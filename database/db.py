@@ -4,6 +4,8 @@ import streamlit as st
 import os
 from pathlib import Path
 
+from database.customer import CustomerWhereCause
+
 
 @st.cache_resource
 def init_db():
@@ -48,9 +50,9 @@ def update_customer(name, address, phone):
     conn.commit()
     #conn.close()
 
-def view_customers(conn:sqlite3.Connection):
+def view_customers(conn:sqlite3.Connection,filter:CustomerWhereCause):
     c = conn.cursor()
-    c.execute("SELECT id,name,address,phone FROM customers")
+    c.execute("SELECT id,name,address,phone FROM customers "+filter.to_sql())
     columns = [col[0] for col in c.description]
     data = [dict(zip(columns, row)) for row in c.fetchall()]
     #conn.close()
