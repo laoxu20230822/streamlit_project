@@ -1,9 +1,12 @@
 import sqlite3
 import streamlit as st
+import os
+from pathlib import Path
 
 def create_database():
-    
-    conn = sqlite3.connect('customers.db')
+    db_path = Path(__file__).parent.parent / 'customers.db'
+    print(f"dbpath::::: {db_path}")
+    conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute("""
     SELECT name FROM sqlite_master WHERE type='table' AND name='customers'
