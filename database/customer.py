@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 
 
 class CustomerWhereCause:
@@ -20,3 +19,4 @@ class CustomerWhereCause:
         if self.phone:
             sql += f" AND phone like '%{self.phone}%' "
         return sql
+    

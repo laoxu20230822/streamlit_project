@@ -1,10 +1,14 @@
-import sqlite3
-from pandas import DataFrame
-import streamlit as st
 import os
 from pathlib import Path
+import sqlite3
+
+
+from pandas import DataFrame
+import streamlit as st
 
 from database.customer import CustomerWhereCause
+from database.page import Pageable
+from database.page import PageResult
 
 
 @st.cache_resource
@@ -50,13 +54,25 @@ def update_customer(name, address, phone):
     conn.commit()
     #conn.close()
 
-def view_customers(conn:sqlite3.Connection,filter:CustomerWhereCause):
+def view_customers(conn:sqlite3.Connection,filter:CustomerWhereCause,pageable:Pageable) -> PageResult:
     c = conn.cursor()
-    c.execute("SELECT id,name,address,phone FROM customers "+filter.to_sql())
+    sql=f"SELECT id,name,address,phone FROM customers {filter.to_sql()}"
+    count_sql=f"select count(1) from ({sql})"
+    sql_with_page=f"{sql} {pageable.limit_sql()}"
+
+    c.execute(count_sql)
+    total=c.fetchone()[0]
+    print(f"total: {total}")
+
+    c.execute(sql_with_page)
     columns = [col[0] for col in c.description]
     data = [dict(zip(columns, row)) for row in c.fetchall()]
     #conn.close()
-    return data
+    total_page=total//pageable.size
+    if total%pageable.size>0:
+        total_page+=1
+    return PageResult(data,total_page,pageable)
+
 
 def search_customer(name, phone):
     conn = sqlite3.connect('customers.db')

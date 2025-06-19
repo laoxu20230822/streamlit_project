@@ -5,6 +5,8 @@ import os
 import sys
 from database import db
 from database.customer import CustomerWhereCause
+from database.page import Pageable
+
 
 def handle_upload_file():
     uploaded_file=st.session_state.uploaded_file
@@ -14,14 +16,6 @@ def handle_upload_file():
             df = pd.read_excel(uploaded_file, engine='openpyxl')
             db.batch_insert(df,conn)
             st.success('文件上传成功！')
-            
-            # 显示数据预览
-            filter=CustomerWhereCause(
-                st.session_state.name,
-                st.session_state.address,
-                st.session_state.phone);
-            df=db.view_customers(conn,filter)
-            print(df)
         except Exception as e:
             st.error(f"文件解析失败: {str(e)}")
 
@@ -38,7 +32,7 @@ address=st.sidebar.text_input('地址',key='address')
 
 phone=st.sidebar.text_input('手机号',key='phone')
 
-customer=CustomerWhereCause(name,address,phone)
+filter=CustomerWhereCause(name,address,phone)
 uploaded_file = st.sidebar.file_uploader(
         "导入数据",
         type=['xlsx'],
@@ -54,12 +48,9 @@ def get_column_mapping():
         'phone': '电话'
     }
 
-customer_datas=db.view_customers(conn,customer)
-
-
-
+page_result=db.view_customers(conn=conn,filter=filter,pageable=Pageable(1,10))
 st.dataframe(
-    pd.DataFrame(customer_datas if customer_datas else [],columns=get_column_mapping()),
+    pd.DataFrame(page_result.data if page_result.data else [],columns=get_column_mapping()),
     hide_index=True,  # 隐藏默认索引列
     use_container_width=True,
     column_config={
@@ -82,6 +73,17 @@ st.dataframe(
     },  # 表格宽度自适应容器
 )
 # # Add a placeholder
-# latest_iteration = st.empty()
+st.empty()
+col1, col2,col3,col4,col5 = st.columns([0.6,0.1,0.1,0.1,0.1])  # 调整列宽比例
+with col2:
+    st.write(f'共{page_result.total}页')
+with col3:
+    st.button('prev')
+with col4:
+    st.number_input('current_page',label_visibility='collapsed',min_value=1,max_value=10)
+with col5:
+    st.button('next')
+
+
 
 
