@@ -1,101 +1,51 @@
 import streamlit as st
 import pandas as pd
-
+import numpy as np
 import os
 import sys
 from database import db
+
+def handle_upload_file():
+    uploaded_file=st.session_state.uploaded_file
+    if uploaded_file is not None:
+        try:
+            # 读取Excel数据
+            df = pd.read_excel(uploaded_file, engine='openpyxl')
+            db.batch_insert(df,conn)
+            st.success('文件上传成功！')
+            
+            # 显示数据预览
+            df=db.view_customers(conn)
+            print(df)
+        except Exception as e:
+            st.error(f"文件解析失败: {str(e)}")
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-st.write("Hello world")
+#初始化数据库
+conn=db.init_db()
 
-st.write("小组件")
+st.sidebar.text_input('姓名',key='name')
 
-x = st.slider('x')  # 👈 this is a widget
-st.write(x, 'squared is', x * x)
-button=st.button('aaaa')
-st.text_input("Your name", key="name")
-st.session_state.name
-df = pd.DataFrame({
-  'first column': [1, 2, 3, 4],
-  'second column': [10, 20, 30, 40]
-})
+st.sidebar.text_input('地址',key='address')
 
-st.write("交互式表格")
-df      #等价于 st.dataframe(df)
+st.sidebar.text_input('手机号',key='phone')
 
-st.write("静态表格")
-st.table(df)
+uploaded_file = st.sidebar.file_uploader(
+        "导入数据",
+        type=['xlsx'],
+        help="支持.xlsx格式文件",
+        key='uploaded_file',
+        on_change=handle_upload_file
+    )
 
-import numpy as np
-import pandas as pd
 
-if st.checkbox('Show dataframe'):
-    chart_data = pd.DataFrame(
-       np.random.randn(20, 3),
-       columns=['a', 'b', 'c'])
-
-    chart_data
-
-df = pd.DataFrame({
-    'first column': [1, 2, 3, 4],
-    'second column': [10, 20, 30, 40]
-    })
-
-option = st.selectbox(
-    'Which number do you like best?',
-     df['first column'])
-
-'You selected: ', option
-
-# Add a selectbox to the sidebar:
-add_selectbox = st.sidebar.selectbox(
-    'How would you like to be contacted?',
-    ('Email', 'Home phone', 'Mobile phone')
+st.dataframe(
+    db.view_customers(conn),
+    hide_index=True,  # 隐藏默认索引列
+    use_container_width=True  # 表格宽度自适应容器
 )
+# # Add a placeholder
+# latest_iteration = st.empty()
 
-# Add a slider to the sidebar:
-add_slider = st.sidebar.slider(
-    'Select a range of values',
-    0.0, 100.0, (25.0, 75.0)
-)
 
-left_column, right_column = st.columns(2)
-# You can use a column just like st.sidebar:
-left_column.button('Press me!')
-
-# Or even better, call Streamlit functions inside a "with" block:
-with right_column:
-    chosen = st.radio(
-        'Sorting hat',
-        ("Gryffindor", "Ravenclaw", "Hufflepuff", "Slytherin"))
-    st.write(f"You are in {chosen} house!")
-
-import time
-
-'Starting a long computation...'
-
-# Add a placeholder
-latest_iteration = st.empty()
-bar = st.progress(0)
-
-for i in range(10):
-  # Update the progress bar with each iteration.
-  latest_iteration.text(f'Iteration {i+1}')
-  bar.progress(i + 1)
-  time.sleep(0.1)
-
-'...and now we\'re done!'
-
-@st.cache_data
-def long_running_function(param1, param2):
-    return param1 + param2
-
-if "counter" not in st.session_state:
-    st.session_state.counter = 0
-
-st.session_state.counter += 1
-
-st.header(f"This page has run {st.session_state.counter} times.")
-st.button("Run it again")
-
-db.main()
