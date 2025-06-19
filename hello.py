@@ -1,6 +1,11 @@
 import streamlit as st
 import pandas as pd
 
+import os
+import sys
+from database import db
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 st.write("Hello world")
 
 st.write("小组件")
@@ -92,3 +97,5 @@ st.session_state.counter += 1
 
 st.header(f"This page has run {st.session_state.counter} times.")
 st.button("Run it again")
+
+db.main()
