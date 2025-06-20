@@ -1,0 +1,3 @@
+* 安装uv    pip install uv
+* 执行uv run main.py (自动将虚拟环境和依赖都安装好)
+* 切换到虚拟环境 执行    streamlit run hello.py 启动服务
