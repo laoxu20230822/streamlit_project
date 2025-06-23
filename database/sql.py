@@ -1,5 +1,3 @@
-from database import glossary
-
 
 CREATE_TABLE_STANDARD_STRUCTURE = """
 CREATE TABLE IF NOT EXISTS standard_structure (

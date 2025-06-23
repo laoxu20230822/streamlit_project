@@ -1,16 +1,42 @@
+
 import streamlit as st
 import pandas as pd
-import numpy as np
 import os
 import sys
-from database import db
-from database import customer
-from database.customer import CustomerWhereCause
+from database.standard_db import StandardDB
+from database.standard_db import WhereCause
 from database.page import Pageable
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+
+# 定义标准卡片组件
+def display_standard_card(standard):
+    # 创建卡片容器
+    with st.container():
+        col1, col2 = st.columns([1, 10])
+        # 左侧图标（模拟网页中的图标）
+        with col1:
+            st.markdown("⏳")
+        # 右侧内容
+        with col2:
+            # 标准编号和名称
+            st.subheader(f"{standard['standard_name']}")
+            
+            # 信息列表
+            info_cols = st.columns(3)
+            with info_cols[0]:
+                st.markdown(f"**体系序号：** {standard['system_serial']}")
+                #st.markdown(f"**流水号：** {standard['flow_number']}")
+            with info_cols[1]:
+                st.markdown(f"**标准号：** {standard['standard_code']}")
+            with info_cols[2]:
+                st.link_button('详情',url=f'/detail?standard_code={standard['standard_code']}')
+            st.markdown("---")
 
 @st.cache_resource
 def init_customer_db():
-    return db.CustomerDB()
+    return StandardDB()
 
 customer_db=init_customer_db()
 
@@ -20,7 +46,7 @@ def init_current_page():
         st.session_state.current_page=1
 
 def reset_current_page():
-
+    print('reset current page')
     st.session_state.current_page=1
 
 def set_current_page():
@@ -35,78 +61,88 @@ def next_page():
 
 init_current_page()
 
-def handle_upload_file():
-    reset_current_page()
-    uploaded_file=st.session_state.uploaded_file
-    if uploaded_file is not None:
-        try:
-            # 读取Excel数据
-            df = pd.read_excel(uploaded_file, engine='openpyxl')
-            # db.batch_insert(df,conn)
-            customer_db.batch_insert(df)
-            st.success('文件上传成功！')
-        except Exception as e:
-            st.error(f"文件解析失败: {str(e)}")
-
-
-
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-
-
-
-name=st.sidebar.text_input('姓名',key='name')
-
-address=st.sidebar.text_input('地址',key='address')
-
-phone=st.sidebar.text_input('手机号',key='phone')
-
-if name or address or phone:
-    reset_current_page()
-
-filter=CustomerWhereCause(name,address,phone)
-uploaded_file = st.sidebar.file_uploader(
-        "导入数据",
-        type=['xlsx'],
-        help="支持.xlsx格式文件",
-        key='uploaded_file',
-        on_change=handle_upload_file
-    )
 def get_column_mapping():
     return {
         'id': 'ID',
-        'name': '姓名',
-        'address': '地址',
-        'phone': '电话'
+        'system_serial': '体系编号',
+        'flow_number': '流水号',
+        'serial': '序号',
+        'standard_code': '标准号',
+        'standard_name': '标准名称',
+        'content_full': '标准全文'
     }
 
+with st.form('standard_search_form'):
+    col1,col2=st.columns([0.8,0.2])
+    standard_name=col1.text_input('标准名称',key='standard_name',label_visibility='collapsed')
+    submit=col2.form_submit_button('查询',on_click=set_current_page)
+
+
+filter=WhereCause(standard_name)
 pageable=Pageable(st.session_state.current_page,page_size)
-page_result=customer_db.view_customers(filter=filter,pageable=pageable)
+page_result=customer_db.view_standards(filter=filter,pageable=pageable)
 df=pd.DataFrame(page_result.data if page_result.data else [],columns=get_column_mapping())
-st.dataframe(
+
+for row in page_result.data:
+    display_standard_card(row)
+
+event=st.dataframe(
     df,
     hide_index=True,  # 隐藏默认索引列
     use_container_width=True,
-    column_config={
+        column_config={
         "id": st.column_config.TextColumn(
             "ID",
-             help="Streamlit **widget** commands 🎈",
-            # default="st.",
-            # max_chars=50,
-            # validate=r"^st\.[a-z_]+$",
+             help="体系唯一标识符",
         ),
-        "name": st.column_config.TextColumn(
-            "姓名",
+        "system_serial": st.column_config.TextColumn(
+            "体系编号",
+            help="标准体系序列号"
         ),
-        "address": st.column_config.TextColumn(
-            "地址",
+        "flow_number": st.column_config.TextColumn(
+            "流水号",
+            help="唯一流水编号"
         ),
-        "phone": st.column_config.TextColumn(
-            "手机号",
-        )
-    },  # 表格宽度自适应容器
+        "serial": st.column_config.TextColumn(
+            "序号",
+            help="标准排序序号"
+        ),
+        "standard_code": st.column_config.TextColumn(
+            "标准号",
+            help="国家标准编号"
+        ),
+        "standard_name": st.column_config.TextColumn(
+            "标准名称",
+            help="标准完整名称"
+        ),
+        "content_full": st.column_config.TextColumn(
+            "标准全文",
+            help="标准完整文本内容"
+        ),
+    }, 
+    on_select='rerun',
+    selection_mode='single-row',
+    #key='selected_row',
 )
+
+if len(event.selection['rows']):
+    selected_row = event.selection['rows'][0]
+    standard_code = df.iloc[selected_row]['standard_code']
+
+    st.session_state['standard_code'] = {'standard_code': standard_code}
+    #https://docs.streamlit.io/develop/api-reference/widgets/st.page_link
+    st.page_link('pages/page_1.py', label=f'Goto {standard_code} Page', icon='🗺️')
+
+
+#standard_index = event.selection.rows
+
+#standard_detail=df.iloc[standard_index]
+#print(standard_detail['standard_code'])
+#print(standard_detail['standard_name'])
+#print(standard_detail['content_full'])
+
+
+
 # # Add a placeholder
 st.empty()
 col1, col2,col3,col4,col5 = st.columns([0.6,0.1,0.1,0.1,0.1])  # 调整列宽比例
@@ -126,24 +162,10 @@ with col5:
     st.button('next',on_click=next_page,key='next_key')
 
 
-"""
-设置页面
-"""
-st.set_page_config(
-    page_title="Hello",
-    page_icon="👋",
-)
-
-@st.fragment
-def test():
-    input=st.text_input('test')
-    button=st.button('abc')
-    print(f"{input},----- {button}")
-
-test()
-
-
-
+# st.link_button('link',url='/page_3?key1=abcdef')
+#st.switch_page("pages/page_3.py")
+#pg = st.navigation([st.Page("page_1.py"), st.Page("page_2.py")],position='hidden')
+#pg.run()
 
 
 
