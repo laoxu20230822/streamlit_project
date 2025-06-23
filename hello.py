@@ -40,7 +40,7 @@ def init_customer_db():
 
 customer_db=init_customer_db()
 
-page_size=10
+page_size=5
 def init_current_page():
     if 'current_page' not in st.session_state:
         st.session_state.current_page=1
