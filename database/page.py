@@ -3,7 +3,7 @@ from typing import TypeAlias
 RowType: TypeAlias = list[dict[str, Any]] 
 
 class Pageable:
-    def __init__(self, page: int = 1, size: int = 10):
+    def __init__(self, page: int = 1, size: int = 50):
         self.page = page
         self.size = size
     
