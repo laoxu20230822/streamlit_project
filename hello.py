@@ -382,13 +382,11 @@ with placeholder.container():
                 }
             )
         st.markdown("---")
-        with st.container(height=200):
-            st.subheader('产品标准')
-            st.write('hello world 2')
+        with st.expander("查看产品标准"):
+            st.write('TODO')
         st.markdown("---")
-        with st.container(height=200):
-            st.subheader('工艺标准')
-            st.write('hello world 2')
+        with st.expander("查看工艺标准"):
+            st.write('TODO')
         st.markdown("---")
 
 
