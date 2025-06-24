@@ -16,7 +16,7 @@ from database.standard_structure import StandardStructure
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
-
+st.markdown("<h1 style='text-align: center; color: grey;'>标准知识查询系统</h1>", unsafe_allow_html=True)
 @st.cache_resource
 def init_standard_db():
     return StandardDB()
