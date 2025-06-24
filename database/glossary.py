@@ -50,6 +50,11 @@ class Glossary:
         c.execute("select count(1) from glossary")
         return c.fetchone()[0]
     
+    def update_by_standard_code(self,standard_code_old:str,standard_code_new:str):
+        c = self.conn.cursor()
+        c.execute(f"update glossary set standard_code='{standard_code_new}' where standard_code='{standard_code_old}'")
+        self.conn.commit()
+    
     def detail(self,standard_code:str):
         c = self.conn.cursor()
         c.execute(f"select * from glossary where standard_code='{standard_code}'")
@@ -96,8 +101,7 @@ class Glossary:
         df = pd.read_excel(file_path, engine='openpyxl',header=0)
         self.batch_insert(df)
 
-
-
+    
 
 
 

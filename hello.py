@@ -75,7 +75,7 @@ init_current_page()
 
 with st.form('standard_search_form'):
     col,col1,col2=st.columns([0.2,0.6,0.2])
-    col.markdown('<div> 输入标准名称：</div>',unsafe_allow_html=True)
+    col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
     standard_name=col1.text_input('标准名称',key='standard_name',label_visibility='collapsed',)
     submit=col2.form_submit_button('查询',on_click=set_current_page)
 
@@ -263,6 +263,7 @@ with placeholder.container():
         with st.expander("查看术语信息"):
             glossary=Glossary()
             data=glossary.detail(standard_code)
+            print(data)
             df=pd.DataFrame(data,columns={
                 'term_id': '术语序号',
                 'term': '术语词条',

@@ -26,16 +26,12 @@ from database.reference_standards import ReferenceStandards
 # print(glossary.count())
 # print(glossary.detail('SY/T 5510-2021'))
 
-reference_standards=ReferenceStandards()
-reference_standards.drop()
-reference_standards=ReferenceStandards()
-reference_standards.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/05-规范性引用文件2.xlsx')
-print(reference_standards.count())
-detail=reference_standards.detail('GB/T 2091-2008')
-print(detail)
-
+glossary=Glossary()
+glossary.update_by_standard_code('SY/T 5745-2008','SY/T 5289-2016')
 
     
+data=glossary.detail('SY/T 5289-2016')
+print(data)
 #pageable=Pageable(1,10)
 #page_result=standard_structure.detail(WhereCause('油气井管柱完整性管理'),pageable)
 #print(page_result.data)
