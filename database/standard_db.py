@@ -50,12 +50,14 @@ class StandardDB:
         c.execute("select count(1) from standard_system")
         return c.fetchone()[0]
     
-    def standard_detail(standard_code:str):
+    def standard_detail(self,standard_code:str):
         c = self.conn.cursor()
         c.execute(f"select * from standard_system where standard_code='{standard_code}'")
-        return c.fetchone()
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
 
-    def view_standards(self,filter:WhereCause,pageable:Pageable) -> PageResult:
+    def list(self,filter:WhereCause,pageable:Pageable) -> PageResult:
         c = self.conn.cursor()
 
         #build sql???

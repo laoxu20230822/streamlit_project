@@ -6,6 +6,7 @@ import sys
 from database.standard_db import StandardDB
 from database.standard_db import WhereCause
 from database.page import Pageable
+from database.standard_structure import StandardStructure
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -40,7 +41,7 @@ def init_customer_db():
 
 customer_db=init_customer_db()
 
-page_size=5
+page_size=20
 def init_current_page():
     if 'current_page' not in st.session_state:
         st.session_state.current_page=1
@@ -63,13 +64,11 @@ init_current_page()
 
 def get_column_mapping():
     return {
-        'id': 'ID',
         'system_serial': '体系编号',
         'flow_number': '流水号',
         'serial': '序号',
         'standard_code': '标准号',
-        'standard_name': '标准名称',
-        'content_full': '标准全文'
+        'standard_name': '标准名称'
     }
 
 with st.form('standard_search_form'):
@@ -80,21 +79,17 @@ with st.form('standard_search_form'):
 
 filter=WhereCause(standard_name)
 pageable=Pageable(st.session_state.current_page,page_size)
-page_result=customer_db.view_standards(filter=filter,pageable=pageable)
+page_result=customer_db.list(filter=filter,pageable=pageable)
 df=pd.DataFrame(page_result.data if page_result.data else [],columns=get_column_mapping())
 
-for row in page_result.data:
-    display_standard_card(row)
+# for row in page_result.data:
+#     display_standard_card(row)
 
 event=st.dataframe(
     df,
     hide_index=True,  # 隐藏默认索引列
     use_container_width=True,
         column_config={
-        "id": st.column_config.TextColumn(
-            "ID",
-             help="体系唯一标识符",
-        ),
         "system_serial": st.column_config.TextColumn(
             "体系编号",
             help="标准体系序列号"
@@ -115,23 +110,13 @@ event=st.dataframe(
             "标准名称",
             help="标准完整名称"
         ),
-        "content_full": st.column_config.TextColumn(
-            "标准全文",
-            help="标准完整文本内容"
-        ),
     }, 
     on_select='rerun',
     selection_mode='single-row',
     #key='selected_row',
 )
 
-if len(event.selection['rows']):
-    selected_row = event.selection['rows'][0]
-    standard_code = df.iloc[selected_row]['standard_code']
 
-    st.session_state['standard_code'] = {'standard_code': standard_code}
-    #https://docs.streamlit.io/develop/api-reference/widgets/st.page_link
-    st.page_link('pages/page_1.py', label=f'Goto {standard_code} Page', icon='🗺️')
 
 
 #standard_index = event.selection.rows
@@ -143,8 +128,6 @@ if len(event.selection['rows']):
 
 
 
-# # Add a placeholder
-st.empty()
 col1, col2,col3,col4,col5 = st.columns([0.6,0.1,0.1,0.1,0.1])  # 调整列宽比例
 with col2:
     st.write(f'共{page_result.total}页')
@@ -161,11 +144,46 @@ with col4:
 with col5:
     st.button('next',on_click=next_page,key='next_key')
 
+placeholder=st.empty()
 
-# st.link_button('link',url='/page_3?key1=abcdef')
-#st.switch_page("pages/page_3.py")
-#pg = st.navigation([st.Page("page_1.py"), st.Page("page_2.py")],position='hidden')
-#pg.run()
+with placeholder.container():
+    if len(event.selection['rows']):
+        selected_row = event.selection['rows'][0]
+        standard_code = df.iloc[selected_row]['standard_code']
 
+        standard_db=StandardDB()
+        standard_structure=StandardStructure()
+        detail=standard_db.standard_detail(standard_code)
+        detail_for_markdown=standard_structure.detail_to_markdown(standard_code)
+        ## 显示详情
+        with st.container(height=200):
+            st.subheader("标准基本信息")
+            st.markdown(f"""
+            :blue[{detail[0]['standard_code']}]
+            """)
+            st.markdown(f"#### {detail[0]['standard_name']}")
+
+        with st.container(height=200):
+            st.subheader('标准目次信息')
+            
+            st.markdown(detail_for_markdown)
+        st.markdown("---")
+        with st.container(height=200):
+            st.subheader('引用列表')
+            
+
+        st.markdown("---",)
+        with st.container(height=200):
+            st.subheader('术语')
+            st.write('hello world 2')
+        st.markdown("---")
+        with st.container(height=200):
+            st.subheader('产品标准')
+            st.write('hello world 2')
+        st.markdown("---")
+        with st.container(height=200):
+            st.subheader('工艺标准')
+            st.write('hello world 2')
+        st.markdown("---")
 
 
