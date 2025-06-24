@@ -143,15 +143,18 @@ with col4:
 with col5:
     st.button('下页',on_click=next_page,key='next_key')
 
+
 placeholder=st.empty()
 
 with placeholder.container():
     if len(event.selection['rows']):
+        t1,t2,t3,t4,t5,t6=st.tabs(['基本信息','标准目次信息','引用文件信息','术语','产品标准','工业标准'])
         selected_row = event.selection['rows'][0]
         standard_code = df.iloc[selected_row]['standard_code']
 
         ## 显示详情
-        with st.container(height=200):
+        #with st.container(height=200):
+        with t1:
             standard_db=StandardDB()
             detail=standard_db.standard_detail(standard_code)
             st.subheader("标准基本信息")
@@ -159,14 +162,16 @@ with placeholder.container():
             st.markdown(f"#### {detail[0]['standard_name']}")
 
         st.markdown("---",)
-        with st.expander("标准目次信息"):
+        #with st.expander("标准目次信息"):
+        with t2:
             standard_structure=StandardStructure()
             detail_for_markdown=standard_structure.detail_to_markdown(standard_code)
             #st.subheader('标准目次信息')
             st.markdown(detail_for_markdown)
-        st.markdown("---")
+        #st.markdown("---")
 
-        with st.expander("查看引用文件信息"):
+        #with st.expander("查看引用文件信息"):
+        with t3:
             reference_standards=ReferenceStandards()
             data=reference_standards.detail(standard_code)
             df=pd.DataFrame(data,columns={
@@ -259,8 +264,9 @@ with placeholder.container():
             #key='selected_row',
         )
 
-        st.markdown("---",)
-        with st.expander("查看术语信息"):
+        #st.markdown("---",)
+        #with st.expander("查看术语信息"):
+        with t4:
             glossary=Glossary()
             data=glossary.detail(standard_code)
             df=pd.DataFrame(data,columns={
@@ -380,12 +386,14 @@ with placeholder.container():
                 )
                 }
             )
-        st.markdown("---")
-        with st.expander("查看产品标准"):
+        #st.markdown("---")
+        #with st.expander("查看产品标准"):
+        with t5:
             st.write('TODO')
-        st.markdown("---")
-        with st.expander("查看工艺标准"):
+        #st.markdown("---")
+        #with st.expander("查看工艺标准"):
+        with t6:
             st.write('TODO')
-        st.markdown("---")
+        #st.markdown("---")
 
 
