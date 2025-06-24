@@ -254,8 +254,8 @@ with placeholder.container():
                 ),
                 
             }, 
-            on_select='rerun',
-            selection_mode='single-row',
+            #on_select='rerun',
+            #selection_mode='single-row',
             #key='selected_row',
         )
 
@@ -263,7 +263,6 @@ with placeholder.container():
         with st.expander("查看术语信息"):
             glossary=Glossary()
             data=glossary.detail(standard_code)
-            print(data)
             df=pd.DataFrame(data,columns={
                 'term_id': '术语序号',
                 'term': '术语词条',
