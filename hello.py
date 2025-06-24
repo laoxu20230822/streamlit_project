@@ -16,7 +16,7 @@ from database.standard_structure import StandardStructure
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
-st.markdown("<h1 style='text-align: center; color: grey;'>标准知识查询系统</h1>", unsafe_allow_html=True)
+
 @st.cache_resource
 def init_standard_db():
     return StandardDB()
@@ -71,13 +71,28 @@ def next_page():
 
 init_current_page()
 
+st.markdown("<h1 style='text-align: center; color: blue;'>标准知识查询系统</h1>", unsafe_allow_html=True)
 
+st.markdown("---")
 
 with st.form('standard_search_form'):
-    col,col1,col2=st.columns([0.2,0.6,0.2])
-    col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
-    standard_name=col1.text_input('标准名称',key='standard_name',label_visibility='collapsed',)
-    submit=col2.form_submit_button('查询',on_click=set_current_page)
+    col1,col2,col3=st.columns([0.4,0.2,0.2])
+    #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
+    standard_name=col1.text_input('标准名称',key='standard_name',label_visibility='collapsed',placeholder='查询输入',width='stretch')
+    submit=col2.form_submit_button('标准查询',on_click=set_current_page,use_container_width=True)
+    reset=col3.form_submit_button('条款查询',on_click=reset_current_page,use_container_width=True,disabled=True)
+
+    button1,button2,button3,button4=st.columns([0.2,0.2,0.2,0.2])
+    button1.form_submit_button('标准体系',use_container_width=True,disabled=True)
+    button2.form_submit_button('术语',use_container_width=True,disabled=True)
+    button3.form_submit_button('指标',use_container_width=True,disabled=True)
+    button4.form_submit_button('参数',use_container_width=True,disabled=True)
+
+
+
+
+
+
 
 
 #获取standard 列表数据
