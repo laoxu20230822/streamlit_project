@@ -26,12 +26,12 @@ from database.reference_standards import ReferenceStandards
 # print(glossary.count())
 # print(glossary.detail('SY/T 5510-2021'))
 
-glossary=Glossary()
-glossary.update_by_standard_code('SY/T 5745-2008','SY/T 5289-2016')
+# glossary=Glossary()
+# glossary.update_by_standard_code('SY/T 5745-2008','SY/T 5289-2016')
 
     
-data=glossary.detail('SY/T 5289-2016')
-print(data)
+# data=glossary.detail('SY/T 5289-2016')
+# print(data)
 #pageable=Pageable(1,10)
 #page_result=standard_structure.detail(WhereCause('油气井管柱完整性管理'),pageable)
 #print(page_result.data)
@@ -47,3 +47,9 @@ print(data)
 #     #我需要遍历row的各个列
 #     for i in range(row.size):
 #         print(row[i])
+
+standard_db=StandardDB()
+standard_db.drop()
+standard_db=StandardDB()
+standard_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/标准全文--体系范围标准-正文数据源-2025.6.21.xlsx')
+print(standard_db.count())

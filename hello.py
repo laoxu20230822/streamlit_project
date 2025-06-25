@@ -48,7 +48,7 @@ def display_standard_card(standard):
 
 
 
-customer_db=init_standard_db()
+standard_db=init_standard_db()
 
 page_size=20
 def init_current_page():
@@ -96,11 +96,11 @@ with st.form('standard_search_form'):
 
 
 #获取standard 列表数据
-page_result=customer_db.list(filter=WhereCause(standard_name),pageable=Pageable(st.session_state.current_page,page_size))
+page_result=standard_db.list(filter=WhereCause(standard_name),pageable=Pageable(st.session_state.current_page,page_size))
 df=pd.DataFrame(page_result.data if page_result.data else [],columns={
-        'system_serial': '体系编号',
-        'flow_number': '流水号',
-        'serial': '序号',
+        # 'system_serial': '体系编号',
+        # 'flow_number': '流水号',
+        # 'serial': '序号',
         'standard_code': '标准号',
         'standard_name': '标准名称'
     })
@@ -115,25 +115,25 @@ event=st.dataframe(
     hide_index=True,  # 隐藏默认索引列
     use_container_width=True,
         column_config={
-        "system_serial": st.column_config.TextColumn(
-            "体系编号",
-            help="标准体系序列号"
-        ),
-        "flow_number": st.column_config.TextColumn(
-            "流水号",
-            help="唯一流水编号"
-        ),
-        "serial": st.column_config.TextColumn(
-            "序号",
-            help="标准排序序号"
-        ),
+        # "system_serial": st.column_config.TextColumn(
+        #     "体系编号",
+        #     help="标准体系序列号"
+        # ),
+        # "flow_number": st.column_config.TextColumn(
+        #     "流水号",
+        #     help="唯一流水编号"
+        # ),
+        # "serial": st.column_config.TextColumn(
+        #     "序号",
+        #     help="标准排序序号"
+        # ),
         "standard_code": st.column_config.TextColumn(
             "标准号",
-            help="国家标准编号"
+            help="标准号"
         ),
         "standard_name": st.column_config.TextColumn(
             "标准名称",
-            help="标准完整名称"
+            help="标准名称"
         ),
     }, 
     on_select='rerun',

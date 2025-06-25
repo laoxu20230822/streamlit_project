@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import sqlite3
 
-from database.sql import insert_standard_structure_sql, standard_system_table_schema,insert_standard_system_sql,standard_system_select_sql,CREATE_TABLE_STANDARD_STRUCTURE,CREATE_TABLE_GLOSSARY,glossary_insert_sql
+from database.sql import insert_standard_structure_sql,standard_system_select_sql,CREATE_TABLE_STANDARD_STRUCTURE,CREATE_TABLE_GLOSSARY,glossary_insert_sql
 from pandas import DataFrame
 import pandas as pd
 import streamlit as st

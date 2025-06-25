@@ -12,45 +12,6 @@ CREATE TABLE IF NOT EXISTS standard_structure (
 );
 """
 
-standard_system_table_schema="""
-CREATE TABLE standard_system (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    system_serial TEXT NOT NULL,
-    flow_number TEXT UNIQUE,
-    serial TEXT NOT NULL,
-    standard_code TEXT NOT NULL,
-    standard_name TEXT NOT NULL,
-    content_full TEXT,
-    content_start_page INTEGER,
-    page_start INTEGER,
-    page_total INTEGER,
-    line_start INTEGER,
-    relevance_level INTEGER,
-    min_chapter_id TEXT,
-    content_element TEXT,
-    content_element_sub TEXT,
-    important_prompt TEXT,
-    expression_form TEXT,
-    expression_form_desc TEXT,
-    paragraph_type TEXT,
-    hierarchy_level INTEGER,
-    formula_desc TEXT,
-    item TEXT,
-    item_id TEXT,
-    unknown1 TEXT,
-    performance_level1 TEXT,
-    performance_level2 TEXT,
-    method_name TEXT,
-    sample_preparation TEXT,
-    equipment_materials TEXT,
-    product_cat1 TEXT,
-    product_cat2 TEXT,
-    product_name TEXT,
-    resource_type TEXT,
-    product TEXT,
-    craft1 TEXT,
-    craft2 TEXT)
-"""
 
 CREATE_TABLE_GLOSSARY="""
 CREATE TABLE glossary (
@@ -165,51 +126,7 @@ INSERT INTO standard_structure(
 )
 """
 
-insert_standard_system_sql="""
-INSERT INTO standard_system(
-    system_serial,
-    flow_number,
-    serial,
-    standard_code,
-    standard_name,
-    content_full,
-    content_start_page,
-    page_start,
-    page_total,
-    line_start,
-    relevance_level,
-    min_chapter_id,
-    content_element,
-    content_element_sub,
-    important_prompt,
-    expression_form,
-    expression_form_desc,
-    paragraph_type,
-    hierarchy_level,
-    formula_desc,
-    item,
-    item_id,
-    unknown1,
-    performance_level1,
-    performance_level2,
-    method_name,
-    sample_preparation,
-    equipment_materials,
-    product_cat1,
-    product_cat2,
-    product_name,
-    resource_type,
-    product,
-    craft1,
-    craft2
-) VALUES (
-    ?,?,?,?,?,?,?,?,?,?,
-    ?,?,?,?,?,?,?,?,?,?,
-    ?,?,?,?,?,?,?,?,?,?,
-    ?,?,?,?,?
-)
-"""
 
 standard_system_select_sql="""
-SELECT id,system_serial,flow_number,serial,standard_code, standard_name ,content_full FROM standard_system 
+SELECT standard_code, standard_name  FROM standard_system 
 """
