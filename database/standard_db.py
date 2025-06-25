@@ -257,7 +257,7 @@ class StandardDB:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-    def list(self,filter:WhereCause,pageable:Pageable) -> PageResult:
+    def list(self,filter:WhereCause = WhereCause(),pageable:Pageable = Pageable(1,10)) -> PageResult:
         c = self.conn.cursor()
 
         #build sql???

@@ -12,7 +12,6 @@ from database.standard_db import StandardDB
 from database.standard_db import WhereCause
 from database.page import Pageable
 from database.standard_structure import StandardStructure
-from st_aggrid import AgGrid, GridOptionsBuilder
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -52,25 +51,25 @@ def display_standard_card(standard):
 standard_db=init_standard_db()
 
 page_size=20
-# def init_current_page():
-#     if 'current_page' not in st.session_state:
-#         st.session_state.current_page=1
+def init_current_page():
+    if 'current_page' not in st.session_state:
+        st.session_state.current_page=1
 
-# def reset_current_page():
-#     print('reset current page')
-#     st.session_state.current_page=1
+def reset_current_page():
+    print('reset current page')
+    st.session_state.current_page=1
 
-# def set_current_page():
-#     st.session_state.current_page=st.session_state.current_page_key
+def set_current_page():
+    st.session_state.current_page=st.session_state.current_page_key
 
-# def prev_page():
-#     if st.session_state.current_page>1:
-#         st.session_state.current_page=st.session_state.current_page_key-1
+def prev_page():
+    if st.session_state.current_page>1:
+        st.session_state.current_page=st.session_state.current_page_key-1
 
-# def next_page():
-#     st.session_state.current_page=st.session_state.current_page_key+1
+def next_page():
+    st.session_state.current_page=st.session_state.current_page_key+1
 
-#init_current_page()
+init_current_page()
 
 st.markdown("<h1 style='text-align: center; color: blue;'>标准知识查询系统</h1>", unsafe_allow_html=True)
 
@@ -80,8 +79,8 @@ with st.form('standard_search_form'):
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
     standard_name=col1.text_input('标准名称',key='standard_name',label_visibility='collapsed',placeholder='查询输入',width='stretch')
-    submit=col2.form_submit_button('标准查询',use_container_width=True)
-    reset=col3.form_submit_button('条款查询',use_container_width=True,disabled=True)
+    submit=col2.form_submit_button('标准查询',on_click=set_current_page,use_container_width=True)
+    reset=col3.form_submit_button('条款查询',on_click=reset_current_page,use_container_width=True,disabled=True)
 
     button1,button2,button3,button4=st.columns([0.2,0.2,0.2,0.2])
     button1.form_submit_button('标准体系',use_container_width=True,disabled=True)
@@ -97,8 +96,7 @@ with st.form('standard_search_form'):
 
 
 #获取standard 列表数据
-page_result=standard_db.list(filter=WhereCause(standard_name),pageable=Pageable(1,page_size))
-print(page_result.data)
+page_result=standard_db.list(filter=WhereCause(standard_name),pageable=Pageable(st.session_state.current_page,page_size))
 df=pd.DataFrame(page_result.data if page_result.data else [],columns={
         # 'system_serial': '体系编号',
         # 'flow_number': '流水号',
@@ -108,92 +106,66 @@ df=pd.DataFrame(page_result.data if page_result.data else [],columns={
     })
 
 
+
 # for row in page_result.data:
 #     display_standard_card(row)
 
-# event=st.dataframe(
-#     df,
-#     hide_index=True,  # 隐藏默认索引列
-#     use_container_width=True,
-#         column_config={
-#         # "system_serial": st.column_config.TextColumn(
-#         #     "体系编号",
-#         #     help="标准体系序列号"
-#         # ),
-#         # "flow_number": st.column_config.TextColumn(
-#         #     "流水号",
-#         #     help="唯一流水编号"
-#         # ),
-#         # "serial": st.column_config.TextColumn(
-#         #     "序号",
-#         #     help="标准排序序号"
-#         # ),
-#         "standard_code": st.column_config.TextColumn(
-#             "标准号",
-#             help="标准号"
-#         ),
-#         "standard_name": st.column_config.TextColumn(
-#             "标准名称",
-#             help="标准名称"
-#         ),
-#     }, 
-#     on_select='rerun',
-#     selection_mode='single-row',
-#     #key='selected_row',
-# )
-
-grid_options = {
-    'columnDefs': [
-    { 'field': "standard_code", 'headerName': "标准号"},
-    { 'field': "standard_name", 'headerName': "标准名称"}
-  ],
-  'rowSelection': {
-        'mode': 'singleRow',
-        'checkboxes': False,
-        'enableClickSelection': True
-    },
-    "autoSizeStrategy": {
-        "type": "fitGridWidth"
-    }
-}
-grid_response = AgGrid(
-    df, 
-    gridOptions=grid_options,
-    #key='asdjflasdjkfl'
-    )
-
-grid_response.grid_options
-
-selected_rows = grid_response['selected_rows']
-
+event=st.dataframe(
+    df,
+    hide_index=True,  # 隐藏默认索引列
+    use_container_width=True,
+        column_config={
+        # "system_serial": st.column_config.TextColumn(
+        #     "体系编号",
+        #     help="标准体系序列号"
+        # ),
+        # "flow_number": st.column_config.TextColumn(
+        #     "流水号",
+        #     help="唯一流水编号"
+        # ),
+        # "serial": st.column_config.TextColumn(
+        #     "序号",
+        #     help="标准排序序号"
+        # ),
+        "standard_code": st.column_config.TextColumn(
+            "标准号",
+            help="标准号"
+        ),
+        "standard_name": st.column_config.TextColumn(
+            "标准名称",
+            help="标准名称"
+        ),
+    }, 
+    on_select='rerun',
+    selection_mode='single-row',
+    #key='selected_row',
+)
 
 #分页处理
-# col1, col2,col3,col4,col5 = st.columns([0.55,0.1,0.1,0.1,0.1])  # 调整列宽比例
-# with col2:
-#     st.write(f'共{page_result.total}页')
-# with col3:
-#     st.button('上页',on_click=prev_page,key='prev_key')
-# with col4:
-#     st.number_input(
-#         'current_page',
-#         label_visibility='collapsed',
-#         value=st.session_state.current_page,
-#         key='current_page_key',
-#         on_change=set_current_page
-#         )
-# with col5:
-#     st.button('下页',on_click=next_page,key='next_key')
+col1, col2,col3,col4,col5 = st.columns([0.55,0.1,0.1,0.1,0.1])  # 调整列宽比例
+with col2:
+    st.write(f'共{page_result.total}页')
+with col3:
+    st.button('上页',on_click=prev_page,key='prev_key')
+with col4:
+    st.number_input(
+        'current_page',
+        label_visibility='collapsed',
+        value=st.session_state.current_page,
+        key='current_page_key',
+        on_change=set_current_page
+        )
+with col5:
+    st.button('下页',on_click=next_page,key='next_key')
 
 
 placeholder=st.empty()
 
 with placeholder.container():
-    if selected_rows is not  None:
-        standard_code=''
-        for index, row in selected_rows.iterrows():
-            standard_code=row['standard_code']
+    if len(event.selection['rows']):
         t1,t2,t3,t4,t5,t6=st.tabs(['基本信息','标准目次信息','引用文件信息','术语','产品标准','工业标准'])
-        #standard_code = df.iloc[selected_row]['standard_code']
+        selected_row = event.selection['rows'][0]
+        standard_code = df.iloc[selected_row]['standard_code']
 
         ## 显示详情
         #with st.container(height=200):
@@ -438,5 +410,4 @@ with placeholder.container():
         with t6:
             st.write('TODO')
         #st.markdown("---")
-
 
