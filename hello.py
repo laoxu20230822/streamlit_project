@@ -108,39 +108,7 @@ df=pd.DataFrame(page_result.data if page_result.data else [],columns={
     })
 
 
-# for row in page_result.data:
-#     display_standard_card(row)
 
-# event=st.dataframe(
-#     df,
-#     hide_index=True,  # 隐藏默认索引列
-#     use_container_width=True,
-#         column_config={
-#         # "system_serial": st.column_config.TextColumn(
-#         #     "体系编号",
-#         #     help="标准体系序列号"
-#         # ),
-#         # "flow_number": st.column_config.TextColumn(
-#         #     "流水号",
-#         #     help="唯一流水编号"
-#         # ),
-#         # "serial": st.column_config.TextColumn(
-#         #     "序号",
-#         #     help="标准排序序号"
-#         # ),
-#         "standard_code": st.column_config.TextColumn(
-#             "标准号",
-#             help="标准号"
-#         ),
-#         "standard_name": st.column_config.TextColumn(
-#             "标准名称",
-#             help="标准名称"
-#         ),
-#     }, 
-#     on_select='rerun',
-#     selection_mode='single-row',
-#     #key='selected_row',
-# )
 
 grid_options = {
     'columnDefs': [
@@ -162,27 +130,7 @@ grid_response = AgGrid(
     #key='asdjflasdjkfl'
     )
 
-grid_response.grid_options
-
 selected_rows = grid_response['selected_rows']
-
-
-#分页处理
-# col1, col2,col3,col4,col5 = st.columns([0.55,0.1,0.1,0.1,0.1])  # 调整列宽比例
-# with col2:
-#     st.write(f'共{page_result.total}页')
-# with col3:
-#     st.button('上页',on_click=prev_page,key='prev_key')
-# with col4:
-#     st.number_input(
-#         'current_page',
-#         label_visibility='collapsed',
-#         value=st.session_state.current_page,
-#         key='current_page_key',
-#         on_change=set_current_page
-#         )
-# with col5:
-#     st.button('下页',on_click=next_page,key='next_key')
 
 
 placeholder=st.empty()
