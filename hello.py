@@ -194,21 +194,10 @@ with placeholder.container():
             reference_standards=ReferenceStandards()
             data=reference_standards.detail(standard_code)
             df=pd.DataFrame(data,columns={
-                'standard_code': '标准号',
                 'cited_standard_original': '引用文件标准号',
-                'citation_type': '引用文件类型',
-                'has_edition_year': '是否带年代号引用',
                 'cited_standard_normalized': '引用文件标准号（规范后）',
                 'standard_name_normalized': '引用文件标准名称（规范后）',
-                'standard_code_prefix': '标准代号',
-                'serial_number': '标准序列号',
-                'edition_year': '标准年代号',
-                'statistical_code': '标准代号（统计用）',
-                'serial_number1': '标准序列号1',
-                'serial_number2': '标准序列号2',
-                'org_classification_code': '标准组织分类编号',
-                'standard_category': '标准类别',
-                'is_referenced': '是否引用文件'
+                'status': '状态'
                 })
             #st.subheader('引用列表')
             event=st.dataframe(
@@ -216,21 +205,9 @@ with placeholder.container():
             hide_index=True,  # 隐藏默认索引列
             use_container_width=True,
             column_config={
-                "standard_code": st.column_config.TextColumn(
-                    "标准号",
-                    help="国家标准编号"
-                ),
                 "cited_standard_original": st.column_config.TextColumn(
                     "引用文件标准号",
                     help="引用文件标准号"
-                ),
-                "citation_type": st.column_config.TextColumn(
-                    "引用文件类型",
-                    help="引用文件类型"
-                ),
-                "has_edition_year": st.column_config.TextColumn(
-                    "是否带年代号引用",
-                    help="是否带年代号引用"
                 ),
                 "cited_standard_normalized": st.column_config.TextColumn(
                     "引用文件标准号（规范后）",
@@ -240,41 +217,9 @@ with placeholder.container():
                     "引用文件标准名称（规范后）",
                     help="引用文件标准名称（规范后）"
                 ),
-                "standard_code_prefix": st.column_config.TextColumn(
-                    "标准代号",
-                    help="标准代号"
-                ),
-                "serial_number": st.column_config.TextColumn(
-                    "标准序列号",
-                    help="标准序列号"
-                ),
-                "edition_year": st.column_config.TextColumn(
-                    "标准年代号",
-                    help="标准年代号"
-                ),
-                "statistical_code": st.column_config.TextColumn(
-                    "标准代号（统计用）",
-                    help="标准代号（统计用）"
-                ),
-                "serial_number1": st.column_config.TextColumn(
-                    "标准序列号1",
-                    help="标准序列号1"
-                ),
-                "serial_number2": st.column_config.TextColumn(
-                    "标准序列号2",
-                    help="标准序列号2"
-                ),
-                "org_classification_code": st.column_config.TextColumn(
-                    "标准组织分类编号",
-                    help="标准组织分类编号"
-                ),
-                "standard_category": st.column_config.TextColumn(
-                    "标准类别",
-                    help="标准类别"
-                ),
-                "is_referenced": st.column_config.TextColumn(
-                    "是否引用文件",
-                    help="是否引用文件"
+                "status": st.column_config.TextColumn(
+                    "状态",
+                    help="状态"
                 ),
                 
             }, 

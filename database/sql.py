@@ -45,7 +45,7 @@ CREATE TABLE glossary (
 CREATE_TABLE_REFERENCE_STANDARDS = """
 CREATE TABLE reference_standards (
     id INTEGER PRIMARY KEY AUTOINCREMENT,     -- 主键 
-    standard_code TEXT ,  -- 标准号
+    standard_code TEXT ,  -- 核心标准号
     cited_standard_original TEXT  NULL,  -- 引用文件标准号（原文提取）
     citation_type TEXT,  -- 引用文件类型
     has_edition_year TEXT,  -- 是否带年代号引用

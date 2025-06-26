@@ -52,7 +52,17 @@ class ReferenceStandards:
     
     def detail(self,standard_code:str):
         c = self.conn.cursor()
-        c.execute(f"select * from reference_standards where standard_code='{standard_code}'")
+        sql=f"""
+        select 
+        r.cited_standard_original,
+        r.cited_standard_normalized,
+        r.standard_name_normalized,
+        i.status 
+        from reference_standards r left join  standard_index i 
+        on r.cited_standard_normalized=i.standard_code
+        where r.standard_code = '{standard_code}'
+        """
+        c.execute(sql)
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
