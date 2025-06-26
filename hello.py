@@ -164,7 +164,6 @@ with placeholder.container():
         #standard_code = df.iloc[selected_row]['standard_code']
 
         ## 显示详情
-        #with st.container(height=200):
         with t1:
             display_standard_info(standard_code,standard_name)
             standard_index=StandardIndex()
@@ -172,22 +171,28 @@ with placeholder.container():
 
             col1,col2=st.columns(2)
             with col1:
-                col1.markdown("**标准号：**")
-                col1.write(detail['standard_code'])
+                col1.markdown("**标准分类：**")
+                col1.write(detail['standard_type'])
                 col1.markdown("---")
-                col1.markdown("**状态：**")
-                col1.write(detail['status'])
+                col1.markdown("**专业：**")
+                col1.write(detail['specialty'])
+                col1.markdown("---")           
+                col1.markdown("**ICS分类号：**")
+                col1.write(detail['ics_classification'])
                 col1.markdown("---")
                 col1.markdown("**发布日期：**")
                 col1.write(detail['release_date'])
                 col1.markdown("---")
                 
             with col2:
-                col2.markdown("**标准名称：**")
-                col2.write(detail['standard_name'])     
+                col2.markdown("**标准状态：**")
+                col2.write(detail['status'])
                 col2.markdown("---")           
-                col2.markdown("**专业领域：**")
-                col2.write(detail['specialty'])
+                col2.markdown("**标准性质：**")
+                col2.write(detail['standard_nature'])     
+                col2.markdown("---")           
+                col2.markdown("**CCS分类号：**")
+                col2.write(detail['ccs_classification'])
                 col2.markdown("---")
                 col2.markdown("**实施日期：**")
                 col2.write(detail['implementation_date'])
