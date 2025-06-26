@@ -150,8 +150,8 @@ placeholder=st.empty()
 
 def display_standard_info(standard_code,standard_name):
     st.markdown(f"""
-    >:blue[{standard_code}]
-    >**{standard_name}**
+    >:blue[{standard_code}]\n
+    >#### {standard_name}
     """)
 with placeholder.container():
     if selected_rows is not  None:
@@ -168,7 +168,10 @@ with placeholder.container():
             display_standard_info(standard_code,standard_name)
             standard_index=StandardIndex()
             detail=standard_index.detail(standard_code)
-
+            st.markdown("##### 基本信息\n\n---")
+            st.markdown("**标准英文名称：**")
+            st.write(detail['english_name'])
+            st.markdown("---")
             col1,col2=st.columns(2)
             with col1:
                 col1.markdown("**标准分类：**")
@@ -197,6 +200,13 @@ with placeholder.container():
                 col2.markdown("**实施日期：**")
                 col2.write(detail['implementation_date'])
                 col2.markdown("---")
+            st.markdown("##### 起草单位及其他")
+            st.markdown("**起草单位：**")
+            st.write(detail['drafting_unit'])
+            st.markdown("---")
+            st.markdown("**技术委员会（或技术归口单位）：**")
+            st.write(detail['responsible_unit'])
+            st.markdown("---")
         #with st.expander("标准目次信息"):
         with t2:
             display_standard_info(standard_code,standard_name)
