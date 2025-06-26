@@ -1,3 +1,4 @@
+from numpy import place
 import streamlit as st
 import pandas as pd
 from database.glossary import Glossary
@@ -5,6 +6,7 @@ from database.page import Pageable
 import database.sql as sql
 from database.standard_db import StandardDB
 from database.standard_db import WhereCause
+from database.standard_index import StandardIndex
 from database.standard_structure import StandardStructure
 from database.reference_standards import ReferenceStandards
 
@@ -54,9 +56,20 @@ from database.reference_standards import ReferenceStandards
 # standard_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/标准全文--体系范围标准-正文数据源-2025.6.21.xlsx')
 # print(standard_db.count())
 
-from database.standard_index import StandardIndex
+# from database.standard_index import StandardIndex
+# standard_index=StandardIndex()
+# standard_index.drop()
+# standard_index=StandardIndex()
+# standard_index.load_from_excel("/Users/xuminghui/code/uv_project_install/streamlit_project/file/00-全部标准索引库（体系相关）2025.3.25.xlsx")
+# print(standard_index.detail('GB/T 150.1-2011'))
+
+standard_codes=['GB/T 150.1-2011','GB/T 229-2020']
+placeholders=','.join(['?']* len(standard_codes))
+print(placeholders)
+
+
 standard_index=StandardIndex()
-standard_index.drop()
-standard_index=StandardIndex()
-standard_index.load_from_excel("/Users/xuminghui/code/uv_project_install/streamlit_project/file/00-全部标准索引库（体系相关）2025.3.25.xlsx")
-print(standard_index.detail('GB/T 150.1-2011'))
+data=standard_index.list_by_standard_codes(standard_codes)
+print(data)
+
+

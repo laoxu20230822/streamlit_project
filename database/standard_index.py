@@ -126,6 +126,14 @@ class StandardIndex:
             cursor = c.execute("PRAGMA table_info(standard_index)")
             db_columns = [row[1] for row in cursor.fetchall()]  # 获取所有数据库列名
             print(db_columns)
+    def list_by_standard_codes(self,standard_codes:list[str]):
+        c = self.conn.cursor()
+        c.execute(f"select * from standard_index where standard_code in ({','.join(['?' for _ in standard_codes])})",standard_codes)
+        
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
+    
     def count(self):
         c = self.conn.cursor()
         c.execute("select count(1) from standard_index")

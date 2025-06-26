@@ -50,7 +50,6 @@ def display_standard_card(standard):
 
 
 
-standard_db=init_standard_db()
 
 page_size=20
 # def init_current_page():
@@ -98,13 +97,23 @@ with st.form('standard_search_form'):
 
 
 #获取standard 列表数据
+#查询standard大表数据
+standard_db=init_standard_db()
 page_result=standard_db.list(filter=WhereCause(search_term),pageable=Pageable(1,page_size))
-df=pd.DataFrame(page_result.data if page_result.data else [],columns={
+standard_codes=[row['standard_code'] for row in page_result.data]
+#查询索引表
+standard_index=StandardIndex()
+data=standard_index.list_by_standard_codes(standard_codes)
+df=pd.DataFrame(data if data else [],columns={
         # 'system_serial': '体系编号',
         # 'flow_number': '流水号',
         # 'serial': '序号',
         'standard_code': '标准号',
-        'standard_name': '标准名称'
+        'standard_name': '标准名称',
+        'status': '状态',
+        'specialty':'专业',
+        'release_date': '发布日期',
+        'implementation_date': '实施日期',
     })
 
 
@@ -113,7 +122,11 @@ df=pd.DataFrame(page_result.data if page_result.data else [],columns={
 grid_options = {
     'columnDefs': [
     { 'field': "standard_code", 'headerName': "标准号"},
-    { 'field': "standard_name", 'headerName': "标准名称"}
+    { 'field': "standard_name", 'headerName': "标准名称"},
+    { 'field': "status", 'headerName': "状态"},
+    { 'field': "specialty", 'headerName': "专业"},
+    { 'field': "release_date", 'headerName': "发布日期"},
+    { 'field': "implementation_date", 'headerName': "实施日期"},
   ],
   'rowSelection': {
         'mode': 'singleRow',
