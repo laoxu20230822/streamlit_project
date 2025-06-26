@@ -11,6 +11,7 @@ from database.reference_standards import ReferenceStandards
 from database.standard_db import StandardDB
 from database.standard_db import WhereCause
 from database.page import Pageable
+from database.standard_index import StandardIndex
 from database.standard_structure import StandardStructure
 from st_aggrid import AgGrid, GridOptionsBuilder
 
@@ -72,7 +73,7 @@ page_size=20
 
 #init_current_page()
 
-st.markdown("<h1 style='text-align: center; color: blue;'>标准知识查询系统</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: blue;'>储层改造标准知识服务</h1>", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -138,21 +139,45 @@ placeholder=st.empty()
 with placeholder.container():
     if selected_rows is not  None:
         standard_code=''
+        standard_name=''
         for index, row in selected_rows.iterrows():
             standard_code=row['standard_code']
+            standard_name=row['standard_name']
         t1,t2,t3,t4,t5,t6=st.tabs(['基本信息','标准目次信息','引用文件信息','术语','产品标准','工业标准'])
         #standard_code = df.iloc[selected_row]['standard_code']
 
         ## 显示详情
         #with st.container(height=200):
         with t1:
-            standard_db=StandardDB()
-            detail=standard_db.standard_detail(standard_code)
-            st.subheader("标准基本信息")
-            st.markdown(f""":blue[{detail[0]['standard_code']}]""")
-            st.markdown(f"#### {detail[0]['standard_name']}")
+            standard_index=StandardIndex()
+            detail=standard_index.detail(standard_code)
+            st.markdown(f"""
+            >:blue[{detail['standard_code']}]
+            >**{detail['standard_name']}**
+            """)
 
-        st.markdown("---",)
+            col1,col2=st.columns(2)
+            with col1:
+                col1.markdown("**标准号：**")
+                col1.write(detail['standard_code'])
+                col1.markdown("---")
+                col1.markdown("**状态：**")
+                col1.write(detail['status'])
+                col1.markdown("---")
+                col1.markdown("**发布日期：**")
+                col1.write(detail['release_date'])
+                col1.markdown("---")
+                
+            with col2:
+                col2.markdown("**标准名称：**")
+                col2.write(detail['standard_name'])     
+                col2.markdown("---")           
+                col2.markdown("**专业领域：**")
+                col2.write(detail['specialty'])
+                col2.markdown("---")
+                col2.markdown("**实施日期：**")
+                col2.write(detail['implementation_date'])
+                col2.markdown("---")
         #with st.expander("标准目次信息"):
         with t2:
             standard_structure=StandardStructure()

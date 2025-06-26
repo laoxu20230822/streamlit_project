@@ -48,8 +48,15 @@ from database.reference_standards import ReferenceStandards
 #     for i in range(row.size):
 #         print(row[i])
 
-standard_db=StandardDB()
-standard_db.drop()
-standard_db=StandardDB()
-standard_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/标准全文--体系范围标准-正文数据源-2025.6.21.xlsx')
-print(standard_db.count())
+# standard_db=StandardDB()
+# standard_db.drop()
+# standard_db=StandardDB()
+# standard_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/标准全文--体系范围标准-正文数据源-2025.6.21.xlsx')
+# print(standard_db.count())
+
+from database.standard_index import StandardIndex
+standard_index=StandardIndex()
+standard_index.drop()
+standard_index=StandardIndex()
+standard_index.load_from_excel("/Users/xuminghui/code/uv_project_install/streamlit_project/file/00-全部标准索引库（体系相关）2025.3.25.xlsx")
+print(standard_index.detail('GB/T 150.1-2011'))
