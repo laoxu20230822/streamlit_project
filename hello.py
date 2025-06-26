@@ -234,38 +234,18 @@ with placeholder.container():
             display_standard_info(standard_code,standard_name)
             glossary=Glossary()
             data=glossary.detail(standard_code)
+
             df=pd.DataFrame(data,columns={
-                'term_id': '术语序号',
+                'entry_code': '术语条目编号',
                 'term': '术语词条',
                 'english_term': '术语英文',
-                'derived_terms': '派生词',
                 'definition': '术语定义',
-                'entry_code': '术语条目编号',
-                'synonyms': '同义词',
-                'abbreviation': '缩略语',
-                'symbol': '符号',
-                'source': '来源',
-                'note': '注',
-                'nature': '性质',
-                'system_id': '体系序号',
-                'standard_code': '标准号',
-                'standard_name': '标准名称',
-                'unknown1': '分割列',
-                'professional_field': '标准所属专业',
-                'primary_heading': '一级条标题',
-                'secondary_heading': '二级条标题',
-                'tertiary_heading': '三级条标题',
-                'mentioned_in_tech': '是否在技术要素中提及',
-                'term_length': '术语字数',
                 })
             event=st.dataframe(df,
             hide_index=True,  # 隐藏默认索引列
             use_container_width=True,
             column_config={
-                "term_id": st.column_config.TextColumn(
-                    "术语序号",
-                    help="术语序号"
-                ),
+               
                 "term": st.column_config.TextColumn(
                     "术语词条",
                     help="术语词条"
@@ -274,10 +254,7 @@ with placeholder.container():
                     "术语英文",
                     help="术语英文"
                 ),
-                "derived_terms": st.column_config.TextColumn(
-                    "派生词",
-                    help="派生词"
-                ),
+               
                 "definition": st.column_config.TextColumn(
                     "术语定义",
                     help="术语定义"
@@ -286,69 +263,7 @@ with placeholder.container():
                     "术语条目编号",
                     help="术语条目编号"
                 ),
-                "synonyms": st.column_config.TextColumn(
-                    "同义词",
-                    help="同义词"
-                ),
-                "abbreviation": st.column_config.TextColumn(
-                    "缩略语",
-                    help="缩略语"
-                ),
-                "symbol": st.column_config.TextColumn(
-                    "符号",
-                    help="符号"
-                ),
-                "source": st.column_config.TextColumn(
-                    "来源",
-                    help="来源"
-                ),
-                "note": st.column_config.TextColumn(
-                    "注",
-                    help="注"
-                ),
-                "nature": st.column_config.TextColumn(
-                    "性质",
-                    help="性质"
-                ),
-                "system_id": st.column_config.TextColumn(
-                    "体系序号",
-                    help="体系序号"
-                ),
-                "standard_code": st.column_config.TextColumn(
-                    "标准号",
-                    help="标准号"
-                ),
-                "standard_name": st.column_config.TextColumn(
-                    "标准名称",
-                    help="标准名称"
-                ),
-                "unknown1": st.column_config.TextColumn(
-                    "分割列",
-                    help="分割列"
-                ),
-                "professional_field": st.column_config.TextColumn(
-                    "标准所属专业",
-                    help="标准所属专业"
-                ),
-                "primary_heading": st.column_config.TextColumn(
-                    "一级条标题",
-                    help="一级条标题"
-                ),
-                "secondary_heading": st.column_config.TextColumn(
-                    "二级条标题",
-                    help="二级条标题"
-                ),
-                "tertiary_heading": st.column_config.TextColumn(
-                    "三级条标题",
-                    help="三级条标题"
-                ),
-                "mentioned_in_tech": st.column_config.TextColumn(
-                    "是否在技术要素中提及",
-                    help="是否在技术要素中提及"
-                ),
-                "term_length": st.column_config.TextColumn(
-                    "术语字数",
-                )
+               
                 }
             )
         #st.markdown("---")
