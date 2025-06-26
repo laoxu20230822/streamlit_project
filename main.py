@@ -63,13 +63,16 @@ from database.reference_standards import ReferenceStandards
 # standard_index.load_from_excel("/Users/xuminghui/code/uv_project_install/streamlit_project/file/00-全部标准索引库（体系相关）2025.3.25.xlsx")
 # print(standard_index.detail('GB/T 150.1-2011'))
 
-standard_codes=['GB/T 150.1-2011','GB/T 229-2020']
-placeholders=','.join(['?']* len(standard_codes))
-print(placeholders)
+# standard_codes=['GB/T 150.1-2011','GB/T 229-2020']
+# placeholders=','.join(['?']* len(standard_codes))
+# print(placeholders)
 
 
-standard_index=StandardIndex()
-data=standard_index.list_by_standard_codes(standard_codes)
-print(data)
+# standard_index=StandardIndex()
+# data=standard_index.list_by_standard_codes(standard_codes)
+# print(data)
 
+standard_db=StandardDB()
+level1_code=standard_db.query_category_level1_code('SY/T 5289-2016')
+print(level1_code)
 

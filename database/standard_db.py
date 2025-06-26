@@ -294,12 +294,43 @@ class StandardDB:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
+    def product_list(self,standard_code:str):
+        SELECT_STATEMENT=f"""
+        select 
+        standard_code,
+        performance_indicator_level1,
+        performance_indicator_level2,
+        method_name,
+        sample_preparation,
+        equipment_materials,
+        product_category1,
+        product_category2,
+        product_name from standard_system where standard_code='{standard_code}' group by 
+        standard_code,
+        performance_indicator_level1,
+        performance_indicator_level2,
+        method_name,
+        sample_preparation,
+        equipment_materials,
+        product_category1,
+        product_category2
+        """
+        c = self.conn.cursor()
+        c.execute(SELECT_STATEMENT)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
+
+    def query_category_level1_code(self,standard_code:str):
+        c = self.conn.cursor()
+        c.execute(f"SELECT distinct category_level1_code FROM standard_system where standard_code='{standard_code}'")
+        return c.fetchone()
 
     def list(self,filter:WhereCause = WhereCause(),pageable:Pageable = Pageable(1,10)) -> PageResult:
         c = self.conn.cursor()
 
         #build sql???
-        sql=f"{standard_system_select_sql} {filter.to_sql()} group by standard_code,standard_name"
+        sql=f"SELECT standard_code, standard_name  FROM standard_system {filter.to_sql()} group by standard_code,standard_name"
         count_sql=f"select count(1) from ({sql})"
         print(f"count sql: {count_sql}")
         sql_with_page=f"{sql} {pageable.limit_sql()}"

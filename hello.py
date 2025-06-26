@@ -113,7 +113,7 @@ df=pd.DataFrame(data if data else [],columns={
         'status': '状态',
         'specialty':'专业',
         'release_date': '发布日期',
-        'implementation_date': '实施日期',
+        'implementation_date': '实施日期'
     })
 
 
@@ -160,9 +160,19 @@ with placeholder.container():
         for index, row in selected_rows.iterrows():
             standard_code=row['standard_code']
             standard_name=row['standard_name']
-        t1,t2,t3,t4,t5,t6=st.tabs(['基本信息','标准目次信息','引用文件信息','术语','产品标准','工业标准'])
+        
+        #查询一级门类编号
+        level1_code_data=standard_db.query_category_level1_code(standard_code)
+        if level1_code_data is not None and level1_code_data[0] == '104':
+            level1_code=level1_code_data[0]
+            product_or_craft_tab_name='产品标准'
+        elif level1_code_data is not None and level1_code_data[0] in ['103','106','107']:
+            product_or_craft_tab_name='工业标准'
+        t1,t2,t3,t4,t5=st.tabs(['基本信息','标准目次信息','引用文件信息','术语',product_or_craft_tab_name])
         #standard_code = df.iloc[selected_row]['standard_code']
 
+        
+        
         ## 显示详情
         with t1:
             display_standard_info(standard_code,standard_name)
@@ -296,14 +306,64 @@ with placeholder.container():
             )
         #st.markdown("---")
         #with st.expander("查看产品标准"):
+
+        
         with t5:
             display_standard_info(standard_code,standard_name)
-            st.write('TODO')
-        #st.markdown("---")
-        #with st.expander("查看工艺标准"):
-        with t6:
-            display_standard_info(standard_code,standard_name)
-            st.write('TODO')
-        #st.markdown("---")
+            standard_db=StandardDB()
+            data=standard_db.product_list(standard_code)
+          
+            df=pd.DataFrame(data,columns={
+                'performance_indicator_level1': '一级性能指标',
+                'performance_indicator_level2': '二级性能指标',
+                'method_name': '方法名称',
+                'sample_preparation': '样本制备',
+                'equipment_materials':'设备材料',
+                'product_category1':'一级产品分类',
+                'product_category2':'二级产品分类',
+                'product_name':'产品名称',
+                })
+            #st.subheader('引用列表')
+            event=st.dataframe(
+            df,
+            hide_index=True,  # 隐藏默认索引列
+            use_container_width=True,
+            column_config={
+                "performance_indicator_level1": st.column_config.TextColumn(
+                    "一级性能指标",
+                    help="一级性能指标"
+                ),
+                "performance_indicator_level2": st.column_config.TextColumn(
+                    "二级性能指标",
+                    help="二级性能指标"
+                ),
+                "method_name": st.column_config.TextColumn(
+                    "方法名称",
+                    help="方法名称"
+                ),
+                "sample_preparation": st.column_config.TextColumn(
+                    "样本制备",
+                    help="样本制备"
+                ),
+                "equipment_materials": st.column_config.TextColumn(
+                    "设备材料",
+                    help="设备材料"
+                ),
+                "product_category1": st.column_config.TextColumn(
+                    "一级产品分类",
+                    help="一级产品分类"
+                ),
+                "product_category2": st.column_config.TextColumn(
+                    "二级产品分类",
+                    help="二级产品分类"
+                ),
+                "product_name": st.column_config.TextColumn(
+                    "产品名称",
+                    help="产品名称"
+                ),
+                
+            }
+            )
+        
 
 
