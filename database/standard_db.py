@@ -321,6 +321,52 @@ class StandardDB:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
+
+    def craft_list(self,standard_code:str):
+        c = self.conn.cursor()
+        craft_statement=f"""
+        select 
+        standard_code,
+        quality_control,
+        hse_requirements,
+        quality_supervision,
+        designer,
+        format_template,
+        parameter_nature,
+        parameter_category,
+        parameter,
+        method1,
+        method2,
+        wellbore_type1,
+        wellbore_type2,
+        process_tech1,
+        process_tech2,
+        process_tech3 from standard_system 
+        where standard_code='{standard_code}' 
+        group by 
+        standard_code,
+        quality_control,
+        hse_requirements,
+        quality_supervision,
+        designer,
+        format_template,
+        parameter_nature,
+        parameter_category,
+        parameter,
+        method1,
+        method2,
+        wellbore_type1,
+        wellbore_type2,
+        process_tech1,
+        process_tech2,
+        process_tech3
+        """
+        c.execute(craft_statement)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
+
+
     def query_category_level1_code(self,standard_code:str):
         c = self.conn.cursor()
         c.execute(f"SELECT distinct category_level1_code FROM standard_system where standard_code='{standard_code}'")
