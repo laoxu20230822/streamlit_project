@@ -80,7 +80,7 @@ st.markdown("---")
 with st.form('standard_search_form'):
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
-    standard_name=col1.text_input('标准名称',key='standard_name',label_visibility='collapsed',placeholder='查询输入',width='stretch')
+    search_term=col1.text_input('标准名称',key='standard_name',label_visibility='collapsed',placeholder='查询输入',width='stretch')
     submit=col2.form_submit_button('标准查询',use_container_width=True)
     reset=col3.form_submit_button('条款查询',use_container_width=True,disabled=True)
 
@@ -98,8 +98,7 @@ with st.form('standard_search_form'):
 
 
 #获取standard 列表数据
-page_result=standard_db.list(filter=WhereCause(standard_name),pageable=Pageable(1,page_size))
-print(page_result.data)
+page_result=standard_db.list(filter=WhereCause(search_term),pageable=Pageable(1,page_size))
 df=pd.DataFrame(page_result.data if page_result.data else [],columns={
         # 'system_serial': '体系编号',
         # 'flow_number': '流水号',
@@ -136,6 +135,11 @@ selected_rows = grid_response['selected_rows']
 
 placeholder=st.empty()
 
+def display_standard_info(standard_code,standard_name):
+    st.markdown(f"""
+    >:blue[{standard_code}]
+    >**{standard_name}**
+    """)
 with placeholder.container():
     if selected_rows is not  None:
         standard_code=''
@@ -149,12 +153,9 @@ with placeholder.container():
         ## 显示详情
         #with st.container(height=200):
         with t1:
+            display_standard_info(standard_code,standard_name)
             standard_index=StandardIndex()
             detail=standard_index.detail(standard_code)
-            st.markdown(f"""
-            >:blue[{detail['standard_code']}]
-            >**{detail['standard_name']}**
-            """)
 
             col1,col2=st.columns(2)
             with col1:
@@ -180,6 +181,7 @@ with placeholder.container():
                 col2.markdown("---")
         #with st.expander("标准目次信息"):
         with t2:
+            display_standard_info(standard_code,standard_name)
             standard_structure=StandardStructure()
             detail_for_markdown=standard_structure.detail_to_markdown(standard_code)
             #st.subheader('标准目次信息')
@@ -188,6 +190,7 @@ with placeholder.container():
 
         #with st.expander("查看引用文件信息"):
         with t3:
+            display_standard_info(standard_code,standard_name)
             reference_standards=ReferenceStandards()
             data=reference_standards.detail(standard_code)
             df=pd.DataFrame(data,columns={
@@ -283,6 +286,7 @@ with placeholder.container():
         #st.markdown("---",)
         #with st.expander("查看术语信息"):
         with t4:
+            display_standard_info(standard_code,standard_name)
             glossary=Glossary()
             data=glossary.detail(standard_code)
             df=pd.DataFrame(data,columns={
@@ -405,10 +409,12 @@ with placeholder.container():
         #st.markdown("---")
         #with st.expander("查看产品标准"):
         with t5:
+            display_standard_info(standard_code,standard_name)
             st.write('TODO')
         #st.markdown("---")
         #with st.expander("查看工艺标准"):
         with t6:
+            display_standard_info(standard_code,standard_name)
             st.write('TODO')
         #st.markdown("---")
 

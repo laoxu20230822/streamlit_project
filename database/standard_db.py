@@ -212,15 +212,51 @@ VALUES (
     ?,?,?,?,?,?,?,?,?
 )"""
 class WhereCause:
-    standard_name: str
+    search_term: str
     
-    def __init__(self,standard_name:str=""):
-        self.standard_name= standard_name
+    def __init__(self,search_term:str=""):
+        self.search_term= search_term
 
     def to_sql(self):
         sql = " WHERE 1=1 "
-        if self.standard_name:
-            sql += f" AND standard_content like '%{self.standard_name}%' "
+        if self.search_term:
+            # sql += f" AND standard_content like '%{self.search_term}%' "
+            sql += f"""and (
+            performance_indicator_level1 LIKE '%{self.search_term}%'
+            OR performance_indicator_level2 LIKE '%{self.search_term}%'
+            OR method_name LIKE '%{self.search_term}%'
+            OR sample_preparation LIKE '%{self.search_term}%'
+            OR equipment_materials LIKE '%{self.search_term}%'
+            OR product_category1 LIKE '%{self.search_term}%'
+            OR product_category2 LIKE '%{self.search_term}%'
+            OR product_name LIKE '%{self.search_term}%'
+            OR oil_gas_resource_type LIKE '%{self.search_term}%'
+            OR product LIKE '%{self.search_term}%'
+            OR process1 LIKE '%{self.search_term}%'
+            OR process2 LIKE '%{self.search_term}%'
+            OR stimulation_business_level1 LIKE '%{self.search_term}%'
+            OR stimulation_business_level2 LIKE '%{self.search_term}%'
+            OR stimulation_business_level3 LIKE '%{self.search_term}%'
+            OR stimulation_business_level4 LIKE '%{self.search_term}%'
+            OR stimulation_business_level5 LIKE '%{self.search_term}%'
+            OR quality_control LIKE '%{self.search_term}%'
+            OR hse_requirements LIKE '%{self.search_term}%'
+            OR quality_supervision LIKE '%{self.search_term}%'
+            OR designer LIKE '%{self.search_term}%'
+            OR format_template LIKE '%{self.search_term}%'
+            OR parameter_nature LIKE '%{self.search_term}%'
+            OR parameter_category LIKE '%{self.search_term}%'
+            OR parameter LIKE '%{self.search_term}%'
+            OR method1 LIKE '%{self.search_term}%'
+            OR method2 LIKE '%{self.search_term}%'
+            OR wellbore_type1 LIKE '%{self.search_term}%'
+            OR wellbore_type2 LIKE '%{self.search_term}%'
+            OR process_tech1 LIKE '%{self.search_term}%'
+            OR process_tech2 LIKE '%{self.search_term}%'
+            OR process_tech3 LIKE '%{self.search_term}%'
+            OR offshore LIKE '%{self.search_term}%'
+            )
+            """
         return sql
     
 
@@ -263,6 +299,7 @@ class StandardDB:
         #build sql???
         sql=f"{standard_system_select_sql} {filter.to_sql()} group by standard_code,standard_name"
         count_sql=f"select count(1) from ({sql})"
+        print(f"count sql: {count_sql}")
         sql_with_page=f"{sql} {pageable.limit_sql()}"
 
         c.execute(count_sql)
