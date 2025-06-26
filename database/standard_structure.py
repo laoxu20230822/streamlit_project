@@ -65,7 +65,7 @@ class StandardStructure:
                 item['chapter_level']=0
                 item['chapter_number']=""
                 item['title_content']=""
-            content+="#"*item['chapter_level']+" "+item['chapter_number']+" "+item['title_content']+"\n"
+            content+="&nbsp;&nbsp;&nbsp;&nbsp;"*item['chapter_level']+" "+item['chapter_number']+" "+item['title_content']+"\n\n"
         return content
 
     def drop(self):

@@ -146,13 +146,14 @@ grid_response = AgGrid(
 selected_rows = grid_response['selected_rows']
 
 
-placeholder=st.empty()
 
 def display_standard_info(standard_code,standard_name):
     st.markdown(f"""
     >:blue[{standard_code}]\n
     >#### {standard_name}
     """)
+
+placeholder=st.empty()
 with placeholder.container():
     if selected_rows is not  None:
         standard_code=''
@@ -222,8 +223,7 @@ with placeholder.container():
             display_standard_info(standard_code,standard_name)
             standard_structure=StandardStructure()
             detail_for_markdown=standard_structure.detail_to_markdown(standard_code)
-            #st.subheader('标准目次信息')
-            st.markdown(detail_for_markdown)
+            st.markdown(detail_for_markdown,unsafe_allow_html=True)
         #st.markdown("---")
 
         #with st.expander("查看引用文件信息"):
