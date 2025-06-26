@@ -222,7 +222,8 @@ class WhereCause:
         if self.search_term:
             # sql += f" AND standard_content like '%{self.search_term}%' "
             sql += f"""and (
-            performance_indicator_level1 LIKE '%{self.search_term}%'
+            standard_content like '%{self.search_term}%' 
+            OR performance_indicator_level1 LIKE '%{self.search_term}%'
             OR performance_indicator_level2 LIKE '%{self.search_term}%'
             OR method_name LIKE '%{self.search_term}%'
             OR sample_preparation LIKE '%{self.search_term}%'
