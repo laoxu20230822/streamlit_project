@@ -15,6 +15,16 @@ from database.standard_index import StandardIndex
 from database.standard_structure import StandardStructure
 from st_aggrid import AgGrid, GridOptionsBuilder
 
+from view.display_standard_glossary import display_standard_glossary
+from view.display_standard_references import display_standard_references
+from view.display_standard_detail import display_standard_detail
+from view.display_standard_query_list import display_standard_query_list
+from view.display_product_standard import display_product_standard
+from view.display_craft_standard import display_craft_standard
+from view.display_standard_structure import display_standard_structure
+
+
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -49,246 +59,59 @@ def display_standard_card(standard):
             st.markdown("---")
 
 
-def display_product_standard(standard_code):
-    standard_db=StandardDB()
-    data=standard_db.product_list(standard_code)
-          
-    df=pd.DataFrame(data,columns={
-        'performance_indicator_level1': '一级性能指标',
-        'performance_indicator_level2': '二级性能指标',
-        'method_name': '方法名称',
-        'sample_preparation': '样本制备',
-        'equipment_materials':'设备材料',
-        'product_category1':'一级产品分类',
-        'product_category2':'二级产品分类',
-        'product_name':'产品名称',
-        })
-    #st.subheader('引用列表')
-    event=st.dataframe(
-    df,
-    hide_index=True,  # 隐藏默认索引列
-    use_container_width=True,
-    column_config={
-        "performance_indicator_level1": st.column_config.TextColumn(
-            "一级性能指标",
-            help="一级性能指标"
-        ),
-        "performance_indicator_level2": st.column_config.TextColumn(
-            "二级性能指标",
-            help="二级性能指标"
-        ),
-        "method_name": st.column_config.TextColumn(
-            "方法名称",
-            help="方法名称"
-        ),
-        "sample_preparation": st.column_config.TextColumn(
-            "样本制备",
-            help="样本制备"
-        ),
-        "equipment_materials": st.column_config.TextColumn(
-            "设备材料",
-            help="设备材料"
-        ),
-        "product_category1": st.column_config.TextColumn(
-            "一级产品分类",
-            help="一级产品分类"
-        ),
-        "product_category2": st.column_config.TextColumn(
-            "二级产品分类",
-            help="二级产品分类"
-        ),
-        "product_name": st.column_config.TextColumn(
-            "产品名称",
-            help="产品名称"
-        ),
-        
-    }
-    )
+#标题
+with st.container():
+    st.markdown("<h1 style='text-align: center; color: blue;'>储层改造标准知识服务</h1>", unsafe_allow_html=True)
+    st.markdown("---")
 
-def display_craft_standard(standard_code):
-    standard_db=StandardDB()
-    data=standard_db.craft_list(standard_code)
-          
-    df=pd.DataFrame(data,columns={
-        'quality_control': '质量控制(施工方)',
-        'hse_requirements': '健康、安全与环境控制要求',
-        'quality_supervision': '工程质量技术监督(第三方或甲方)',
-        'designer': '设计人员',
-        'format_template':'格式-模板',
-        'parameter_nature':'参数性质',
-        'parameter_category':'参数类别',
-        'parameter':'参数',
-        'method1':'方法1(1计算方法/2录取方法)',
-        'method2':'方法2',
-        'wellbore_type1':'井筒类型分类',
-        'wellbore_type2':'井筒类型分类',
-        'process_tech1':'工艺技术1',
-        'process_tech2':'工艺技术2',
-        'process_tech3':'工艺技术3',
-        })
-    #st.subheader('引用列表')
-    event=st.dataframe(
-    df,
-    hide_index=True,  # 隐藏默认索引列
-    use_container_width=True,
-    column_config={
-        "quality_control": st.column_config.TextColumn(
-            "质量控制(施工方)",
-            help="质量控制(施工方)"
-        ),
-        "hse_requirements": st.column_config.TextColumn(
-            "健康、安全与环境控制要求",
-            help="健康、安全与环境控制要求"
-        ),
-        "quality_supervision": st.column_config.TextColumn(
-            "工程质量技术监督(第三方或甲方)",
-            help="工程质量技术监督(第三方或甲方)"
-        ),
-        "designer": st.column_config.TextColumn(
-            "设计人员",
-            help="设计人员"
-        ),
-        "format_template": st.column_config.TextColumn(
-            "格式-模板",
-            help="格式-模板"
-        ),
-        "parameter_nature": st.column_config.TextColumn(
-            "参数性质",
-            help="参数性质"
-        ),
-        "parameter_category": st.column_config.TextColumn(
-            "参数类别",
-            help="参数类别"
-        ),
-        "parameter": st.column_config.TextColumn(
-            "参数",
-            help="参数"
-        ),
-        "method1": st.column_config.TextColumn(
-            "方法1(1计算方法/2录取方法)",
-            help="方法1(1计算方法/2录取方法)"
-        ),
-        "method2": st.column_config.TextColumn(
-            "方法2",
-            help="方法2"
-        ),
-        "wellbore_type1": st.column_config.TextColumn(
-            "井筒类型分类",
-            help="井筒类型分类"
-        ),
-        "wellbore_type2": st.column_config.TextColumn(
-            "井筒类型分类",
-            help="井筒类型分类"
-        ),
-        "process_tech1": st.column_config.TextColumn(
-            "工艺技术1",
-            help="工艺技术1"
-        ),
-        "process_tech2": st.column_config.TextColumn(
-            "工艺技术2",
-            help="工艺技术2"
-        ),
-        "process_tech3": st.column_config.TextColumn(
-            "工艺技术3",
-            help="工艺技术3"
-        ),
-    }
-    )
-
-page_size=20
-# def init_current_page():
-#     if 'current_page' not in st.session_state:
-#         st.session_state.current_page=1
-
-# def reset_current_page():
-#     print('reset current page')
-#     st.session_state.current_page=1
-
-# def set_current_page():
-#     st.session_state.current_page=st.session_state.current_page_key
-
-# def prev_page():
-#     if st.session_state.current_page>1:
-#         st.session_state.current_page=st.session_state.current_page_key-1
-
-# def next_page():
-#     st.session_state.current_page=st.session_state.current_page_key+1
-
-#init_current_page()
-
-st.markdown("<h1 style='text-align: center; color: blue;'>储层改造标准知识服务</h1>", unsafe_allow_html=True)
-
-st.markdown("---")
-
+#查询表单
 with st.form('standard_search_form'):
+
+    def button_submit(**kwargs:dict):
+        submit_type=kwargs['submit_type']
+        st.session_state.submit_type=submit_type
+        st.session_state.search_term=st.session_state.standard_term
+
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
-    search_term=col1.text_input('标准名称',key='standard_name',label_visibility='collapsed',placeholder='查询输入',width='stretch')
-    submit=col2.form_submit_button('标准查询',use_container_width=True)
-    reset=col3.form_submit_button('条款查询',use_container_width=True,disabled=True)
+    search_term=col1.text_input('标准名称',key='standard_term',label_visibility='collapsed',placeholder='查询输入',width='stretch')
+    standard_submit=col2.form_submit_button('标准查询',use_container_width=True,kwargs={'submit_type':'standard'},on_click=button_submit)
+    tiaokuan_submit=col3.form_submit_button('条款查询',use_container_width=True,kwargs={'submit_type':'tiaokuan'},on_click=button_submit)
 
     button1,button2,button3,button4=st.columns([0.2,0.2,0.2,0.2])
-    button1.form_submit_button('标准体系',use_container_width=True,disabled=True)
-    button2.form_submit_button('术语',use_container_width=True,disabled=True)
-    button3.form_submit_button('指标',use_container_width=True,disabled=True)
-    button4.form_submit_button('参数',use_container_width=True,disabled=True)
+
+    button1.form_submit_button('标准体系',use_container_width=True,kwargs={'submit_type':'tixi'},on_click=button_submit)
+    button2.form_submit_button('术语',use_container_width=True,kwargs={'submit_type':'shuyu'},on_click=button_submit)
+    button3.form_submit_button('指标',use_container_width=True,kwargs={'submit_type':'zhibiao'},on_click=button_submit)
+    button4.form_submit_button('参数',use_container_width=True,kwargs={'submit_type':'canshu'},on_click=button_submit)
 
 
+    
 
-
-
-
-
-
-#获取standard 列表数据
-#查询standard大表数据
-standard_db=init_standard_db()
-page_result=standard_db.list(filter=WhereCause(search_term),pageable=Pageable(1,page_size))
-standard_codes=[row['standard_code'] for row in page_result.data]
-#查询索引表
-standard_index=StandardIndex()
-data=standard_index.list_by_standard_codes(standard_codes)
-df=pd.DataFrame(data if data else [],columns={
-        # 'system_serial': '体系编号',
-        # 'flow_number': '流水号',
-        # 'serial': '序号',
-        'standard_code': '标准号',
-        'standard_name': '标准名称',
-        'status': '状态',
-        'specialty':'专业',
-        'release_date': '发布日期',
-        'implementation_date': '实施日期'
-    })
-
-
-
-
-grid_options = {
-    'columnDefs': [
-    { 'field': "standard_code", 'headerName': "标准号"},
-    { 'field': "standard_name", 'headerName': "标准名称"},
-    { 'field': "status", 'headerName': "状态"},
-    { 'field': "specialty", 'headerName': "专业"},
-    { 'field': "release_date", 'headerName': "发布日期"},
-    { 'field': "implementation_date", 'headerName': "实施日期"},
-  ],
-  'rowSelection': {
-        'mode': 'singleRow',
-        'checkboxes': False,
-        'enableClickSelection': True
-    },
-    "autoSizeStrategy": {
-        "type": "fitGridWidth"
-    }
-}
-grid_response = AgGrid(
-    df, 
-    gridOptions=grid_options,
-    #key='asdjflasdjkfl'
-    )
-
-selected_rows = grid_response['selected_rows']
-
+#列表展示
+with st.container():
+    #根据查询内容显示不同的列表
+    submit_type=st.session_state.submit_type
+    if submit_type == 'standard':
+        grid_response=display_standard_query_list()
+        st.session_state.selected_rows=grid_response['selected_rows']
+    elif submit_type == 'tiaokuan':
+        #display_tiaokuan_query_list()
+        print('TODO')
+    elif submit_type == 'tixi':
+        #display_tixi_query_list()
+        print('TODO')
+    elif submit_type == 'shuyu':
+        #display_shuyu_query_list()
+        print('TODO')
+    elif submit_type == 'zhibiao':
+        #display_zhibiao_query_list()
+        print('TODO')
+    elif submit_type == 'canshu':
+        #display_canshu_query_list()
+        print('TODO')
+    else:
+        st.write('参数错误')
 
 
 def display_standard_info(standard_code,standard_name):
@@ -299,14 +122,15 @@ def display_standard_info(standard_code,standard_name):
 
 placeholder=st.empty()
 with placeholder.container():
-    if selected_rows is not  None:
+    if st.session_state['selected_rows'] is not  None:
         standard_code=''
         standard_name=''
-        for index, row in selected_rows.iterrows():
+        for index, row in st.session_state['selected_rows'].iterrows():
             standard_code=row['standard_code']
             standard_name=row['standard_name']
         
         #查询一级门类编号
+        standard_db=StandardDB()
         level1_code_data=standard_db.query_category_level1_code(standard_code)
         if level1_code_data is not None and level1_code_data[0] == '104':
             level1_code=level1_code_data[0]
@@ -322,138 +146,28 @@ with placeholder.container():
 
         
         
-        ## 显示详情
+        ## 显示标准详情
         with t1:
             display_standard_info(standard_code,standard_name)
-            standard_index=StandardIndex()
-            detail=standard_index.detail(standard_code)
-            st.markdown("##### 基本信息\n\n---")
-            st.markdown("**标准英文名称：**")
-            st.write(detail['english_name'])
-            st.markdown("---")
-            col1,col2=st.columns(2)
-            with col1:
-                col1.markdown("**标准分类：**")
-                col1.write(detail['standard_type'])
-                col1.markdown("---")
-                col1.markdown("**专业：**")
-                col1.write(detail['specialty'])
-                col1.markdown("---")           
-                col1.markdown("**ICS分类号：**")
-                col1.write(detail['ics_classification'])
-                col1.markdown("---")
-                col1.markdown("**发布日期：**")
-                col1.write(detail['release_date'])
-                col1.markdown("---")
-                
-            with col2:
-                col2.markdown("**标准状态：**")
-                col2.write(detail['status'])
-                col2.markdown("---")           
-                col2.markdown("**标准性质：**")
-                col2.write(detail['standard_nature'])     
-                col2.markdown("---")           
-                col2.markdown("**CCS分类号：**")
-                col2.write(detail['ccs_classification'])
-                col2.markdown("---")
-                col2.markdown("**实施日期：**")
-                col2.write(detail['implementation_date'])
-                col2.markdown("---")
-            st.markdown("##### 起草单位及其他")
-            st.markdown("**起草单位：**")
-            st.write(detail['drafting_unit'])
-            st.markdown("---")
-            st.markdown("**技术委员会（或技术归口单位）：**")
-            st.write(detail['responsible_unit'])
-            st.markdown("---")
-        #with st.expander("标准目次信息"):
+            display_standard_detail(standard_code)
+        
+        # 显示目次信息
         with t2:
             display_standard_info(standard_code,standard_name)
-            standard_structure=StandardStructure()
-            detail_for_markdown=standard_structure.detail_to_markdown(standard_code)
-            st.markdown(detail_for_markdown,unsafe_allow_html=True)
+            display_standard_structure(standard_code)
         #st.markdown("---")
 
-        #with st.expander("查看引用文件信息"):
+        #引用文件
         with t3:
             display_standard_info(standard_code,standard_name)
-            reference_standards=ReferenceStandards()
-            data=reference_standards.detail(standard_code)
-            df=pd.DataFrame(data,columns={
-                'cited_standard_original': '引用文件标准号',
-                'cited_standard_normalized': '引用文件标准号（规范后）',
-                'standard_name_normalized': '引用文件标准名称（规范后）',
-                'status': '状态'
-                })
-            #st.subheader('引用列表')
-            event=st.dataframe(
-            df,
-            hide_index=True,  # 隐藏默认索引列
-            use_container_width=True,
-            column_config={
-                "cited_standard_original": st.column_config.TextColumn(
-                    "引用文件标准号",
-                    help="引用文件标准号"
-                ),
-                "cited_standard_normalized": st.column_config.TextColumn(
-                    "引用文件标准号（规范后）",
-                    help="引用文件标准号（规范后）"
-                ),
-                "standard_name_normalized": st.column_config.TextColumn(
-                    "引用文件标准名称（规范后）",
-                    help="引用文件标准名称（规范后）"
-                ),
-                "status": st.column_config.TextColumn(
-                    "状态",
-                    help="状态"
-                ),
-                
-            }, 
-            #on_select='rerun',
-            #selection_mode='single-row',
-            #key='selected_row',
-        )
+            display_standard_references(standard_code)
 
-        #st.markdown("---",)
-        #with st.expander("查看术语信息"):
+        # 术语信息
         with t4:
             display_standard_info(standard_code,standard_name)
-            glossary=Glossary()
-            data=glossary.detail(standard_code)
+            display_standard_glossary(standard_code)
 
-            df=pd.DataFrame(data,columns={
-                'entry_code': '术语条目编号',
-                'term': '术语词条',
-                'english_term': '术语英文',
-                'definition': '术语定义',
-                })
-            event=st.dataframe(df,
-            hide_index=True,  # 隐藏默认索引列
-            use_container_width=True,
-            column_config={
-               
-                "term": st.column_config.TextColumn(
-                    "术语词条",
-                    help="术语词条"
-                ),
-                "english_term": st.column_config.TextColumn(
-                    "术语英文",
-                    help="术语英文"
-                ),
-               
-                "definition": st.column_config.TextColumn(
-                    "术语定义",
-                    help="术语定义"
-                ),
-                "entry_code": st.column_config.TextColumn(
-                    "术语条目编号",
-                    help="术语条目编号"
-                ),
-               
-                }
-            )
-
-        
+        # 工艺标准 or 产品标准
         with t5:
             display_standard_info(standard_code,standard_name)
             if st.session_state.pc_type == 'product':
