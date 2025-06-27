@@ -36,31 +36,6 @@ def init_standard_db():
     return StandardDB()
     
 
-# 定义标准卡片组件
-def display_standard_card(standard):
-    # 创建卡片容器
-    with st.container():
-        col1, col2 = st.columns([1, 10])
-        # 左侧图标（模拟网页中的图标）
-        with col1:
-            st.markdown("⏳")
-        # 右侧内容
-        with col2:
-            # 标准编号和名称
-            st.subheader(f"{standard['standard_name']}")
-            
-            # 信息列表
-            info_cols = st.columns(3)
-            with info_cols[0]:
-                st.markdown(f"**体系序号：** {standard['system_serial']}")
-                #st.markdown(f"**流水号：** {standard['flow_number']}")
-            with info_cols[1]:
-                st.markdown(f"**标准号：** {standard['standard_code']}")
-            with info_cols[2]:
-                st.link_button('详情',url=f'/detail?standard_code={standard['standard_code']}')
-            st.markdown("---")
-
-
 #标题
 with st.container():
     st.markdown("<h1 style='text-align: center; color: blue;'>储层改造标准知识服务</h1>", unsafe_allow_html=True)
@@ -72,7 +47,11 @@ with st.form('standard_search_form'):
         submit_type=kwargs['submit_type']
         st.session_state.submit_type=submit_type
         st.session_state.search_term=st.session_state.standard_term
-
+        #初始化session_state的状态
+        # if 'standard_list_selected_rows' in st.session_state:
+        #     del st.session_state['standard_list_selected_rows']   #尽量不使用，而采用参数传递的方式比较安全，状态管理的问题会很多。TODO
+        # if 'selected_rows' in st.session_state:
+        #     del st.session_state['selected_rows'] 
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
     search_term=col1.text_input('标准名称',key='standard_term',label_visibility='collapsed',placeholder='查询输入',width='stretch',value='')
@@ -88,16 +67,24 @@ with st.form('standard_search_form'):
 
 
     
+def display_standard_info(standard_code,standard_name):
+    col1,col2 = st.columns(2)
+    col1.write(f"""标准号：{standard_code}""",unsafe_allow_html=True)
+    col2.write(f"""标准名称：{standard_name}""")
+    # st.markdown(f"""
+    # >:blue[{standard_code}]\n
+    # >#### {standard_name}
+    # """)
 
 #列表展示
-with st.container():
+placeholder=st.empty()
+with placeholder.container(border=True):
     #根据查询内容显示不同的列表
 
     if 'submit_type' in st.session_state:
         submit_type=st.session_state.submit_type
         if submit_type == 'standard':
-            grid_response=display_standard_query_list()
-            st.session_state.selected_rows=grid_response['selected_rows']
+            display_standard_query_list()
         elif submit_type == 'tiaokuan':
             display_tiaokuan_query_list(st.session_state.search_term)
             print('TODO')
@@ -117,24 +104,9 @@ with st.container():
             print('')
 
 
-def display_standard_info(standard_code,standard_name):
-    col1,col2 = st.columns(2)
-    col1.write(f"""标准号：{standard_code}""",unsafe_allow_html=True)
-    col2.write(f"""标准名称：{standard_name}""")
-    # st.markdown(f"""
-    # >:blue[{standard_code}]\n
-    # >#### {standard_name}
-    # """)
-
-placeholder=st.empty()
-with placeholder.container():
     if 'selected_rows' in st.session_state:
-        standard_code=''
-        standard_name=''
-        for index, row in st.session_state['selected_rows'].iterrows():
-            standard_code=row['standard_code']
-            standard_name=row['standard_name']
-        
+        standard_code=st.session_state['selected_rows'][0]['standard_code']
+        standard_name=st.session_state['selected_rows'][0]['standard_name']
         #查询一级门类编号
         standard_db=StandardDB()
         level1_code_data=standard_db.query_category_level1_code(standard_code)
@@ -147,7 +119,7 @@ with placeholder.container():
             st.session_state.pc_type='craft'
         else:
             st.session_state.pc_type='other'
-        t1,t2,t3,t4,t5=st.tabs(['基本信息','标准目次信息','引用文件信息','术语',product_or_craft_tab_name])
+        t1,t2,t3,t4,t5=st.tabs(['**基本信息**','**标准目次信息**','**引用文件信息**','**术语**','**'+product_or_craft_tab_name+'**'])
         #standard_code = df.iloc[selected_row]['standard_code']
 
         

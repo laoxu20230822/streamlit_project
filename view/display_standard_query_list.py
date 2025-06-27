@@ -67,4 +67,9 @@ def display_standard_query_list():
         gridOptions=grid_options,
         #key='asdjflasdjkfl'
         )
-    return grid_response
+    selected_rows=grid_response['selected_rows']
+    if selected_rows is not None:
+        st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
+        #st.write(test)       # standard_code=row['standard_code']
+            # standard_name=row['standard_name']
+    #return grid_response

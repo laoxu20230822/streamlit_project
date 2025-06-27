@@ -17,8 +17,8 @@ def display_grid(data:list[dict]):
 
     grid_options = {
         'columnDefs': [
-        # { 'field': "standard_code", 'headerName': "标准号"},
-        # { 'field': "standard_name", 'headerName': "标准名称"},
+        { 'field': "standard_code", 'headerName': "标准号",'hide':True},
+        { 'field': "standard_name", 'headerName': "标准名称",'hide':True},
         { 'field': "min_chapter_clause_code", 'headerName': "最小章节编号"},
         { 'field': "standard_content", 'headerName': "标准内容"},
     ],
@@ -39,19 +39,27 @@ def display_grid(data:list[dict]):
         gridOptions=grid_options,
         #key='asdjflasdjkfl'
         )
+    selected_rows=grid_response['selected_rows']
+    if selected_rows is not None:
+        st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name'],'min_chapter_clause_code':row['min_chapter_clause_code']} for _, row in selected_rows.iterrows()]
+        #st.write(test)       # standard_code=row['standard_code']
+            # standard_name=row['standard_name']
+        if grid_response['selected_rows'] is not None:
+                for index,row_chapter in grid_response['selected_rows'].iterrows():
+                    st.container(border=True).markdown(row_chapter['standard_content'])
     return grid_response
+
 
 def display_tiaokuan_query_list(search_term:str):
     standard_db=StandardDB()
     page_result=standard_db.list(filter=WhereCause(search_term))
-    
     for row in page_result.data:
-
         label=f"**{row['standard_name']}({row['standard_code']})**"
         with st.container(border=True):
             st.markdown(label)
             data=standard_db.standard_detail(row['standard_code'])
             grid_response=display_grid(data)
+            
 
 
 
