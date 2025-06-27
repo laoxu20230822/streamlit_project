@@ -286,7 +286,7 @@ class StandardDB:
     
     def standard_detail(self,standard_code:str):
         SELECT_STATEMENT=f"""
-        select standard_code,standard_name from standard_system where standard_code='{standard_code}' group by standard_code,standard_name
+        select * from standard_system where standard_code='{standard_code}' order by serial_number asc
         """
         c = self.conn.cursor()
         c.execute(SELECT_STATEMENT)
@@ -371,6 +371,15 @@ class StandardDB:
         c = self.conn.cursor()
         c.execute(f"SELECT distinct category_level1_code FROM standard_system where standard_code='{standard_code}'")
         return c.fetchone()
+
+    #条款数据查询
+    def list_for_tiaokuan(self,filter:WhereCause = WhereCause()):
+        c = self.conn.cursor()
+        sql=f"SELECT serial_number,standard_code, standard_name, standard_content, min_chapter_clause_code FROM standard_system {filter.to_sql()} order by serial_number asc "
+        c.execute(sql)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
 
     def list(self,filter:WhereCause = WhereCause(),pageable:Pageable = Pageable(1,10)) -> PageResult:
         c = self.conn.cursor()

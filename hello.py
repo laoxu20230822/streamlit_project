@@ -22,7 +22,7 @@ from view.display_standard_query_list import display_standard_query_list
 from view.display_product_standard import display_product_standard
 from view.display_craft_standard import display_craft_standard
 from view.display_standard_structure import display_standard_structure
-
+from view.display_tiaokuan_query_list import display_tiaokuan_query_list
 
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -96,7 +96,7 @@ with st.container():
         grid_response=display_standard_query_list()
         st.session_state.selected_rows=grid_response['selected_rows']
     elif submit_type == 'tiaokuan':
-        #display_tiaokuan_query_list()
+        display_tiaokuan_query_list()
         print('TODO')
     elif submit_type == 'tixi':
         #display_tixi_query_list()

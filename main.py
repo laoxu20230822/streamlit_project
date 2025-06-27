@@ -73,6 +73,6 @@ from database.reference_standards import ReferenceStandards
 # print(data)
 
 standard_db=StandardDB()
-level1_code=standard_db.query_category_level1_code('SY/T 5289-2016')
-print(level1_code)
+list=standard_db.list_for_tiaokuan()
+print(list)
 
