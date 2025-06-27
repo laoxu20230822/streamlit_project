@@ -28,6 +28,8 @@ from view.display_tiaokuan_query_list import display_tiaokuan_query_list
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
+if 'search_term' not in st.session_state:
+    st.session_state.search_term=''
 
 @st.cache_resource
 def init_standard_db():
@@ -66,7 +68,7 @@ with st.container():
 
 #查询表单
 with st.form('standard_search_form'):
-
+    st.session_state.submit_type='standard'
     def button_submit(**kwargs:dict):
         submit_type=kwargs['submit_type']
         st.session_state.submit_type=submit_type
@@ -74,7 +76,7 @@ with st.form('standard_search_form'):
 
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
-    search_term=col1.text_input('标准名称',key='standard_term',label_visibility='collapsed',placeholder='查询输入',width='stretch')
+    search_term=col1.text_input('标准名称',key='standard_term',label_visibility='collapsed',placeholder='查询输入',width='stretch',value='')
     standard_submit=col2.form_submit_button('标准查询',use_container_width=True,kwargs={'submit_type':'standard'},on_click=button_submit)
     tiaokuan_submit=col3.form_submit_button('条款查询',use_container_width=True,kwargs={'submit_type':'tiaokuan'},on_click=button_submit)
 
@@ -91,12 +93,13 @@ with st.form('standard_search_form'):
 #列表展示
 with st.container():
     #根据查询内容显示不同的列表
+
     submit_type=st.session_state.submit_type
     if submit_type == 'standard':
         grid_response=display_standard_query_list()
         st.session_state.selected_rows=grid_response['selected_rows']
     elif submit_type == 'tiaokuan':
-        display_tiaokuan_query_list()
+        display_tiaokuan_query_list(st.session_state.search_term)
         print('TODO')
     elif submit_type == 'tixi':
         #display_tixi_query_list()
@@ -125,7 +128,7 @@ def display_standard_info(standard_code,standard_name):
 
 placeholder=st.empty()
 with placeholder.container():
-    if st.session_state['selected_rows'] is not  None:
+    if 'selected_rows' in st.session_state:
         standard_code=''
         standard_name=''
         for index, row in st.session_state['selected_rows'].iterrows():

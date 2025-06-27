@@ -41,9 +41,9 @@ def display_grid(data:list[dict]):
         )
     return grid_response
 
-def display_tiaokuan_query_list():
+def display_tiaokuan_query_list(search_term:str):
     standard_db=StandardDB()
-    page_result=standard_db.list(filter=WhereCause(st.session_state.search_term))
+    page_result=standard_db.list(filter=WhereCause(search_term))
     
     for row in page_result.data:
 
