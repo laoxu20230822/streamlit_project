@@ -68,7 +68,6 @@ with st.container():
 
 #查询表单
 with st.form('standard_search_form'):
-    st.session_state.submit_type='standard'
     def button_submit(**kwargs:dict):
         submit_type=kwargs['submit_type']
         st.session_state.submit_type=submit_type
@@ -82,10 +81,10 @@ with st.form('standard_search_form'):
 
     button1,button2,button3,button4=st.columns([0.2,0.2,0.2,0.2])
 
-    button1.form_submit_button('标准体系',use_container_width=True,kwargs={'submit_type':'tixi'},on_click=button_submit)
-    button2.form_submit_button('术语',use_container_width=True,kwargs={'submit_type':'shuyu'},on_click=button_submit)
-    button3.form_submit_button('指标',use_container_width=True,kwargs={'submit_type':'zhibiao'},on_click=button_submit)
-    button4.form_submit_button('参数',use_container_width=True,kwargs={'submit_type':'canshu'},on_click=button_submit)
+    button1.form_submit_button('标准体系',use_container_width=True,kwargs={'submit_type':'tixi'},on_click=button_submit,disabled=True)
+    button2.form_submit_button('术语',use_container_width=True,kwargs={'submit_type':'shuyu'},on_click=button_submit,disabled=True)
+    button3.form_submit_button('指标',use_container_width=True,kwargs={'submit_type':'zhibiao'},on_click=button_submit,disabled=True)
+    button4.form_submit_button('参数',use_container_width=True,kwargs={'submit_type':'canshu'},on_click=button_submit,disabled=True)
 
 
     
@@ -94,27 +93,28 @@ with st.form('standard_search_form'):
 with st.container():
     #根据查询内容显示不同的列表
 
-    submit_type=st.session_state.submit_type
-    if submit_type == 'standard':
-        grid_response=display_standard_query_list()
-        st.session_state.selected_rows=grid_response['selected_rows']
-    elif submit_type == 'tiaokuan':
-        display_tiaokuan_query_list(st.session_state.search_term)
-        print('TODO')
-    elif submit_type == 'tixi':
-        #display_tixi_query_list()
-        print('TODO')
-    elif submit_type == 'shuyu':
-        #display_shuyu_query_list()
-        print('TODO')
-    elif submit_type == 'zhibiao':
-        #display_zhibiao_query_list()
-        print('TODO')
-    elif submit_type == 'canshu':
-        #display_canshu_query_list()
-        print('TODO')
-    else:
-        st.write('参数错误')
+    if 'submit_type' in st.session_state:
+        submit_type=st.session_state.submit_type
+        if submit_type == 'standard':
+            grid_response=display_standard_query_list()
+            st.session_state.selected_rows=grid_response['selected_rows']
+        elif submit_type == 'tiaokuan':
+            display_tiaokuan_query_list(st.session_state.search_term)
+            print('TODO')
+        elif submit_type == 'tixi':
+            #display_tixi_query_list()
+            print('TODO')
+        elif submit_type == 'shuyu':
+            #display_shuyu_query_list()
+            print('TODO')
+        elif submit_type == 'zhibiao':
+            #display_zhibiao_query_list()
+            print('TODO')
+        elif submit_type == 'canshu':
+            #display_canshu_query_list()
+            print('TODO')
+        else:
+            print('')
 
 
 def display_standard_info(standard_code,standard_name):
