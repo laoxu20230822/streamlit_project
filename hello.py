@@ -115,10 +115,13 @@ with st.container():
 
 
 def display_standard_info(standard_code,standard_name):
-    st.markdown(f"""
-    >:blue[{standard_code}]\n
-    >#### {standard_name}
-    """)
+    col1,col2 = st.columns(2)
+    col1.write(f"""标准号：{standard_code}""",unsafe_allow_html=True)
+    col2.write(f"""标准名称：{standard_name}""")
+    # st.markdown(f"""
+    # >:blue[{standard_code}]\n
+    # >#### {standard_name}
+    # """)
 
 placeholder=st.empty()
 with placeholder.container():
