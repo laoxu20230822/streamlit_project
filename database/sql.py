@@ -13,33 +13,7 @@ CREATE TABLE IF NOT EXISTS standard_structure (
 """
 
 
-CREATE_TABLE_GLOSSARY="""
-CREATE TABLE glossary (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,     /* 主键 */
-    term_id TEXT,                             /* 术语序号 */
-    term TEXT  NULL,                       /* 术语词条 */
-    english_term TEXT,                        /* 术语英文 */
-    derived_terms TEXT,                       /* 派生词 */
-    definition TEXT  NULL,                 /* 术语定义 */
-    entry_code TEXT,                          /* 术语条目编号 */
-    synonyms TEXT,                            /* 同义词/简化词 */
-    abbreviation TEXT,                        /* 缩略语 */
-    symbol TEXT,                              /* 符号 */
-    source TEXT,                              /* 来源 */
-    note TEXT,                                /* 注 */
-    nature TEXT,                              /* 性质 */
-    system_id INTEGER,                        /* 体系序号 */
-    standard_code TEXT,                     /* 标准号 */
-    standard_name TEXT,                       /* 标准名称 */
-    unknown1 TEXT,                            /* 分割列 */
-    professional_field TEXT,                  /* 标准所属专业 */
-    primary_heading TEXT,                     /* 一级条标题 */
-    secondary_heading TEXT,                   /* 二级条标题 */
-    tertiary_heading TEXT,                    /* 三级条标题 */
-    mentioned_in_tech BOOLEAN,                /* 是否在技术要素中提及 */
-    term_length INTEGER                       /* 术语字数 */
-);
-"""
+
 
 
 CREATE_TABLE_REFERENCE_STANDARDS = """
@@ -85,33 +59,7 @@ INSERT INTO reference_standards (
 ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 """
 
-glossary_insert_sql="""
-INSERT INTO glossary (
-    term_id,
-    term,
-    english_term,
-    derived_terms,
-    definition,
-    entry_code,
-    synonyms,
-    abbreviation,
-    symbol,
-    source,
-    note,
-    nature,
-    system_id,
-    standard_code,
-    standard_name,
-    unknown1,
-    professional_field,
-    primary_heading,
-    secondary_heading,
-    tertiary_heading,
-    mentioned_in_tech,
-    term_length
-) VALUES (
-    ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-"""
+
 insert_standard_structure_sql="""
 INSERT INTO standard_structure(
     standard_code,

@@ -23,6 +23,7 @@ from view.display_product_standard import display_product_standard
 from view.display_craft_standard import display_craft_standard
 from view.display_standard_structure import display_standard_structure
 from view.display_tiaokuan_query_list import display_tiaokuan_query_list
+from view.display_glossary_query_list import display_glossary_query_list
 
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -47,11 +48,7 @@ with st.form('standard_search_form'):
         submit_type=kwargs['submit_type']
         st.session_state.submit_type=submit_type
         st.session_state.search_term=st.session_state.standard_term
-        #初始化session_state的状态
-        # if 'standard_list_selected_rows' in st.session_state:
-        #     del st.session_state['standard_list_selected_rows']   #尽量不使用，而采用参数传递的方式比较安全，状态管理的问题会很多。TODO
-        # if 'selected_rows' in st.session_state:
-        #     del st.session_state['selected_rows'] 
+
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
     search_term=col1.text_input('标准名称',key='standard_term',label_visibility='collapsed',placeholder='查询输入',width='stretch',value='')
@@ -61,7 +58,7 @@ with st.form('standard_search_form'):
     button1,button2,button3,button4=st.columns([0.2,0.2,0.2,0.2])
 
     button1.form_submit_button('标准体系',use_container_width=True,kwargs={'submit_type':'tixi'},on_click=button_submit,disabled=True)
-    button2.form_submit_button('术语',use_container_width=True,kwargs={'submit_type':'shuyu'},on_click=button_submit,disabled=True)
+    button2.form_submit_button('术语',use_container_width=True,kwargs={'submit_type':'shuyu'},on_click=button_submit)
     button3.form_submit_button('指标',use_container_width=True,kwargs={'submit_type':'zhibiao'},on_click=button_submit,disabled=True)
     button4.form_submit_button('参数',use_container_width=True,kwargs={'submit_type':'canshu'},on_click=button_submit,disabled=True)
 
@@ -92,8 +89,7 @@ with placeholder.container(border=True):
             #display_tixi_query_list()
             print('TODO')
         elif submit_type == 'shuyu':
-            #display_shuyu_query_list()
-            print('TODO')
+            display_glossary_query_list(st.session_state.search_term)
         elif submit_type == 'zhibiao':
             #display_zhibiao_query_list()
             print('TODO')
