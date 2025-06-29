@@ -44,6 +44,8 @@ with st.form('standard_search_form'):
         submit_type=kwargs['submit_type']
         st.session_state.submit_type=submit_type
         st.session_state.search_term=st.session_state.standard_term
+        if 'selected_rows' in st.session_state:
+            del st.session_state['selected_rows']
 
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)

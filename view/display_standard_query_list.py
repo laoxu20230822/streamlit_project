@@ -1,6 +1,6 @@
 import streamlit as st
-from database.standard_db import StandardDB, init_standard_db
-from database.standard_index import StandardIndex, init_standard_index_db
+from database.standard_db import  init_standard_db
+from database.standard_index import  init_standard_index_db
 from database.page import Pageable
 from database.standard_db import WhereCause
 from st_aggrid import AgGrid
