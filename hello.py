@@ -23,7 +23,7 @@ from view.display_craft_standard import display_craft_standard
 from view.display_standard_structure import display_standard_structure
 from view.display_tiaokuan_query_list import display_tiaokuan_query_list
 from view.display_glossary_query_list import display_glossary_query_list
-
+from view.display_metric_query_list import display_metric_query_list
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -57,7 +57,7 @@ with st.form('standard_search_form'):
 
     button1.form_submit_button('标准体系',use_container_width=True,kwargs={'submit_type':'tixi'},on_click=button_submit,disabled=True)
     button2.form_submit_button('术语',use_container_width=True,kwargs={'submit_type':'shuyu'},on_click=button_submit)
-    button3.form_submit_button('指标',use_container_width=True,kwargs={'submit_type':'zhibiao'},on_click=button_submit,disabled=True)
+    button3.form_submit_button('指标',use_container_width=True,kwargs={'submit_type':'zhibiao'},on_click=button_submit)
     button4.form_submit_button('参数',use_container_width=True,kwargs={'submit_type':'canshu'},on_click=button_submit,disabled=True)
 
 
@@ -89,7 +89,7 @@ with placeholder.container(border=True):
         elif submit_type == 'shuyu':
             display_glossary_query_list(st.session_state.search_term)
         elif submit_type == 'zhibiao':
-            #display_zhibiao_query_list()
+            display_metric_query_list(st.session_state.search_term)
             print('TODO')
         elif submit_type == 'canshu':
             #display_canshu_query_list()

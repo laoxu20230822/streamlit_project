@@ -8,8 +8,6 @@ from database.standard_db import Pageable
 from database.standard_db import WhereCause
 from st_aggrid import AgGrid
 
-from main import glossary
-
 
 def display_grid(data:list[dict]):
     df=pd.DataFrame(data if data else [],columns={

@@ -2,6 +2,7 @@ from numpy import place
 import streamlit as st
 import pandas as pd
 from database.glossary import Glossary
+from database.metric import Metric
 from database.page import Pageable
 import database.sql as sql
 from database.standard_db import StandardDB
@@ -75,6 +76,8 @@ from database.reference_standards import ReferenceStandards
 # standard_db=StandardDB()
 # list=standard_db.list_for_tiaokuan()
 # print(list)
-glossary=Glossary()
-data=glossary.list('储层胶结类型')
-print(data)
+
+metric=Metric()
+metric.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/13-104-材料技术指标汇总表2024.10.30.xlsx')
+print(metric.count())
+print(metric.list_by_search_term('外观'))
