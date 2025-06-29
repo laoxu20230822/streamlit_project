@@ -1,7 +1,7 @@
 from re import search
 import streamlit as st
 import pandas as pd
-from database.glossary import Glossary
+from database.glossary import Glossary, init_glossary_db
 from database.standard_db import StandardDB
 from database.standard_index import StandardIndex
 from database.standard_db import Pageable
@@ -55,7 +55,7 @@ def display_grid(data:list[dict]):
 
 
 def display_glossary_query_list(search_term:str):
-    glossary=Glossary()
+    glossary=init_glossary_db()
     data=glossary.list(search_term)
     for item in data:
         st.markdown(f"""**术语词条：** {item['term']}   **术语英文：** {item['english_term']}""")

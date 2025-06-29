@@ -1,8 +1,8 @@
 import streamlit as st
-from database.standard_index import StandardIndex
+from database.standard_index import  init_standard_index_db
 
 def display_standard_detail(standard_code:str):
-    standard_index=StandardIndex()
+    standard_index=init_standard_index_db()
     detail=standard_index.detail(standard_code)
     st.markdown("##### 基本信息\n\n---")
     st.markdown("**标准英文名称：**")

@@ -168,3 +168,7 @@ class StandardIndex:
         df = pd.read_excel(file_path, engine='openpyxl',header=0)
         self.batch_insert(df)
 
+@st.cache_resource
+def init_standard_index_db():
+    print("init standard_index db")
+    return StandardIndex()

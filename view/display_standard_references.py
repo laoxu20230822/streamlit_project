@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
-from database.reference_standards import ReferenceStandards
+from database.reference_standards import init_reference_standards_db
 
 def display_standard_references(standard_code:str):
-    reference_standards=ReferenceStandards()
+    reference_standards=init_reference_standards_db()
     data=reference_standards.detail(standard_code)
     df=pd.DataFrame(data,columns={
         'cited_standard_original': '引用文件标准号',

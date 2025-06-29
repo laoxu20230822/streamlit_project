@@ -1,6 +1,6 @@
 import streamlit as st
 from database.standard_db import StandardDB, init_standard_db
-from database.standard_index import StandardIndex
+from database.standard_index import StandardIndex, init_standard_index_db
 from database.page import Pageable
 from database.standard_db import WhereCause
 from st_aggrid import AgGrid
@@ -14,7 +14,7 @@ def display_standard_query_list():
     page_result=standard_db.list(filter=WhereCause(st.session_state.search_term),pageable=Pageable(1,50))
     standard_codes=[row['standard_code'] for row in page_result.data]
     #查询索引表
-    standard_index=StandardIndex()
+    standard_index=init_standard_index_db()
     data=standard_index.list_by_standard_codes(standard_codes)
     df=pd.DataFrame(data if data else [],columns={
             # 'system_serial': '体系编号',

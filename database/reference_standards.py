@@ -104,8 +104,10 @@ class ReferenceStandards:
         df = pd.read_excel(file_path, engine='openpyxl',header=0)
         self.batch_insert(df)
 
-
-
+@st.cache_resource
+def init_reference_standards_db():
+    print("init reference_standards db")
+    return ReferenceStandards()
 
 
 

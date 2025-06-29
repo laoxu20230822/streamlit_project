@@ -161,7 +161,10 @@ class Glossary:
         df = pd.read_excel(file_path, engine='openpyxl',header=0)
         self.batch_insert(df)
 
-    
+@st.cache_resource
+def init_glossary_db():
+    print("init glossary db")
+    return Glossary()
 
 
 

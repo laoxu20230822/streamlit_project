@@ -2,11 +2,11 @@ import streamlit as st
 from database import standard_db
 from database import standard_structure
 from database.standard_db import StandardDB
-from database.standard_structure import StandardStructure
+from database.standard_structure import StandardStructure, init_standard_structure_db
 
 standard_code=st.query_params['standard_code']
 standard_db=StandardDB()
-standard_structure=StandardStructure()
+standard_structure=init_standard_structure_db()
 detail=standard_db.standard_detail(standard_code)
 detail_for_markdown=standard_structure.detail_to_markdown(standard_code)
 

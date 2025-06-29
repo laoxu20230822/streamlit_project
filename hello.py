@@ -7,7 +7,6 @@ import sys
 
 from streamlit.elements.lib.layout_utils import Height
 from database.glossary import Glossary
-from database.reference_standards import ReferenceStandards
 from database.standard_db import init_standard_db
 from database.standard_db import WhereCause
 from database.page import Pageable

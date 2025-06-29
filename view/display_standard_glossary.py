@@ -1,10 +1,11 @@
 import streamlit as st
 import pandas as pd
-from database.glossary import Glossary
+from database.glossary import Glossary, init_glossary_db
 
 def display_standard_glossary(standard_code:str):
-    glossary=Glossary()
+    glossary=init_glossary_db()
     data=glossary.detail(standard_code)
+    
 
     df=pd.DataFrame(data,columns={
         'entry_code': '术语条目编号',
