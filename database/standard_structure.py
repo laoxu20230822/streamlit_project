@@ -66,6 +66,7 @@ class StandardStructure:
             content+="&nbsp;&nbsp;&nbsp;&nbsp;"*item['chapter_level']+" "+item['chapter_number']+" "+item['title_content']+"\n\n"
         return content
 
+    
     def drop(self):
         c = self.conn.cursor()
         c.execute("drop table standard_structure")
