@@ -399,7 +399,22 @@ class StandardDB:
             total_page+=1
         return PageResult(data,total_page,pageable)
     
-
+    def query_by_metrics(self,metric:str,standard_code:str):
+        c = self.conn.cursor()
+    #      performance_indicator_level1 TEXT,  -- 性能指标一级
+    # performance_indicator_level2 TEXT,  -- 性能指标二级
+        c.execute(f"""SELECT  standard_code,standard_name, standard_content
+         FROM standard_system 
+         where 
+         standard_code='{standard_code}' 
+         and 
+         (performance_indicator_level1 like '%{metric}%' 
+         or 
+         performance_indicator_level2 like '%{metric}%')
+         """)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
 
 
     def batch_insert(self,df:DataFrame):
