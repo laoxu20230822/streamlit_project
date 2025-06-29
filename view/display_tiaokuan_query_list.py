@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from database.standard_db import StandardDB
+from database.standard_db import  init_standard_db
 from database.standard_index import StandardIndex
 from database.standard_db import Pageable
 from database.standard_db import WhereCause
@@ -51,7 +51,7 @@ def display_grid(data:list[dict]):
 
 
 def display_tiaokuan_query_list(search_term:str):
-    standard_db=StandardDB()
+    standard_db=init_standard_db()
     page_result=standard_db.list(filter=WhereCause(search_term))
     for row in page_result.data:
         label=f"**{row['standard_name']}({row['standard_code']})**"

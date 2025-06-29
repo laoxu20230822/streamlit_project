@@ -78,34 +78,3 @@ from database.reference_standards import ReferenceStandards
 glossary=Glossary()
 data=glossary.list('储层胶结类型')
 print(data)
-
-
-from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
-
-# Create a simple cell renderer for formatting currency
-
-revert_data=[]
-
-for item in data:
-  r=f'''123'''
-  revert_data.append({'definition':r})
-# Sample data
-df = pd.DataFrame(revert_data)
-
-# Configure grid options
-gb = GridOptionsBuilder.from_dataframe(df)
-gb.configure_column('definition', cellRenderer=JsCode('''
-function(params) {
-    return "abc"  + params.value;
-    }  
-'''))
-grid_options = gb.build()
-
-# Display the grid
-grid_return = AgGrid(
-    df,
-    gridOptions=grid_options,
-    allow_unsafe_jscode=True
-)
-
-

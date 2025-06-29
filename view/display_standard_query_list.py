@@ -1,5 +1,5 @@
 import streamlit as st
-from database.standard_db import StandardDB
+from database.standard_db import StandardDB, init_standard_db
 from database.standard_index import StandardIndex
 from database.page import Pageable
 from database.standard_db import WhereCause
@@ -10,7 +10,7 @@ import pandas as pd
 def display_standard_query_list():
     #获取standard 列表数据
     #查询standard大表数据
-    standard_db=StandardDB()
+    standard_db=init_standard_db()
     page_result=standard_db.list(filter=WhereCause(st.session_state.search_term),pageable=Pageable(1,50))
     standard_codes=[row['standard_code'] for row in page_result.data]
     #查询索引表

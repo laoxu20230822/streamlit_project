@@ -8,7 +8,7 @@ import sys
 from streamlit.elements.lib.layout_utils import Height
 from database.glossary import Glossary
 from database.reference_standards import ReferenceStandards
-from database.standard_db import StandardDB
+from database.standard_db import init_standard_db
 from database.standard_db import WhereCause
 from database.page import Pageable
 from database.standard_index import StandardIndex
@@ -32,9 +32,6 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 if 'search_term' not in st.session_state:
     st.session_state.search_term=''
 
-@st.cache_resource
-def init_standard_db():
-    return StandardDB()
     
 
 #标题
@@ -104,7 +101,7 @@ with placeholder.container(border=True):
         standard_code=st.session_state['selected_rows'][0]['standard_code']
         standard_name=st.session_state['selected_rows'][0]['standard_name']
         #查询一级门类编号
-        standard_db=StandardDB()
+        standard_db=init_standard_db()
         level1_code_data=standard_db.query_category_level1_code(standard_code)
         if level1_code_data is not None and level1_code_data[0] == '104':
             level1_code=level1_code_data[0]

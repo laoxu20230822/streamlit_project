@@ -425,7 +425,10 @@ class StandardDB:
         self.conn.commit()
         #conn.close()
 
-
+@st.cache_resource
+def init_standard_db():
+    print("init standard_db")
+    return StandardDB()
 
 
 

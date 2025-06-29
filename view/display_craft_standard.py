@@ -1,9 +1,9 @@
 import streamlit as st
-from database.standard_db import StandardDB
+from database.standard_db import  init_standard_db
 import pandas as pd
 
 def display_craft_standard(standard_code):
-    standard_db=StandardDB()
+    standard_db=init_standard_db()
     data=standard_db.craft_list(standard_code)
           
     df=pd.DataFrame(data,columns={
