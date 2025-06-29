@@ -89,7 +89,6 @@ class Glossary:
     def __init__(self):
         db_path = Path(__file__).parent.parent / 'standard.db'
         self.conn=sqlite3.connect(db_path,check_same_thread=False)
-        print(f"dbpath::::: {db_path}")
         c = self.conn.cursor()
         c.execute("""
         SELECT name FROM sqlite_master WHERE type='table' AND name='glossary'
@@ -100,7 +99,6 @@ class Glossary:
         else:
             cursor = c.execute("PRAGMA table_info(glossary)")
             db_columns = [row[1] for row in cursor.fetchall()]  # 获取所有数据库列名
-            print(db_columns)
     def count(self):
         c = self.conn.cursor()
         c.execute("select count(1) from glossary")
@@ -141,7 +139,6 @@ class Glossary:
 
         c.execute(count_sql)
         total=c.fetchone()[0]
-        print(f"total: {total}")
 
         c.execute(sql_with_page)
         columns = [col[0] for col in c.description]

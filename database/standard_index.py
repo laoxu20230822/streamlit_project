@@ -114,7 +114,6 @@ class StandardIndex:
     def __init__(self):
         db_path = Path(__file__).parent.parent / 'standard.db'
         self.conn=sqlite3.connect(db_path,check_same_thread=False)
-        print(f"dbpath::::: {db_path}")
         c = self.conn.cursor()
         c.execute("""
         SELECT name FROM sqlite_master WHERE type='table' AND name='standard_index'
@@ -125,7 +124,6 @@ class StandardIndex:
         else:
             cursor = c.execute("PRAGMA table_info(standard_index)")
             db_columns = [row[1] for row in cursor.fetchall()]  # 获取所有数据库列名
-            print(db_columns)
     def list_by_standard_codes(self,standard_codes:list[str]):
         c = self.conn.cursor()
         c.execute(f"select * from standard_index where standard_code in ({','.join(['?' for _ in standard_codes])})",standard_codes)
