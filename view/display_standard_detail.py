@@ -1,18 +1,22 @@
 import streamlit as st
-from database.standard_index import  init_standard_index_db
+from database.standard_index import init_standard_index_db
 
 def display_standard_detail(standard_code:str):
     standard_index=init_standard_index_db()
     detail=standard_index.detail(standard_code)
-    st.markdown("##### 基本信息\n\n---")
+    st.markdown("##### 基本信息")
+    st.markdown("---")
     st.markdown("**标准英文名称：**")
     st.write(detail['english_name'])
     st.markdown("---")
+    
+# ... existing code ...
     col1,col2=st.columns(2)
     with col1:
         col1.markdown("**标准分类：**")
         col1.write(detail['standard_type'])
         col1.markdown("---")
+        
         col1.markdown("**专业：**")
         col1.write(detail['specialty'])
         col1.markdown("---")           
