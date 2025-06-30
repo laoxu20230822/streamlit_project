@@ -1,4 +1,9 @@
 [client]
 showSidebarNavigation = false
 [theme]
-base="dark"
+base="light"
+
+
+
+
+
