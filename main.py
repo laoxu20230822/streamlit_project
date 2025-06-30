@@ -88,10 +88,33 @@ from database.reference_standards import ReferenceStandards
 # standard_db=StandardDB()
 # standard_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/标准全文--体系范围标准-正文数据源-2025.6.21.xlsx')
 
-standard_category_db=StandardCategory()
-standard_category_db.drop()
-standard_category_db=StandardCategory()
-standard_category_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/01-储层改造领域标准目录（含引用标准）--韩20224.1.31--根据专家意见整理后(1).xlsx')
-data=standard_category_db.list_by_categroy('','')
-print(data)
-print(standard_category_db.count())
+# standard_category_db=StandardCategory()
+# standard_category_db.drop()
+# standard_category_db=StandardCategory()
+# standard_category_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/01-储层改造领域标准目录（含引用标准）--韩20224.1.31--根据专家意见整理后(1).xlsx')
+# data=standard_category_db.list_by_categroy('','')
+# print(data)
+# print(standard_category_db.count())
+
+import base64
+
+@st.cache_resource()
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+def set_png_as_page_bg(png_file):
+    bin_str = get_base64_of_bin_file(png_file)
+    page_bg_img =rf"""
+    <style>
+    body {{background-image: url('data:image/jpg;base64,{bin_str}');background-size: cover;}}
+    </style>
+    """
+    print(page_bg_img)
+    st.markdown(page_bg_img,unsafe_allow_html=False)
+    st.markdown("<body class='test'>abcdef</body>", unsafe_allow_html=True)
+    return
+
+set_png_as_page_bg('images/1.jpg')
+

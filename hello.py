@@ -47,7 +47,7 @@ if 'search_term' not in st.session_state:
 
 #标题
 with st.container():
-    st.markdown("<h1 style='text-align: center; color: blue;'>储层改造标准知识服务</h1>", unsafe_allow_html=True)
+    st.markdown("<div style='border: 1px solid blue; padding: 10px;'><h1 style='text-align: center; color: blue;'>储层改造标准知识服务</h1></div>", unsafe_allow_html=True)
     st.markdown("---")
 
 #查询表单
