@@ -77,7 +77,12 @@ from database.reference_standards import ReferenceStandards
 # list=standard_db.list_for_tiaokuan()
 # print(list)
 
-metric=Metric()
-metric.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/13-104-材料技术指标汇总表2024.10.30.xlsx')
-print(metric.count())
-print(metric.list_by_search_term('外观'))
+# metric=Metric()
+# metric.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/13-104-材料技术指标汇总表2024.10.30.xlsx')
+# print(metric.count())
+# print(metric.list_by_search_term('外观'))
+
+standard_db=StandardDB()
+standard_db.drop()
+standard_db=StandardDB()
+standard_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/标准全文--体系范围标准-正文数据源-2025.6.21.xlsx')

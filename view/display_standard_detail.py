@@ -16,7 +16,7 @@ def display_standard_detail(standard_code:str):
 # ... existing code ...
     col1,col2=st.columns(2)
     with col1:
-        col1.markdown(f"""**标准分类：** {detail['standard_type']}  
+        col1.markdown(f"""**标准分类：** {detail['standard_type'] if detail['standard_type'] else '无'}  
         {html_stype}""",unsafe_allow_html=True)
         
         col1.markdown(f"""**专业：** {detail['specialty']}  
