@@ -158,7 +158,7 @@ class Glossary:
         #conn.close()
 
     def load_from_excel(self,file_path:str):
-        df = pd.read_excel(file_path, engine='openpyxl',header=0)
+        df = pd.read_excel(file_path, engine='openpyxl',header=0).fillna('')
         self.batch_insert(df)
 
 @st.cache_resource
