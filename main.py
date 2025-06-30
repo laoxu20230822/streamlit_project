@@ -5,6 +5,7 @@ from database.glossary import Glossary
 from database.metric import Metric
 from database.page import Pageable
 import database.sql as sql
+from database.standard_category import StandardCategory
 from database.standard_db import StandardDB
 from database.standard_db import WhereCause
 from database.standard_index import StandardIndex
@@ -82,7 +83,15 @@ from database.reference_standards import ReferenceStandards
 # print(metric.count())
 # print(metric.list_by_search_term('外观'))
 
-standard_db=StandardDB()
-standard_db.drop()
-standard_db=StandardDB()
-standard_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/标准全文--体系范围标准-正文数据源-2025.6.21.xlsx')
+# standard_db=StandardDB()
+# standard_db.drop()
+# standard_db=StandardDB()
+# standard_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/标准全文--体系范围标准-正文数据源-2025.6.21.xlsx')
+
+standard_category_db=StandardCategory()
+standard_category_db.drop()
+standard_category_db=StandardCategory()
+standard_category_db.load_from_excel('/Users/xuminghui/code/uv_project_install/streamlit_project/file/01-储层改造领域标准目录（含引用标准）--韩20224.1.31--根据专家意见整理后(1).xlsx')
+data=standard_category_db.list_by_categroy('','')
+print(data)
+print(standard_category_db.count())

@@ -25,7 +25,7 @@ from view.display_tiaokuan_query_list import display_tiaokuan_query_list
 from view.display_glossary_query_list import display_glossary_query_list
 from view.display_metric_query_list import display_metric_query_list
 from view.display_method_query_list import display_method_query_list
-
+from view.display_tixi_query_list import display_tixi_query_list
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 st.set_page_config(
@@ -67,7 +67,7 @@ with st.form('standard_search_form'):
 
     button1,button2,button3,button4=st.columns([0.2,0.2,0.2,0.2])
 
-    button1.form_submit_button('标准体系',use_container_width=True,kwargs={'submit_type':'tixi'},on_click=button_submit,disabled=True)
+    button1.form_submit_button('标准体系',use_container_width=True,kwargs={'submit_type':'tixi'},on_click=button_submit)
     button2.form_submit_button('术语查询',use_container_width=True,kwargs={'submit_type':'shuyu'},on_click=button_submit)
     button3.form_submit_button('指标查询',use_container_width=True,kwargs={'submit_type':'zhibiao'},on_click=button_submit)
     button4.form_submit_button('方法查询',use_container_width=True,kwargs={'submit_type':'canshu'},on_click=button_submit)
@@ -97,8 +97,7 @@ with placeholder.container(border=True):
         elif submit_type == 'tiaokuan':
             display_tiaokuan_query_list(st.session_state.search_term)
         elif submit_type == 'tixi':
-            #display_tixi_query_list()
-            print('TODO')
+            display_tixi_query_list(st.session_state.search_term)
         elif submit_type == 'shuyu':
             display_glossary_query_list(st.session_state.search_term)
         elif submit_type == 'zhibiao':
