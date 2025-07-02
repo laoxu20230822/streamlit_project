@@ -60,7 +60,9 @@ def display_standard_query_list():
         },
         "autoSizeStrategy": {
             "type": "fitGridWidth"
-        }
+        },
+        "pagination": True,
+        "paginationAutoPageSize": True,
     }
     grid_response = AgGrid(
         df, 

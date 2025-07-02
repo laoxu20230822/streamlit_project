@@ -22,7 +22,6 @@ def display_tixi_query_list(search_term:str):
             'secondary_category': '二级门类',
             'standard_size': '标准数量'
         })
-    print(df)
     # 按部门和职位双重分组
     grouped = df.groupby(['primary_category_id', 'primary_category'])
 
