@@ -8,7 +8,6 @@ from pandas import DataFrame
 import pandas as pd
 import streamlit as st
 
-from database.customer import CustomerWhereCause
 from database.page import Pageable
 from database.page import PageResult
 
@@ -59,14 +58,22 @@ class StandardStructure:
         data=self.detail(standard_code)
         content=""
         for item in data:
-            if item['chapter_level'] is None or item['chapter_number'] is None or item['title_content'] is None:
-                item['chapter_level']=0
+            if  not item['chapter_level'] or not item['chapter_number']  or not item['title_content']:
+                item['chapter_level']='0'
                 item['chapter_number']=""
                 item['title_content']=""
-            content+="&nbsp;&nbsp;&nbsp;&nbsp;"*item['chapter_level']+" "+item['chapter_number']+" "+item['title_content']+"\n\n"
+            content+="&nbsp;&nbsp;&nbsp;&nbsp;"*int(float(item['chapter_level'].strip()))+" "+item['chapter_number']+" "+item['title_content']+"\n\n"
         return content
 
-    
+    def create_table(self):
+        c = self.conn.cursor()
+        c.execute("""
+        SELECT name FROM sqlite_master WHERE type='table' AND name='standard_structure'
+        """)
+        if not c.fetchone():
+            c.execute(CREATE_TABLE_STANDARD_STRUCTURE)
+            self.conn.commit()
+
     def drop(self):
         c = self.conn.cursor()
         c.execute("drop table standard_structure")

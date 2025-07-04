@@ -7,7 +7,6 @@ from pandas import DataFrame
 import pandas as pd
 import streamlit as st
 
-from database.customer import CustomerWhereCause
 from database.page import Pageable
 from database.page import PageResult
 
@@ -97,6 +96,15 @@ class Metric:
         df = pd.read_excel(file_path, engine='openpyxl',header=0).fillna('')
         self.batch_insert(df)
     
+    def create_table(self):
+        c = self.conn.cursor()
+        c.execute("""
+        SELECT name FROM sqlite_master WHERE type='table' AND name='metrics'
+        """)
+        if not c.fetchone():
+            c.execute(CREATE_TABLE_METRICS_SQL)
+            self.conn.commit()
+
     def drop(self):
         c = self.conn.cursor()
         c.execute("DROP TABLE IF EXISTS metrics")

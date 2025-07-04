@@ -3,12 +3,12 @@ CREATE_TABLE_STANDARD_STRUCTURE = """
 CREATE TABLE IF NOT EXISTS standard_structure (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     standard_code TEXT NOT NULL,
-    start_page INTEGER NOT NULL,
-    title_order INTEGER NOT NULL,
-    chapter_level INTEGER NULL,
+    start_page TEXT NOT NULL,
+    title_order TEXT NOT NULL,
+    chapter_level TEXT NULL,
     chapter_number TEXT  NULL,
     title_content TEXT  NULL,
-    page_number INTEGER  NULL
+    page_number TEXT  NULL
 );
 """
 
@@ -34,7 +34,7 @@ CREATE TABLE reference_standards (
     org_classification_code TEXT,  -- 标准组织分类编号
     unknown1 TEXT, -- 分割
     standard_category TEXT,  -- 标准类别
-    is_referenced INTEGER CHECK(is_referenced IN (0, 1))  -- 是否引用文件
+    is_referenced TEXT  -- 是否引用文件
 );
 """
 

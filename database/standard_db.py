@@ -8,7 +8,6 @@ from pandas import DataFrame
 import pandas as pd
 import streamlit as st
 
-from database.customer import CustomerWhereCause
 from database.page import Pageable
 from database.page import PageResult
 
@@ -277,6 +276,14 @@ class StandardDB:
             cursor = c.execute("PRAGMA table_info(standard_system)")
             db_columns = [row[1] for row in cursor.fetchall()]  # 获取所有数据库列名
     
+    def create_table(self):
+        c = self.conn.cursor()
+        c.execute("""
+        SELECT name FROM sqlite_master WHERE type='table' AND name='standard_system'
+        """)
+        if not c.fetchone():
+            c.execute(CREATE_SQL)
+            self.conn.commit()
     def count(self):
         c = self.conn.cursor()
         c.execute("select count(1) from standard_system")

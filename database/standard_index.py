@@ -144,7 +144,14 @@ class StandardIndex:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data[0]
 
-
+    def create_table(self):
+        c = self.conn.cursor()
+        c.execute("""
+        SELECT name FROM sqlite_master WHERE type='table' AND name='standard_index'
+        """)
+        if not c.fetchone():
+            c.execute(CREATE_TABLE_STANDARD_INDEX)
+            self.conn.commit()
 
     def drop(self):
         c = self.conn.cursor()

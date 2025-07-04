@@ -1,0 +1,9 @@
+[[pages]]
+path = "home.py"
+name = "首页"
+icon = "🏠"
+
+[[pages]]
+path = "pages/load_data.py"
+name = "加载数据"
+icon = ":books:"

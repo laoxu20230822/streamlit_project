@@ -8,7 +8,6 @@ from pandas import DataFrame
 import pandas as pd
 import streamlit as st
 
-from database.customer import CustomerWhereCause
 from database.page import Pageable
 from database.page import PageResult
 
@@ -123,7 +122,15 @@ class Glossary:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-    
+    def create_table(self):
+        c = self.conn.cursor()
+        c.execute("""
+        SELECT name FROM sqlite_master WHERE type='table' AND name='glossary'
+        """)
+        if not c.fetchone():
+            c.execute(CREATE_TABLE_GLOSSARY)
+            self.conn.commit()
+
     def drop(self):
         c = self.conn.cursor()
         c.execute("drop table glossary")

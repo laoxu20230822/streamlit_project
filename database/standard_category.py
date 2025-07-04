@@ -8,7 +8,6 @@ from pandas import DataFrame
 import pandas as pd
 import streamlit as st
 
-from database.customer import CustomerWhereCause
 from database.page import Pageable
 from database.page import PageResult
 
@@ -202,6 +201,14 @@ class StandardCategory:
         df = pd.read_excel(file_path, engine='openpyxl',header=0,sheet_name='储层改造标准目录').fillna('')
         self.batch_insert(df)
 
+    def create_table(self):
+        c = self.conn.cursor()
+        c.execute("""
+        SELECT name FROM sqlite_master WHERE type='table' AND name='standard_category'
+        """)
+        if not c.fetchone():
+            c.execute(CREATE_STANDARD_CATEGORY_SQL)
+            self.conn.commit()
 
     def drop(self):
         c = self.conn.cursor()
