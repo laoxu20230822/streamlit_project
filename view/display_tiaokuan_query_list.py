@@ -31,7 +31,7 @@ def display_grid(data:list[dict]):
             "type": "fitGridWidth"
         },
         "pagination": True,
-        "paginationAutoPageSize": True,
+        #"paginationAutoPageSize": True,
         "paginationPageSize": 20
     }
     grid_response = AgGrid(

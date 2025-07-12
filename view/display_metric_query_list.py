@@ -28,8 +28,8 @@ def display_grid(data:list[dict]):
             "type": "fitGridWidth"
         },
         "pagination": True,
-        "paginationAutoPageSize": True,
-        "paginationPageSize": 20
+        #"paginationAutoPageSize": True,
+        "paginationPageSize": 50
     }
     grid_response = AgGrid(
         df, 
@@ -95,7 +95,8 @@ def display_metric_query_list(search_term:str):
             "type": "fitGridWidth"
         },
         "pagination": True,
-        "paginationAutoPageSize": True,
+        #"paginationAutoPageSize": True,
+        "paginationPageSize": 50,
     }
     grid_response = AgGrid(
         df, 

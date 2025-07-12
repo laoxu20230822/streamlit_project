@@ -43,7 +43,8 @@ gridOptions = {
             "suppressRowClickSelection": True,
             "enableRangeSelection": True,
             "pagination": True,
-            "paginationAutoPageSize": True,
+            #"paginationAutoPageSize": True,
+            "paginationPageSize": 50,
             "columnDefs": [
                 {"field": "callId", "checkboxSelection": True},
                 {"field": "direction"},
