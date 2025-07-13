@@ -14,6 +14,7 @@ def display_grid(data:list[dict]):
     })
 
     grid_options = {
+        'suppressNoRowsOverlay': True,
         'columnDefs': [
         { 'field': "standard_code", 'headerName': "标准号"},
         { 'field': "standard_name", 'headerName': "标准名称"},
@@ -72,6 +73,7 @@ def display_metric_query_list(search_term:str):
             'table_footnote': '表脚注'
         })
     grid_options = {
+        'suppressNoRowsOverlay': True,
         'columnDefs': [
         { 'field': "standard_code", 'headerName': "标准号"},
         { 'field': "table_code", 'headerName': "表编号"},

@@ -16,6 +16,7 @@ def display_grid(data:list[dict]):
     })
 
     grid_options = {
+        'suppressNoRowsOverlay': True,
         'columnDefs': [
         { 'field': "standard_code", 'headerName': "标准号"},
         { 'field': "standard_name", 'headerName': "标准名称"},
