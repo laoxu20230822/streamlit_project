@@ -28,7 +28,13 @@ from view.display_method_query_list import display_method_query_list
 from view.display_tixi_query_list import display_tixi_query_list
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-
+st.markdown(f"""
+        <style>
+        p {{
+            margin: 0;
+            line-height: 1.1;
+        }}
+        </style>""",unsafe_allow_html=True)
 
 st.set_page_config(
     layout="wide",

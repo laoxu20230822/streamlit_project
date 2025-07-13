@@ -10,5 +10,13 @@ def display_standard_structure(standard_code:str):
     if '术语和定义' in detail_for_markdown:
         # for line in detail_for_markdown.splitlines():
         #      print(line)
-        detail_for_markdown='\n'.join([line for line in detail_for_markdown.splitlines() if '3.' not in  line])
+        detail_for_markdown='\n\n'.join([line for line in detail_for_markdown.splitlines() if '3.' not in  line])
+    # st.markdown(f"""
+    #     <style>
+    #     .compact p {{
+    #         margin: 0;
+    #         line-height: 1.1;
+    #     }}
+    #     </style><div class="compact">{detail_for_markdown}</div>
+    #     """,unsafe_allow_html=True) 
     st.markdown(detail_for_markdown,unsafe_allow_html=True)

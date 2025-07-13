@@ -80,7 +80,6 @@ class StandardStructure:
 
     def detail_to_markdown(self,standard_code:str):
         data=self.detail(standard_code)
-        print(data)
         content=""
         for item in data:
             if  not item['chapter_level'] or not item['chapter_number']  or not item['title_content']:
