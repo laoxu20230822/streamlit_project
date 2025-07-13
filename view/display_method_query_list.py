@@ -59,7 +59,7 @@ def display_method_query_list(search_term:str):
     structure_db=StandardStructure()
     for item in data:
         standard_code=item['standard_code']
-        standard_name=standard_db.standard_detail(standard_code)[0]['standard_name']
+        standard_name=standard_db.standard_detail_by_method_query(standard_code,search_term)[0]['standard_name']
         content=structure_db.detail_to_markdown(standard_code)
         with st.expander(standard_name+'('+standard_code+')'):
             st.markdown(content,unsafe_allow_html=True)

@@ -298,7 +298,27 @@ class StandardDB:
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
-
+    
+    ## 新增 performance_indicator_level1 TEXT,  -- 性能指标一级
+    ##performance_indicator_level2 TEXT,  -- 性能指标二级
+    ## method_name TEXT,  -- 方法名称
+    ## method2
+    def standard_detail_by_method_query(self,standard_code:str,search_term:str):
+        SELECT_STATEMENT=f"""
+        select * from standard_system where 
+        standard_code='{standard_code}' and 
+        (method_name like '%{search_term}%' or 
+        method2 like '%{search_term}%' or 
+        performance_indicator_level1 like '%{search_term}%' or 
+        performance_indicator_level2 like '%{search_term}%'
+         )  order by serial_number asc
+        """
+        c = self.conn.cursor()
+        c.execute(SELECT_STATEMENT)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
+        
     def product_list(self,standard_code:str):
         SELECT_STATEMENT=f"""
         select 
