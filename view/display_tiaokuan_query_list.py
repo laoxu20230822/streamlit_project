@@ -29,7 +29,7 @@ def display_grid(data:list[dict]):
             'enableClickSelection': True
         },
         "autoSizeStrategy": {
-            "type": "fitGridWidth"
+            "type": "fitCellContents"
         },
         "pagination": True,
         #"paginationAutoPageSize": True,

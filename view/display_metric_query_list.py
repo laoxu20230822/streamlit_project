@@ -13,12 +13,16 @@ def display_grid(data:list[dict]):
         'standard_content': '标准内容',
     })
 
+# builder = GridOptionsBuilder.from_dataframe(data)
+# builder.configure_default_column(wrapText=True, autoHeight=True)
+# builder.configure_grid_options(domLayout='normal')  # 允许自动高度
+
     grid_options = {
         'suppressNoRowsOverlay': True,
         'columnDefs': [
-        { 'field': "standard_code", 'headerName': "标准号"},
-        { 'field': "standard_name", 'headerName': "标准名称"},
-        { 'field': "standard_content", 'headerName': "标准内容"},
+        { 'field': "standard_code", 'headerName': "标准号","wrapText": True, "autoHeight": True},
+        { 'field': "standard_name", 'headerName': "标准名称","wrapText": True, "autoHeight": True},
+        { 'field': "standard_content", 'headerName': "标准内容","wrapText": True, "autoHeight": True},
     ],
     'rowSelection': {
             'mode': 'singleRow',
@@ -26,7 +30,7 @@ def display_grid(data:list[dict]):
             'enableClickSelection': True
         },
         "autoSizeStrategy": {
-            "type": "fitGridWidth"
+            "type": "fitCellContents"
         },
         "pagination": True,
         #"paginationAutoPageSize": True,
@@ -35,14 +39,16 @@ def display_grid(data:list[dict]):
     grid_response = AgGrid(
         df, 
         gridOptions=grid_options,
+        #fit_columns_on_grid_load=False,
+        #allow_unsafe_jscode=True
         #key='asdjflasdjkfl'
         )
     selected_rows=grid_response['selected_rows']
     
-    if selected_rows is not None:
-        standard_content= [row['standard_content'] for _, row in selected_rows.iterrows()][0]
-        st.container(border=True).markdown(standard_content)
-        st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
+    #if selected_rows is not None:
+    #    standard_content= [row['standard_content'] for _, row in selected_rows.iterrows()][0]
+    #    st.container(border=True).markdown(standard_content)
+    #    st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
     #     #st.write(test)       # standard_code=row['standard_code']
     #         # standard_name=row['standard_name']
     #     if grid_response['selected_rows'] is not None:
@@ -94,7 +100,7 @@ def display_metric_query_list(search_term:str):
             'enableClickSelection': True
         },
         "autoSizeStrategy": {
-            "type": "fitGridWidth"
+            "type": "fitCellContents"
         },
         "pagination": True,
         #"paginationAutoPageSize": True,

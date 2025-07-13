@@ -59,7 +59,7 @@ def display_standard_query_list():
             'enableClickSelection': True
         },
         "autoSizeStrategy": {
-            "type": "fitGridWidth"
+            "type": "fitCellContents"
         },
         "pagination": True,
         ##"paginationAutoPageSize": True,

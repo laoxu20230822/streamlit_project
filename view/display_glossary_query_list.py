@@ -31,7 +31,7 @@ def display_grid(data:list[dict]):
             'enableClickSelection': True
         },
         "autoSizeStrategy": {
-            "type": "fitGridWidth"
+            "type": "fitCellContents"
         },
         "pagination": True,
         #"paginationAutoPageSize": True,
@@ -92,7 +92,7 @@ def display_glossary_query_list(search_term:str):
             'enableClickSelection': True
         },
         "autoSizeStrategy": {
-            "type": "fitGridWidth"
+            "type": "fitCellContents"
         },
         "pagination": True,
         ##"paginationAutoPageSize": True,
