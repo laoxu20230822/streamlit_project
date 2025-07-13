@@ -45,7 +45,23 @@ with st.container():
     st.markdown(f"""<div style='border: 1px solid blue; padding: 1px;'><h3 style='text-align: center; color: blue;'>储层改造标准知识服务系统</h3></div>""", unsafe_allow_html=True)
 
 #查询表单
+
+
 with st.form('standard_search_form'):
+    #调整按钮点击样式
+    st.markdown(
+        """
+        <style>
+        div.stFormSubmitButton > button[kind="primaryFormSubmit"] {
+            background-color: #007BFF !important;  /* 蓝色 */
+            color: white !important;
+            border-radius: 10px;
+            border-color: #007BFF !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
     def button_submit(**kwargs:dict):
         submit_type=kwargs['submit_type']
         st.session_state.submit_type=submit_type
@@ -56,15 +72,15 @@ with st.form('standard_search_form'):
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
     search_term=col1.text_input('标准名称',key='standard_term',label_visibility='collapsed',placeholder='查询输入',width='stretch',value='')
-    standard_submit=col2.form_submit_button('标准查询',use_container_width=True,kwargs={'submit_type':'standard'},on_click=button_submit)
-    tiaokuan_submit=col3.form_submit_button('条款查询',use_container_width=True,kwargs={'submit_type':'tiaokuan'},on_click=button_submit)
+    standard_submit=col2.form_submit_button('标准查询',use_container_width=True,kwargs={'submit_type':'standard'},on_click=button_submit,type=('primary' if 'submit_type' in st.session_state and st.session_state.submit_type == 'standard' else 'secondary'))
+    tiaokuan_submit=col3.form_submit_button('条款查询',use_container_width=True,kwargs={'submit_type':'tiaokuan'},on_click=button_submit,type=('primary' if 'submit_type' in st.session_state and st.session_state.submit_type == 'tiaokuan' else 'secondary'))
 
     button1,button2,button3,button4=st.columns([0.2,0.2,0.2,0.2])
 
-    button1.form_submit_button('标准体系',use_container_width=True,kwargs={'submit_type':'tixi'},on_click=button_submit)
-    button2.form_submit_button('术语查询',use_container_width=True,kwargs={'submit_type':'shuyu'},on_click=button_submit)
-    button3.form_submit_button('指标查询',use_container_width=True,kwargs={'submit_type':'zhibiao'},on_click=button_submit)
-    button4.form_submit_button('方法查询',use_container_width=True,kwargs={'submit_type':'canshu'},on_click=button_submit)
+    button1.form_submit_button('标准体系',use_container_width=True,kwargs={'submit_type':'tixi'},on_click=button_submit,type=('primary' if 'submit_type' in st.session_state and st.session_state.submit_type == 'tixi' else 'secondary'))
+    button2.form_submit_button('术语查询',use_container_width=True,kwargs={'submit_type':'shuyu'},on_click=button_submit,type=('primary' if 'submit_type' in st.session_state and st.session_state.submit_type == 'shuyu' else 'secondary'))
+    button3.form_submit_button('指标查询',use_container_width=True,kwargs={'submit_type':'zhibiao'},on_click=button_submit,type=('primary' if 'submit_type' in st.session_state and st.session_state.submit_type == 'zhibiao' else 'secondary'))
+    button4.form_submit_button('方法查询',use_container_width=True,kwargs={'submit_type':'canshu'},on_click=button_submit,type=('primary' if 'submit_type' in st.session_state and st.session_state.submit_type == 'canshu' else 'secondary'))
 
 
     

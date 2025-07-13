@@ -6,7 +6,6 @@ from database.standard_db import WhereCause
 from st_aggrid import AgGrid
 import pandas as pd
 
-
 def display_standard_query_list():
     #获取standard 列表数据
     #查询standard大表数据
