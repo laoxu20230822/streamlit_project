@@ -10,5 +10,6 @@ dependencies = [
     "st-pages>=1.0.1",
     "streamlit>=1.46.0",
     "streamlit-aggrid>=1.1.5.post1",
+    "streamlit-extras>=0.7.5",
     "streamlit-tree-select>=0.0.5",
 ]

@@ -36,19 +36,27 @@ st.markdown(f"""
         }}
         </style>""",unsafe_allow_html=True)
 
+# st.markdown(f"""
+# <style>
+# header {{ visibility: hidden; }}
+# footer {{ visibility: hidden; }}
+# </style>
+# """,unsafe_allow_html=True)
+
+
 st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
+
 if 'search_term' not in st.session_state:
     st.session_state.search_term=''
 
-    
 
 #标题
 with st.container():
-    st.markdown(f"""<div style='border: 1px solid blue; padding: 1px;'><h3 style='text-align: center; color: blue;'>储层改造标准知识服务系统</h3></div>""", unsafe_allow_html=True)
+    st.markdown(f"""<div><h3 style='text-align: center; color: blue;'>储层改造标准知识服务系统</h3></div>""", unsafe_allow_html=True)
 
 #查询表单
 
