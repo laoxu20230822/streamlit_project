@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import sqlite3
 
-from database.sql import insert_standard_structure_sql,standard_system_select_sql,CREATE_TABLE_STANDARD_STRUCTURE
+from database.sql import standard_system_select_sql
 from pandas import DataFrame
 import pandas as pd
 import streamlit as st
@@ -13,7 +13,31 @@ from database.page import PageResult
 
 import database.sql as sql
 
-
+CREATE_TABLE_STANDARD_STRUCTURE = """
+CREATE TABLE IF NOT EXISTS standard_structure (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    standard_code TEXT NOT NULL,
+    start_page TEXT NOT NULL,
+    title_order INTEGER NOT NULL DEFAULT 0,
+    chapter_level TEXT NULL,
+    chapter_number TEXT  NULL,
+    title_content TEXT  NULL,
+    page_number TEXT  NULL
+);
+"""
+insert_standard_structure_sql="""
+INSERT INTO standard_structure(
+    standard_code,
+    start_page,
+    title_order,
+    chapter_level,
+    chapter_number,
+    title_content,
+    page_number
+) VALUES (
+    ?,?,?,?,?,?,?
+)
+"""
 class WhereCause:
     standard_code: str
     
@@ -56,6 +80,7 @@ class StandardStructure:
 
     def detail_to_markdown(self,standard_code:str):
         data=self.detail(standard_code)
+        print(data)
         content=""
         for item in data:
             if  not item['chapter_level'] or not item['chapter_number']  or not item['title_content']:

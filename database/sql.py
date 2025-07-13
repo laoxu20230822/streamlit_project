@@ -1,16 +1,5 @@
 
-CREATE_TABLE_STANDARD_STRUCTURE = """
-CREATE TABLE IF NOT EXISTS standard_structure (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    standard_code TEXT NOT NULL,
-    start_page TEXT NOT NULL,
-    title_order TEXT NOT NULL,
-    chapter_level TEXT NULL,
-    chapter_number TEXT  NULL,
-    title_content TEXT  NULL,
-    page_number TEXT  NULL
-);
-"""
+
 
 
 
@@ -60,19 +49,7 @@ INSERT INTO reference_standards (
 """
 
 
-insert_standard_structure_sql="""
-INSERT INTO standard_structure(
-    standard_code,
-    start_page,
-    title_order,
-    chapter_level,
-    chapter_number,
-    title_content,
-    page_number
-) VALUES (
-    ?,?,?,?,?,?,?
-)
-"""
+
 
 
 standard_system_select_sql="""
