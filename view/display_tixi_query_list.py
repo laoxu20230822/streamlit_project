@@ -8,8 +8,56 @@ from st_aggrid import AgGrid
 import pandas as pd
 
 
-def display_tixi_query_list(search_term:str):
-    
+def display_tixi_query_list2(primary:str,secondary:str):
+    category_db=init_standard_category_db()
+    data=category_db.standards_by_category(primary,secondary)
+    df=pd.DataFrame(data if data else [],columns={
+            'standard_code': '标准编号',
+            'standard_name': '标准名称',
+            #'primary_category_id': '一级门类编号',
+            'primary_category': '一级门类',
+            #'secondary_category_id':'二级门类编号',
+            'secondary_category': '二级门类',
+            'scope':"适用范围"
+        })
+    grid_options = {
+        "suppressNoRowsOverlay": True,
+        'columnDefs': [
+        { 'field': "standard_code", 'headerName': "标准号"},
+        { 'field': "standard_name", 'headerName': "标准名称"},
+        #{ 'field': "primary_category_id", 'headerName': "一级门类编号"},
+        { 'field': "primary_category", 'headerName': "一级门类"},
+        #{ 'field': "secondary_category_id", 'headerName': "二级门类编号"},
+        { 'field': "secondary_category", 'headerName': "二级门类"},
+        { 'field': "scope", 'headerName': "适用范围","wrapText":True,"autoHeight": True},
+    ],
+    'rowSelection': {
+            'mode': 'singleRow',
+            'checkboxes': False,
+            'enableClickSelection': True
+        },
+        "autoSizeStrategy": {
+            "type": "fitCellContents"
+        },
+        "pagination": True,
+        ##"paginationAutoPageSize": True,
+        "paginationPageSize": 50
+    }
+    grid_response = AgGrid(
+        df, 
+        gridOptions=grid_options,
+        #key='asdjflasdjkfl'
+        )
+    #selected_rows=grid_response['selected_rows']
+    #if selected_rows is not None:
+        #st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
+        #st.write(test)       # standard_code=row['standard_code']
+            # standard_name=row['standard_name']
+    #return grid_response
+
+
+def display_tixi_query_list(search_term:str,primary:str,secondary:str):
+    print(primary,secondary)
     category_db=init_standard_category_db()
     data=category_db.list_by_categroy(search_term)
 

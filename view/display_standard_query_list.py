@@ -26,23 +26,7 @@ def display_standard_query_list():
             'release_date': '发布日期',
             'implementation_date': '实施日期'
         })
-#     df.style.set_table_styles(
-#         [{
-#             'selector': 'th',
-#             'props': [
-#                 ('background-color', '#4CAF50'),
-#                 ('color', 'white'),
-#                 ('font-family', 'Arial, sans-serif'),
-#                 ('font-size', '16px')
-#             ]
-#         }, 
-#         {
-#             'selector': 'td, th',
-#             'props': [
-#                 ('border', '2px solid #4CAF50')
-#             ]
-#         }]
-#    )
+
     grid_options = {
         "suppressNoRowsOverlay": True,
         'columnDefs': [

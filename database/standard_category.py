@@ -169,6 +169,16 @@ class StandardCategory:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
+    def standards_by_category(self,primary_category:str,secondary_category:str):
+        SELECT_STATEMENT=f"""
+        select * from standard_category where primary_category='{primary_category}' and secondary_category='{secondary_category}'
+        """
+        c = self.conn.cursor()
+        c.execute(SELECT_STATEMENT)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
+
     def list_by_categroy(self,category_term:str):
         SELECT_STATEMENT=f"""
         select 

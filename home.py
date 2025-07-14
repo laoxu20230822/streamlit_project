@@ -26,6 +26,7 @@ from view.display_glossary_query_list import display_glossary_query_list
 from view.display_metric_query_list import display_metric_query_list
 from view.display_method_query_list import display_method_query_list
 from view.display_tixi_query_list import display_tixi_query_list
+from view.display_tixi_query_list import display_tixi_query_list2
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 st.markdown(f"""
@@ -82,6 +83,26 @@ with st.form('standard_search_form'):
         st.session_state.search_term=st.session_state.standard_term
         if 'selected_rows' in st.session_state:
             del st.session_state['selected_rows']
+    
+    primary = st.sidebar.selectbox(
+    "**请选择一级门类**",
+    ["基础与通用", "储层改造压前评估", "方案优化设计","储层改造材料评价","装备及工具","现场施工及控制","测试与压后评估分析"])
+
+    sub_options = {
+        "基础与通用": ["术语词汇","基础试验方法","其他"],
+        "储层改造压前评估": ["储层改造压前评估"],
+        "方案优化设计": ["通用设计规范", "压裂方案及工艺设计", "酸化方案及工艺设计"],
+        "储层改造材料评价":["压裂液材料及评价","酸液材料及评价","支撑剂及评价","暂堵及其他材料"],
+        "装备及工具":["压裂酸化装备","压裂酸化工具"],
+        "现场施工及控制":["操作规范","质量控制","健康安全与环保"],
+        "测试与压后评估分析":["裂缝监测","返排测试","评估分析"]
+    }
+
+    secondary = st.sidebar.selectbox(
+        "**请选择二级门类**",
+        sub_options[primary]
+    )
+    #st.sidebar.button('标准体系查询')
 
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
@@ -121,7 +142,10 @@ with placeholder.container(border=True):
         elif submit_type == 'tiaokuan':
             display_tiaokuan_query_list(st.session_state.search_term)
         elif submit_type == 'tixi':
-            display_tixi_query_list(st.session_state.search_term)
+            st.session_state.primary=primary
+            st.session_state.secondary=secondary
+            #display_tixi_query_list(st.session_state.search_term,primary,secondary)
+            display_tixi_query_list2(primary,secondary)
         elif submit_type == 'shuyu':
             display_glossary_query_list(st.session_state.search_term)
         elif submit_type == 'zhibiao':
