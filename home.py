@@ -184,7 +184,17 @@ with placeholder.container(border=True):
         # 显示目次信息
         with t2:
             display_standard_info(standard_code,standard_name)
-            display_standard_structure(standard_code)
+            t21,t22=t2.columns([4,6])
+            with t21.container(border=True):
+                display_standard_structure(standard_code)
+            with t22.container(border=True):
+                if 'chapter' in st.session_state and 'chapter_content' in st.session_state:
+                    if st.session_state.chapter in st.session_state.chapter_content:
+                        content_arr=st.session_state.chapter_content[st.session_state.chapter]
+                        head=content_arr[0]
+                        st.markdown(head)
+                        for content in content_arr[1:]:
+                            st.markdown(content)
         #st.markdown("---")
 
         #引用文件

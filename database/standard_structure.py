@@ -19,10 +19,10 @@ CREATE TABLE IF NOT EXISTS standard_structure (
     standard_code TEXT NOT NULL,
     start_page TEXT NOT NULL,
     title_order INTEGER NOT NULL DEFAULT 0,
-    chapter_level TEXT NULL,
-    chapter_number TEXT  NULL,
-    title_content TEXT  NULL,
-    page_number TEXT  NULL
+    chapter_level TEXT NOT NULL DEFAULT '0',
+    chapter_number TEXT  NOT NULL DEFAULT '',
+    title_content TEXT  NOT NULL DEFAULT '',
+    page_number TEXT  NOT NULL DEFAULT '-1'
 );
 """
 insert_standard_structure_sql="""
@@ -78,16 +78,24 @@ class StandardStructure:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-    def detail_to_markdown(self,standard_code:str):
+
+    def extract_title(self,item):
+        if  not item['chapter_level'] or not item['chapter_number']  or not item['title_content']:
+            item['chapter_level']='0'
+            item['chapter_number']=""
+            item['title_content']=""
+        return "&nbsp;&nbsp;&nbsp;&nbsp;"*int(float(item['chapter_level'].strip()))+" "+item['chapter_number']+" "+item['title_content']
+    
+
+    def title_list(self,standard_code:str):
         data=self.detail(standard_code)
-        content=""
-        for item in data:
-            if  not item['chapter_level'] or not item['chapter_number']  or not item['title_content']:
-                item['chapter_level']='0'
-                item['chapter_number']=""
-                item['title_content']=""
-            content+="&nbsp;&nbsp;&nbsp;&nbsp;"*int(float(item['chapter_level'].strip()))+" "+item['chapter_number']+" "+item['title_content']+"\n\n"
-        return content
+        titles = {item['chapter_number']:item['title_content'] for item  in data if item['chapter_number']!=''}
+        return titles
+    
+    def detail_to_markdown(self,standard_code:str):
+        chapter_title=self.title_list(standard_code)
+
+        return "\n\n".join([len(chapter.split("."))*"&nbsp;&nbsp;&nbsp;&nbsp;"+chapter+" "+title for chapter,title in chapter_title.items() if '3' not in chapter] )
 
     def create_table(self):
         c = self.conn.cursor()
@@ -133,7 +141,9 @@ class StandardStructure:
         #conn.close()
     
     def load_from_excel(self,file_path:str):
-        df = pd.read_excel(file_path, engine='openpyxl',header=0).fillna('')
+        xls = pd.ExcelFile(file_path, engine="openpyxl")
+        cols = xls.parse(0, nrows=0).columns.tolist()
+        df = pd.read_excel(xls, engine='openpyxl',header=0).fillna("")
         self.batch_insert(df)
 
 @st.cache_resource

@@ -2,6 +2,8 @@ import streamlit as st
 from st_pages import add_page_title, get_nav_from_toml, hide_pages
 #from streamlit_extras.app_logo import add_logo
 #add_logo("images/image19.png")  # 支持本地文件，也支持 URL
+
+#向上移动
 st.markdown(
     """
     <style>
@@ -14,6 +16,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 st.set_page_config(layout="wide")
 
