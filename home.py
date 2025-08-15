@@ -102,7 +102,9 @@ with st.form('standard_search_form'):
         "**请选择二级门类**",
         sub_options[primary]
     )
-    #st.sidebar.button('标准体系查询')
+    
+
+
 
     col1,col2,col3=st.columns([0.4,0.2,0.2])
     #col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
@@ -164,7 +166,7 @@ with placeholder.container(border=True):
         level1_code_data=standard_db.query_category_level1_code(standard_code)
         if level1_code_data is not None and level1_code_data[0] == '104':
             level1_code=level1_code_data[0]
-            product_or_craft_tab_name='产品标准'
+            product_or_craft_tab_name='相关产品'
             st.session_state.pc_type='product'
         elif level1_code_data is not None and level1_code_data[0] in ['103','106','107']:
             product_or_craft_tab_name='工业标准'

@@ -17,20 +17,27 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+home_page =st.Page("home.py", title="首页", icon="🏠")
+load_data_page = st.Page("pages/load_data.py", title="加载数据", icon="📂")
+
+pg = st.navigation([home_page,load_data_page,])
+#https://docs.streamlit.io/develop/tutorials/multipage/dynamic-navigation
 
 st.set_page_config(layout="wide")
+
+pg.run()
 
 # If you want to use the no-sections version, this
 # defaults to looking in .streamlit/pages.toml, so you can
 # just call `get_nav_from_toml()`
-nav = get_nav_from_toml(".streamlit/pages.toml")
+#nav = get_nav_from_toml(".streamlit/pages.toml")
 #hide_pages(["加载数据"])
 
 #st.logo("images/image18.png",size='large')
 
-pg = st.navigation(nav)
+#pg = st.navigation(nav)
 
 #add_page_title(pg)
 
 
-pg.run()
+#pg.run()
