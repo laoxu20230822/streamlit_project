@@ -52,6 +52,7 @@ def display_standard_query_list():
     grid_response = AgGrid(
         df, 
         gridOptions=grid_options,
+        height=300
         #key='asdjflasdjkfl'
         )
     selected_rows=grid_response['selected_rows']

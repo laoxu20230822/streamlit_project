@@ -29,6 +29,9 @@ from view.display_tixi_query_list import display_tixi_query_list
 from view.display_tixi_query_list import display_tixi_query_list2
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+
+
+    
 st.markdown(f"""
         <style>
         p {{
@@ -60,6 +63,7 @@ with st.container():
     st.markdown(f"""<div><h3 style='text-align: center; color: blue;'>储层改造标准知识服务系统</h3></div>""", unsafe_allow_html=True)
 
 #查询表单
+
 
 
 with st.form('standard_search_form'):
@@ -98,9 +102,16 @@ with st.form('standard_search_form'):
         "测试与压后评估分析":["裂缝监测","返排测试","评估分析"]
     }
 
+
+    def onchange():
+        st.write("11111")
+        st.session_state.submit_type='tixi'
+        st.session_state.search_term=st.session_state.standard_term
+        if 'selected_rows' in st.session_state:
+            del st.session_state['selected_rows']
     secondary = st.sidebar.selectbox(
         "**请选择二级门类**",
-        sub_options[primary]
+        sub_options[primary],on_change=onchange
     )
     
 
