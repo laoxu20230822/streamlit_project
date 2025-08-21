@@ -13,7 +13,7 @@ from database.page import Pageable
 from database.standard_index import StandardIndex
 from database.standard_structure import StandardStructure
 from st_aggrid import AgGrid, GridOptionsBuilder
-
+from database.standard_index import init_standard_index_db
 from view.display_standard_glossary import display_standard_glossary
 from view.display_standard_references import display_standard_references
 from view.display_standard_detail import display_standard_detail
@@ -104,7 +104,6 @@ with st.form('standard_search_form'):
 
 
     def onchange():
-        st.write("11111")
         st.session_state.submit_type='tixi'
         st.session_state.search_term=st.session_state.standard_term
         if 'selected_rows' in st.session_state:
@@ -143,6 +142,36 @@ def display_standard_info(standard_code,standard_name):
     # >#### {standard_name}
     # """)
 
+def get_chapter_content(data_list, selected_chapter):
+    # 初始化结果列表
+    result = []
+    # 遍历数据列表
+    for item in data_list:
+        chapter = item["min_chapter_code"]
+        # 检查当前章节是否是选定章节或其子章节
+        # 条件1：完全匹配（当前章节）
+        # 条件2：以选定章节+点开头（子章节）
+        if chapter == selected_chapter or chapter.startswith(f"{selected_chapter}."):
+            result.append(item['standard_content'])
+    
+    return result
+
+def display_standard_cotent(standard_code:str):
+    standard_db=init_standard_db()
+    standard_detail=standard_db.standard_detail(standard_code)
+    t21,t22=t2.columns([4,6])
+    with t21.container(border=True,height=400):
+        display_standard_structure(standard_code)
+    with t22.container(border=True,height=400):
+        if 'chapter' in st.session_state and 'chapter_content' in st.session_state:
+            contents=get_chapter_content(standard_detail, st.session_state.chapter)
+            st.markdown('\n\n'.join(contents))
+            # if st.session_state.chapter in st.session_state.chapter_content:
+            #     content_arr=st.session_state.chapter_content[st.session_state.chapter]
+            #     head=content_arr[0]
+            #     st.markdown(head)
+            #     for content in content_arr[1:]:
+            #         st.markdown(content)
 #列表展示
 placeholder=st.empty()
 with placeholder.container(border=True):
@@ -196,18 +225,9 @@ with placeholder.container(border=True):
         
         # 显示目次信息
         with t2:
+            
             display_standard_info(standard_code,standard_name)
-            t21,t22=t2.columns([4,6])
-            with t21.container(border=True):
-                display_standard_structure(standard_code)
-            with t22.container(border=True):
-                if 'chapter' in st.session_state and 'chapter_content' in st.session_state:
-                    if st.session_state.chapter in st.session_state.chapter_content:
-                        content_arr=st.session_state.chapter_content[st.session_state.chapter]
-                        head=content_arr[0]
-                        st.markdown(head)
-                        for content in content_arr[1:]:
-                            st.markdown(content)
+            display_standard_cotent(standard_code)
         #st.markdown("---")
 
         #引用文件

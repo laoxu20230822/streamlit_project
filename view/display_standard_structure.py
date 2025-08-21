@@ -15,6 +15,7 @@ if 'chapter' in st.session_state:
 def handle_click(**kwargs):
     st.session_state.chapter=kwargs['chapter']
 
+
 def display_standard_structure(standard_code:str):
 
     standard_structure=init_standard_structure_db()
@@ -23,7 +24,8 @@ def display_standard_structure(standard_code:str):
     def group_by_key(arr,key):
         return {k: [d['standard_content'] for d in arr if d[key] == k] for k in set(item[key] for item in arr)}
     chapter_content=group_by_key(standard_detail,'min_chapter_code')
-    
+    ##在这里处理chapter_content即可，是一个数组
+
     st.session_state.chapter_content=chapter_content
     chapter_title=standard_structure.title_list(standard_code)
     def display_title(chapter:str,title:str,key:str):
