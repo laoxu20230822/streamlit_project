@@ -110,22 +110,22 @@ class Metric:
         c.execute("DROP TABLE IF EXISTS metrics")
         self.conn.commit()
 
-    def list_standard_code_by_search_term(self,search_term:str):
-        c = self.conn.cursor()
-        SELECT_SQL=f"""
-        select standard_code from metrics where
-        indicator_item like '%{search_term}%' or
-        product_category like '%{search_term}%' or
-        product_name like '%{search_term}%' or
-        table_header_product_name like '%{search_term}%' or
-        primary_project like '%{search_term}%' or
-        secondary_project like '%{search_term}%' group by standard_code
-        """
-        c.execute(SELECT_SQL)
+    # def list_standard_code_by_search_term(self,search_term:str):
+    #     c = self.conn.cursor()
+    #     SELECT_SQL=f"""
+    #     select standard_code from metrics where
+    #     indicator_item like '%{search_term}%' or
+    #     product_category like '%{search_term}%' or
+    #     product_name like '%{search_term}%' or
+    #     table_header_product_name like '%{search_term}%' or
+    #     primary_project like '%{search_term}%' or
+    #     secondary_project like '%{search_term}%' group by standard_code
+    #     """
+    #     c.execute(SELECT_SQL)
         
-        columns = [col[0] for col in c.description]
-        data = [dict(zip(columns, row)) for row in c.fetchall()]
-        return data
+    #     columns = [col[0] for col in c.description]
+    #     data = [dict(zip(columns, row)) for row in c.fetchall()]
+    #     return data
     
     def list_by_search_term(self,search_term:str):
         c = self.conn.cursor()

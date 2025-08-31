@@ -92,10 +92,10 @@ class StandardStructure:
         titles = {item['chapter_number']:item['title_content'] for item  in data if item['chapter_number']!=''}
         return titles
     
-    def detail_to_markdown(self,standard_code:str):
-        chapter_title=self.title_list(standard_code)
+    # def detail_to_markdown(self,standard_code:str):
+    #     chapter_title=self.title_list(standard_code)
 
-        return "\n\n".join([len(chapter.split("."))*"&nbsp;&nbsp;&nbsp;&nbsp;"+chapter+" "+title for chapter,title in chapter_title.items() if '3' not in chapter] )
+    #     return "\n\n".join([len(chapter.split("."))*"&nbsp;&nbsp;&nbsp;&nbsp;"+chapter+" "+title for chapter,title in chapter_title.items() if '3' not in chapter] )
 
     def create_table(self):
         c = self.conn.cursor()

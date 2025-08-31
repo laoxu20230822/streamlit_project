@@ -23,9 +23,9 @@ from view.display_standard_structure import display_standard_structure
 from view.display_tiaokuan_query_list import display_tiaokuan_query_list
 from view.display_glossary_query_list import display_glossary_query_list
 from view.display_metric_query_list import display_metric_query_list
-from view.display_method_query_list import display_method_query_list
 from view.display_tixi_query_list import display_tixi_query_list
 from view.display_tixi_query_list import display_tixi_query_list2
+from view.display_method_query_list import display_method_query_list_new
 from base64 import b64encode
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -284,7 +284,8 @@ with placeholder.container(border=True):
         elif submit_type == "zhibiao":
             display_metric_query_list(st.session_state.search_term)
         elif submit_type == "canshu":
-            display_method_query_list(st.session_state.search_term)
+            #display_method_query_list(st.session_state.search_term)
+            display_method_query_list_new(st.session_state.search_term)   
         else:
             print("")
 

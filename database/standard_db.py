@@ -303,21 +303,21 @@ class StandardDB:
     ##performance_indicator_level2 TEXT,  -- 性能指标二级
     ## method_name TEXT,  -- 方法名称
     ## method2
-    def standard_detail_by_method_query(self,standard_code:str,search_term:str):
-        SELECT_STATEMENT=f"""
-        select * from standard_system where 
-        standard_code='{standard_code}' and 
-        (method_name like '%{search_term}%' or 
-        method2 like '%{search_term}%' or 
-        performance_indicator_level1 like '%{search_term}%' or 
-        performance_indicator_level2 like '%{search_term}%'
-         )  order by serial_number asc
-        """
-        c = self.conn.cursor()
-        c.execute(SELECT_STATEMENT)
-        columns = [col[0] for col in c.description]
-        data = [dict(zip(columns, row)) for row in c.fetchall()]
-        return data
+    # def standard_detail_by_method_query(self,standard_code:str,search_term:str):
+    #     SELECT_STATEMENT=f"""
+    #     select * from standard_system where 
+    #     standard_code='{standard_code}' and 
+    #     (method_name like '%{search_term}%' or 
+    #     method2 like '%{search_term}%' or 
+    #     performance_indicator_level1 like '%{search_term}%' or 
+    #     performance_indicator_level2 like '%{search_term}%'
+    #      )  order by serial_number asc
+    #     """
+    #     c = self.conn.cursor()
+    #     c.execute(SELECT_STATEMENT)
+    #     columns = [col[0] for col in c.description]
+    #     data = [dict(zip(columns, row)) for row in c.fetchall()]
+    #     return data
         
     def product_list(self,standard_code:str):
         SELECT_STATEMENT=f"""
@@ -426,6 +426,18 @@ class StandardDB:
             total_page+=1
         return PageResult(data,total_page,pageable)
     
+    def query_by_stimulation_business_level2(self,search_term:str=''):
+        sql = f"""
+SELECT standard_code, standard_name, standard_content, stimulation_business_level2
+FROM standard_system where stimulation_business_level2 in ('方法提要','试验步骤','试验数据处理','仪器设备、试剂或材料') 
+and (method1 like '%{search_term}%' or method2 like '%{search_term}%' or method_name like '%{search_term}%')
+"""
+        c = self.conn.cursor()
+        c.execute(sql)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
+
     def query_by_metrics(self,metric:str,standard_code:str):
         c = self.conn.cursor()
     #      performance_indicator_level1 TEXT,  -- 性能指标一级
