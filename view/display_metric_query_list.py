@@ -141,7 +141,7 @@ def display_metric_query_list(search_term: str):
             # {"field": "table_name", "headerName": "表名称"},
             # {"field": "product_name", "headerName": "产品名称"},
             {"field": "indicator_item", "headerName": "指标项","hide":True},
-            {"field": "standard_info", "headerName": "标准信息","wrapText": True, "autoHeight": True,"width":300},
+            {"field": "standard_info", "headerName": "标准来源","wrapText": True, "autoHeight": True,"width":300},
             # {"field": "primary_project", "headerName": "一级项目名称"},
             # {"field": "secondary_project", "headerName": "二级项目名称"},
             # {"field": "remarks", "headerName": "备注"},
