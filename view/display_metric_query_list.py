@@ -1,11 +1,13 @@
+from gc import disable
 import streamlit as st
 import pandas as pd
 from database.metric import init_metric_db
 from database.standard_index import StandardIndex
 from database.standard_db import Pageable, StandardDB
 from database.standard_db import WhereCause
-from st_aggrid import AgGrid
+from st_aggrid import AgGrid,JsCode
 from database.standard_structure import StandardStructure
+from view.display_standard_tab_info import display_standard_tab_info
 
 
 def display_details(data: list[dict]):
@@ -63,7 +65,7 @@ def display_details(data: list[dict]):
         # key='asdjflasdjkfl'
     )
     selected_rows = grid_response["selected_rows"]
-
+    
     # if selected_rows is not None:
     #    standard_content= [row['standard_content'] for _, row in selected_rows.iterrows()][0]
     #    st.container(border=True).markdown(standard_content)
@@ -87,42 +89,70 @@ def display_metric_query_list(search_term: str):
     df = pd.DataFrame(
         data if data else [],
         columns={
-            "standard_code": "标准号",
-            "table_code": "表编号",
-            "table_name": "表名称",
+            "product_category": "产品类别",
             "product_name": "产品名称",
-            "indicator_item": "指标项",
-            "primary_project": "一级项目名称",
-            "secondary_project": "二级项目名称",
+            "project": "检测项目",
             "unit": "单位",
-            "experimental_condition": "实验条件",
             "indicator_requirement": "指标要求",
-            "remarks": "备注",
+            "experimental_condition": "实验条件",
             "table_footnote": "表脚注",
+            "standard_code": "标准号",
+            "standard_name": "标准名称",
+            # "table_code": "表编号",
+            # "table_name": "表名称",
+            "indicator_item": "指标项",
+            # "primary_project": "一级项目名称",
+            # "secondary_project": "二级项目名称",
+            # "remarks": "备注",
         },
+    
     )
+    df.insert(0, 'seq', range(1, len(df) + 1))
+    df["standard_info"] = df["standard_code"] + " " + df["standard_name"] + ""
+    cell_renderer_for_name = JsCode("""
+        class NameRenderer {
+            init(params) {
+            this.eGui = document.createElement('div');
+            this.eGui.innerText = params.value;
+            this.eGui.style.fontWeight = 'bold';
+            this.eGui.style.color = 'blue';
+            }
+            getGui() {
+                console.log(this.eGui);
+                return this.eGui;
+            }
+        }
+    """)
     grid_options = {
         "suppressNoRowsOverlay": True,
         "columnDefs": [
-            {"field": "standard_code", "headerName": "标准号"},
-            {"field": "table_code", "headerName": "表编号"},
-            {"field": "table_name", "headerName": "表名称"},
-            {"field": "product_name", "headerName": "产品名称"},
-            {"field": "indicator_item", "headerName": "指标项"},
-            {"field": "primary_project", "headerName": "一级项目名称"},
-            {"field": "secondary_project", "headerName": "二级项目名称"},
-            {"field": "unit", "headerName": "单位"},
-            {"field": "experimental_condition", "headerName": "实验条件"},
-            {"field": "indicator_requirement", "headerName": "指标要求"},
-            {"field": "remarks", "headerName": "备注"},
-            {"field": "table_footnote", "headerName": "表脚注"},
+            {"field": "seq", "headerName": "序号","width":50},
+            {"field": "product_category", "headerName": "产品类别","width":100},
+            {"field": "product_name", "headerName": "产品名称","width":120},
+            {"field": "project", "headerName": "检测项目","width":120,
+            "cellRenderer": cell_renderer_for_name},
+            {"field": "unit", "headerName": "单位","width":60},
+            {"field": "indicator_requirement", "headerName": "指标要求","width":100},
+            {"field": "experimental_condition", "headerName": "实验条件","width":150},
+            {"field": "table_footnote", "headerName": "表脚注","autoHeight":True,"width":200,"wrapText": True},
+            {"field": "standard_code", "headerName": "标准号","hide":True},
+            {"field": "standard_name", "headerName": "标准名称","hide":True},
+            # {"field": "table_code", "headerName": "表编号"},
+            # {"field": "table_name", "headerName": "表名称"},
+            # {"field": "product_name", "headerName": "产品名称"},
+            {"field": "indicator_item", "headerName": "指标项","hide":True},
+            {"field": "standard_info", "headerName": "标准信息","wrapText": True, "autoHeight": True,"width":300},
+            # {"field": "primary_project", "headerName": "一级项目名称"},
+            # {"field": "secondary_project", "headerName": "二级项目名称"},
+            # {"field": "remarks", "headerName": "备注"},
         ],
         "rowSelection": {
             "mode": "singleRow",
             "checkboxes": False,
             "enableClickSelection": True,
         },
-        "autoSizeStrategy": {"type": "fitCellContents"},
+        "autoSizeStrategy": {"type": "fitGridWidth"},
+        # "autoSizeStrategy": {"type": "fitCellContents"},
         "pagination": True,
         # "paginationAutoPageSize": True,
         "paginationPageSize": 50,
@@ -131,21 +161,25 @@ def display_metric_query_list(search_term: str):
         df,
         gridOptions=grid_options,
         height=300,
+        allow_unsafe_jscode=True,
         # key='asdjflasdjkfl'
     )
     selected_rows = grid_response["selected_rows"]
     #  if selected_rows is not None:
     # st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
+    # if selected_rows is not None:
+    #     metric_term = [row["indicator_item"] for _, row in selected_rows.iterrows()][0]
+    #     standard_code = [row["standard_code"] for _, row in selected_rows.iterrows()][0]
+    #     standard_db = StandardDB()
+    #     metrics_for_standard = standard_db.query_by_metrics(metric_term, standard_code)
+    #     # display_details(metrics_for_standard)
+
+    #     filtered_df = df[df["standard_code"] == standard_code]
+    #     display_details_new(standard_code, filtered_df)
     if selected_rows is not None:
-        metric_term = [row["indicator_item"] for _, row in selected_rows.iterrows()][0]
-        standard_code = [row["standard_code"] for _, row in selected_rows.iterrows()][0]
-        standard_db = StandardDB()
-        metrics_for_standard = standard_db.query_by_metrics(metric_term, standard_code)
-        # display_details(metrics_for_standard)
-
-        filtered_df = df[df["standard_code"] == standard_code]
-        display_details_new(standard_code, filtered_df)
-
+        st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
+    if "selected_rows" in st.session_state:
+        display_standard_tab_info()
 
 def display_details_new(standard_code: str, df: pd.DataFrame):
     # 获取标准号，标准名称，标准内容（目前在02标准中没有产品名称无法进行过滤）
@@ -217,16 +251,17 @@ def show_metric_grid(df: pd.DataFrame, tab_index: int):
     grid_options = {
         "suppressNoRowsOverlay": True,
         "columnDefs": [
-            {"field": "table_code", "headerName": "表编号"},
-            {"field": "table_name", "headerName": "表名称"},
+            # {"field": "table_code", "headerName": "表编号"},
+            # {"field": "table_name", "headerName": "表名称"},
+            {"field": "product_category", "headerName": "产品类别"},
             {"field": "product_name", "headerName": "产品名称"},
-            {"field": "indicator_item", "headerName": "指标项"},
-            {"field": "primary_project", "headerName": "一级项目名称"},
-            {"field": "secondary_project", "headerName": "二级项目名称"},
+            # {"field": "indicator_item", "headerName": "指标项"},
+            # {"field": "primary_project", "headerName": "一级项目名称"},
+            # {"field": "secondary_project", "headerName": "二级项目名称"},
             {"field": "unit", "headerName": "单位"},
             {"field": "experimental_condition", "headerName": "实验条件"},
             {"field": "indicator_requirement", "headerName": "指标要求"},
-            {"field": "remarks", "headerName": "备注"},
+            # {"field": "remarks", "headerName": "备注"},
             {"field": "table_footnote", "headerName": "表脚注"},
         ],
         "rowSelection": {

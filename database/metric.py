@@ -130,7 +130,10 @@ class Metric:
     def list_by_search_term(self,search_term:str):
         c = self.conn.cursor()
         SELECT_SQL=f"""
-        select * from metrics where
+        SELECT m.*, i.standard_name 
+        FROM metrics m 
+        LEFT JOIN standard_index i ON m.standard_code = i.standard_code
+        where
         indicator_item like '%{search_term}%' or
         product_category like '%{search_term}%' or
         product_name like '%{search_term}%' or
