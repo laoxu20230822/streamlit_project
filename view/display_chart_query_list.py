@@ -46,7 +46,7 @@ def show_grid(data):
     df["standard_info"] = df["standard_code"] + " " + df["standard_name"] + ""
     
     #使用下划线
-    df["image_file_name"]="Q_SY 01017-2018岩石物理分析成果数据存储文件结构"
+    #df["image_file_name"]="Q_SY 01017-2018岩石物理分析成果数据存储文件结构"
     df["image_info"] = "/app/static/" + df["image_file_name"].str.replace("/", "_") + ".png"
     grid_options = {
         "suppressNoRowsOverlay": True,
