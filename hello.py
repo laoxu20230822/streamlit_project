@@ -7,10 +7,26 @@ from st_pages import add_page_title, get_nav_from_toml, hide_pages
 st.markdown(
     """
     <style>
-      /* 针对 data-testid="stMainBlockContainer" 的容器，覆盖它的上内边距 */
+      /* 隐藏顶部的header空白区域 */
+      [data-testid="stHeader"] {
+        display: none;
+      }
+      
+      /* 减少主容器的顶部内边距 */
       [data-testid="stMainBlockContainer"] {
-        padding-top: 1.1rem;    /* 默认可能是 2rem 左右，你可以根据需要调小 */
-        margin-top: 0;          /* 如果还有外边距，也可以同时清零 */
+        padding-top: 0rem !important;
+        margin-top: -2rem !important;
+      }
+      
+      /* 减少应用容器的顶部内边距 */
+      [data-testid="stAppViewContainer"] {
+        padding-top: 0rem !important;
+      }
+      
+      /* 调整顶部工具栏位置 */
+      [data-testid="stToolbar"] {
+        top: 0rem !important;
+        right: 0.5rem !important;
       }
     </style>
     """,

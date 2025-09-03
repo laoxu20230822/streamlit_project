@@ -60,7 +60,7 @@ if "search_term" not in st.session_state:
 # 标题
 with st.container():
     st.markdown(
-        f"""<div><h3 style='text-align: center; color: blue;'>储层改造标准知识服务系统</h3></div>""",
+        f"""<div><h2 style='text-align: center; color: blue; margin-top: 0rem; margin-bottom: 1rem; padding-top: 0.5rem;'>储层改造标准知识服务系统</h2></div>""",
         unsafe_allow_html=True,
     )
 
