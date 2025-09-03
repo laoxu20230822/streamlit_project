@@ -26,6 +26,7 @@ from view.display_metric_query_list import display_metric_query_list
 from view.display_tixi_query_list import display_tixi_query_list
 from view.display_tixi_query_list import display_tixi_query_list2
 from view.display_method_query_list import display_method_query_list_new
+from view.display_chart_query_list import display_chart_query_list
 from base64 import b64encode
 from view.showimg import showimg
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -129,7 +130,7 @@ with st.form("standard_search_form"):
         "**请选择二级门类**", sub_options[primary], on_change=onchange
     )
 
-    col1, col2, col3 = st.columns([0.4, 0.2, 0.2])
+    col1, col2, col3, col4 = st.columns([0.2, 0.2, 0.2, 0.2])
     # col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
     search_term = col1.text_input(
         "标准名称",
@@ -160,6 +161,19 @@ with st.form("standard_search_form"):
             "primary"
             if "submit_type" in st.session_state
             and st.session_state.submit_type == "tiaokuan"
+            else "secondary"
+        ),
+    )
+
+    chart_submit= col4.form_submit_button(
+        "图-表-公式查询",
+        use_container_width=True,
+        kwargs={"submit_type": "chart"},
+        on_click=button_submit,
+        type=(
+            "primary"
+            if "submit_type" in st.session_state
+            and st.session_state.submit_type == "chart"
             else "secondary"
         ),
     )
@@ -287,6 +301,8 @@ with placeholder.container(border=True):
         elif submit_type == "canshu":
             #display_method_query_list(st.session_state.search_term)
             display_method_query_list_new(st.session_state.search_term)   
+        elif submit_type == "chart":
+            display_chart_query_list(st.session_state.search_term)
         else:
             print("")
 

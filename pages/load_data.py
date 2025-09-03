@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from database.chart import init_standard_chart_db
 from database.standard_db import init_standard_db
 from database.standard_index import init_standard_index_db
 from database.standard_structure import init_standard_structure_db
@@ -174,8 +175,29 @@ def fragment_structure():
                 container_structure.success('文件上传成功！')
             except Exception as e:
                 container_structure.error(f"文件解析失败: {str(e)}")
+@st.fragment
+def fragment_11():
+    container_chart=st.container(border=True)
+    with container_chart:
+        # 11-图片（图-表-公式）索引
+        file=st.file_uploader(
+            "11-图片（图-表-公式）索引",
+            type=['xlsx'],
+            help="支持.xlsx格式文件",
+            key='uploaded_file_standard_chart',
+        )
+        if file is not None:
+            try:
+                # 读取Excel数据
+                db=init_standard_chart_db()
+                db.drop()
+                db.create_table()
+                db.load_from_excel(file)
+                container_chart.success('文件上传成功！')
+            except Exception as e:
+                container_chart.error(f"文件解析失败: {str(e)}")
         
-
+st.markdown("---")
 fragment_00()
 fragment_01()
 fragment_02()
@@ -183,3 +205,4 @@ fragment_05()
 fragment_06()
 fragment_13()
 fragment_structure()
+fragment_11()
