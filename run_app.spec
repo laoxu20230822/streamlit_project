@@ -26,6 +26,7 @@ a = Analysis(
         ('hooks', 'hooks'),
         ('images', 'images'),
         ('pages', 'pages'),
+        ('static', 'static'),
         ('view', 'view'),
 
         # --- 你的应用根目录文件 ---
