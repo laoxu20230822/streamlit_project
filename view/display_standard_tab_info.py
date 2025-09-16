@@ -76,6 +76,7 @@ def display_standard_tab_info():
             product_or_craft_tab_name = "工业标准"
             st.session_state.pc_type = "craft"
         else:
+            product_or_craft_tab_name = "其他"
             st.session_state.pc_type = "other"
         t1, t2, t3, t4, t5 = st.tabs(
             [
