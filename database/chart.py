@@ -74,7 +74,7 @@ class StandardChart:
         SQL=f"""
         select c.*,i.standard_name from standard_chart c
         LEFT JOIN standard_index i ON c.standard_code = i.standard_code
-        where c.image_type like '%{image_type}%'
+        where c.image_type like '%{image_type}%' and (c.in_text_name like '%{search_term}%' or c.image_file_name like '%{search_term}%')
         """
         c.execute(
             SQL

@@ -99,19 +99,21 @@ def display_chart_query_list(search_term:str):
         selected_rows=grid_response['selected_rows']
         if selected_rows is not None:
             st.session_state.selected_rows=[{'image_info_path':row['image_info_path']} for _, row in selected_rows.iterrows()]
+            show_chart()
     with t2:
         data=standard_chart.list_all('表格',search_term)
         grid_response=show_grid(data,'table')
         selected_rows=grid_response['selected_rows']
         if selected_rows is not None:
             st.session_state.selected_rows=[{'image_info_path':row['image_info_path']} for _, row in selected_rows.iterrows()]
+            show_chart()
     with t3:
         data=standard_chart.list_all('公式',search_term)
         grid_response=show_grid(data,'formula')
         selected_rows=grid_response['selected_rows']
         if selected_rows is not None:
             st.session_state.selected_rows=[{'image_info_path':row['image_info_path']} for _, row in selected_rows.iterrows()]
-    show_chart()
+            show_chart()
     
     # df=pd.DataFrame(data if data else [],columns={
     #         'standard_code': '标准号',
