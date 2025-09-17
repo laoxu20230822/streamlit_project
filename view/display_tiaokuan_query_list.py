@@ -7,7 +7,7 @@ from database.standard_db import WhereCause
 from st_aggrid import AgGrid
 
 
-def display_grid(data:list[dict]):
+def display_grid(data:list[dict],key:str):
     df=pd.DataFrame(data if data else [],columns={
         'standard_code': '标准号',
         'standard_name': '标准名称',
@@ -39,7 +39,7 @@ def display_grid(data:list[dict]):
         df, 
         gridOptions=grid_options,
         height=300,
-        #key='asdjflasdjkfl'
+        key=key
         )
     selected_rows=grid_response['selected_rows']
     if selected_rows is not None:
@@ -60,7 +60,7 @@ def display_tiaokuan_query_list(search_term:str):
         with st.container(border=True):
             st.markdown(label)
             data=standard_db.standard_detail(row['standard_code'])
-            grid_response=display_grid(data)
+            grid_response=display_grid(data,key=f"grid_{label}")
             
 
 
