@@ -21,6 +21,7 @@ def display_tixi_query_list2(primary:str,secondary:str):
             'scope':"适用范围"
         })
     grid_options = {
+        "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         'columnDefs': [
         { 'field': "standard_code", 'headerName': "标准号"},

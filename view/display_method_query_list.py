@@ -92,6 +92,7 @@ def display_method_query_list_new(search_term:str):
     
     
     grid_options = {
+        "enableCellTextSelection": True,
             'suppressNoRowsOverlay': True,
             'columnDefs': [
             { 'field': "standard_code", 'headerName': "标准号",'width':120},

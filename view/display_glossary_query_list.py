@@ -18,6 +18,7 @@ def display_grid(data:list[dict]):
     })
 
     grid_options = {
+        "enableCellTextSelection": True,
          'suppressNoRowsOverlay': True,
         'columnDefs': [
         { 'field': "standard_code", 'headerName': "标准号",'hide':True},
@@ -78,6 +79,7 @@ def display_glossary_query_list(search_term:str):
     })
 
     grid_options = {
+        "enableCellTextSelection": True,
         'suppressNoRowsOverlay': True,
         'columnDefs': [
         { 'field': "term", 'headerName': "术语词条"},

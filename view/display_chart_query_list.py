@@ -51,6 +51,7 @@ def show_grid(data,key:str):
     df["image_info_path"] = "app/static/" + df["image_file_name"].str.replace("/", "_") + ".png"
     df["image_info"] = "/app/static/" + df["image_file_name"].str.replace("/", "_") + ".png"
     grid_options = {
+        "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         'columnDefs': [
         { 'field': "seq", 'headerName': "序号",'width':40,'suppressSizeToFit':True},

@@ -16,6 +16,7 @@ def display_grid(data:list[dict],key:str):
     })
 
     grid_options = {
+        "enableCellTextSelection": True,
         'suppressNoRowsOverlay': True,
         'columnDefs': [
         { 'field': "standard_code", 'headerName': "标准号",'hide':True},

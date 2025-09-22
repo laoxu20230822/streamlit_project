@@ -84,7 +84,10 @@ def display_standard_query_list():
         })
 
     grid_options = {
+        "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
+        ##"cellSelection": True,
+        # "enableRangeSelection": True,
         'columnDefs': [
         { 'field': "standard_code", 'headerName': "标准号"},
         { 'field': "standard_name", 'headerName': "标准名称"},
@@ -93,6 +96,7 @@ def display_standard_query_list():
         { 'field': "release_date", 'headerName': "发布日期"},
         { 'field': "implementation_date", 'headerName': "实施日期"},
     ],
+    # 'copyHeadersToClipboard': True,
     'rowSelection': {
             'mode': 'singleRow',
             'checkboxes': False,
@@ -108,7 +112,8 @@ def display_standard_query_list():
     grid_response = AgGrid(
         df, 
         gridOptions=grid_options,
-        height=300
+        height=300,
+        enable_enterprise_modules=True,
         #key='asdjflasdjkfl'
         )
     selected_rows=grid_response['selected_rows']
