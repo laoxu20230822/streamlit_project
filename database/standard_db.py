@@ -1,5 +1,5 @@
 import os
-
+from utils.utils import build_single_column_search
 from pathlib import Path
 import sqlite3
 
@@ -215,7 +215,49 @@ class WhereCause:
     
     def __init__(self,search_term:str=""):
         self.search_term= search_term
-
+    
+    def to_sql_new(self):
+        sql = " WHERE 1=1 "
+        if self.search_term:
+            # sql += f" AND standard_content like '%{self.search_term}%' "
+            sql += f"""and (
+            {build_single_column_search(self.search_term, "standard_content")}
+             or {build_single_column_search(self.search_term, "performance_indicator_level1")}
+             or {build_single_column_search(self.search_term, "performance_indicator_level2")}
+             or {build_single_column_search(self.search_term, "method_name")}
+             or {build_single_column_search(self.search_term, "sample_preparation")}
+             or {build_single_column_search(self.search_term, "equipment_materials")}
+             or {build_single_column_search(self.search_term, "product_category1")}
+             or {build_single_column_search(self.search_term, "product_category2")}
+             or {build_single_column_search(self.search_term, "product_name")}
+             or {build_single_column_search(self.search_term, "oil_gas_resource_type")}
+             or {build_single_column_search(self.search_term, "product")}
+             or {build_single_column_search(self.search_term, "process1")}
+             or {build_single_column_search(self.search_term, "process2")}
+             or {build_single_column_search(self.search_term, "stimulation_business_level1")}
+             or {build_single_column_search(self.search_term, "stimulation_business_level2")}
+             or {build_single_column_search(self.search_term, "stimulation_business_level3")}
+             or {build_single_column_search(self.search_term, "stimulation_business_level4")}
+             or {build_single_column_search(self.search_term, "stimulation_business_level5")}
+             or {build_single_column_search(self.search_term, "quality_control")}
+             or {build_single_column_search(self.search_term, "hse_requirements")}
+             or {build_single_column_search(self.search_term, "quality_supervision")}
+             or {build_single_column_search(self.search_term, "designer")}
+             or {build_single_column_search(self.search_term, "format_template")}
+             or {build_single_column_search(self.search_term, "parameter_nature")}
+             or {build_single_column_search(self.search_term, "parameter_category")}
+             or {build_single_column_search(self.search_term, "parameter")}
+             or {build_single_column_search(self.search_term, "method1")}
+             or {build_single_column_search(self.search_term, "method2")}
+             or {build_single_column_search(self.search_term, "wellbore_type1")}
+             or {build_single_column_search(self.search_term, "wellbore_type2")}
+             or {build_single_column_search(self.search_term, "process_tech1")}
+             or {build_single_column_search(self.search_term, "process_tech2")}
+             or {build_single_column_search(self.search_term, "process_tech3")}
+             or {build_single_column_search(self.search_term, "offshore")}
+            )
+            """
+        return sql
     def to_sql(self):
         sql = " WHERE 1=1 "
         if self.search_term:
@@ -410,7 +452,7 @@ class StandardDB:
         c = self.conn.cursor()
 
         #build sql???
-        sql=f"SELECT standard_code, standard_name  FROM standard_system {filter.to_sql()} group by standard_code,standard_name"
+        sql=f"SELECT standard_code, standard_name  FROM standard_system {filter.to_sql_new()} group by standard_code,standard_name"
         count_sql=f"select count(1) from ({sql})"
         sql_with_page=f"{sql} {pageable.limit_sql()}"
 
