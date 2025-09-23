@@ -96,7 +96,7 @@ def display_glossary_query_list(search_term:str):
         'columnDefs': [
         { 'field': "term", 'headerName': "术语词条",'width': 150},
         { 'field': "english_term", 'headerName': "术语英文",'width': 150},
-        { 'field': "definition", 'headerName': "术语定义", 'width': 400, 'autoHeight': True, "wrapText": True, 'cellStyle': {
+        { 'field': "definition", 'tooltipField':'definition', 'headerName': "术语定义", 'width': 400, 'autoHeight': True, "wrapText": True, 'cellStyle': {
                     'whiteSpace': 'pre-wrap',  # 保留原始换行符和空格
                     'wordBreak': 'normal'      # 正常的单词换行规则
                 }},
