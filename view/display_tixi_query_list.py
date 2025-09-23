@@ -21,6 +21,12 @@ def display_tixi_query_list2(primary:str,secondary:str):
             'scope':"适用范围"
         })
     grid_options = {
+        "defaultColDef": {
+            "filter": True,           # 开启过滤
+            #"floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,         # 可排序
+            "resizable": True         # 可拖动列宽
+        },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         'columnDefs': [

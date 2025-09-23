@@ -25,6 +25,12 @@ def display_details(data: list[dict]):
     # builder.configure_grid_options(domLayout='normal')  # 允许自动高度
 
     grid_options = {
+        "defaultColDef": {
+            "filter": True,           # 开启过滤
+            #"floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,         # 可排序
+            "resizable": True         # 可拖动列宽
+        },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         "columnDefs": [
@@ -125,6 +131,12 @@ def display_metric_query_list(search_term: str):
         }
     """)
     grid_options = {
+        "defaultColDef": {
+            "filter": True,           # 开启过滤
+            #"floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,         # 可排序
+            "resizable": True         # 可拖动列宽
+        },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         "columnDefs": [
@@ -251,6 +263,12 @@ def show_content(df: pd.DataFrame):
 # 选择一个标准号之后，显示该标准号下的所有指标，需要按照产品名称进行过滤
 def show_metric_grid(df: pd.DataFrame, tab_index: int):
     grid_options = {
+        "defaultColDef": {
+            "filter": True,           # 开启过滤
+            #"floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,         # 可排序
+            "resizable": True         # 可拖动列宽
+        },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         "columnDefs": [

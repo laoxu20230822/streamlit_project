@@ -90,10 +90,22 @@ def display_standard_query_list():
     )
 
     grid_options = {
+        "defaultColDef": {
+            "filter": True,           # 开启过滤
+            #"floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,         # 可排序
+            "resizable": True         # 可拖动列宽
+        },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         ##"cellSelection": True,
         # "enableRangeSelection": True,
+        "defaultColDef": {
+            "filter": True,           # 开启过滤
+            #"floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,         # 可排序
+            "resizable": True         # 可拖动列宽
+        },
         "columnDefs": [
             {"field": "standard_code", "headerName": "标准号"},
             {"field": "standard_name", "headerName": "标准名称"},

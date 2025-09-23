@@ -18,6 +18,12 @@ def display_grid(data:list[dict]):
     })
 
     grid_options = {
+        "defaultColDef": {
+            "filter": True,           # 开启过滤
+            #"floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,         # 可排序
+            "resizable": True         # 可拖动列宽
+        },
         "enableCellTextSelection": True,
          'suppressNoRowsOverlay': True,
         'columnDefs': [
@@ -79,6 +85,12 @@ def display_glossary_query_list(search_term:str):
     })
 
     grid_options = {
+        "defaultColDef": {
+            "filter": True,           # 开启过滤
+            #"floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,         # 可排序
+            "resizable": True         # 可拖动列宽
+        },
         "enableCellTextSelection": True,
         'suppressNoRowsOverlay': True,
         'columnDefs': [

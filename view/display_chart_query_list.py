@@ -51,6 +51,12 @@ def show_grid(data,key:str):
     df["image_info_path"] = "app/static/" + df["image_file_name"].str.replace("/", "_") + ".png"
     df["image_info"] = "/app/static/" + df["image_file_name"].str.replace("/", "_") + ".png"
     grid_options = {
+        "defaultColDef": {
+            "filter": True,           # 开启过滤
+            #"floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,         # 可排序
+            "resizable": True         # 可拖动列宽
+        },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         'columnDefs': [
