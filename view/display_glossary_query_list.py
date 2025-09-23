@@ -94,21 +94,24 @@ def display_glossary_query_list(search_term:str):
         "enableCellTextSelection": True,
         'suppressNoRowsOverlay': True,
         'columnDefs': [
-        { 'field': "term", 'headerName': "术语词条"},
-        { 'field': "english_term", 'headerName': "术语英文"},
-        { 'field': "definition", 'headerName': "术语定义"},
-        { 'field': "standard_code", 'headerName': "标准号"},
-        { 'field': "standard_name", 'headerName': "标准名称"},
-        { 'field': "entry_code", 'headerName': "术语条目编号"},
+        { 'field': "term", 'headerName': "术语词条",'width': 150},
+        { 'field': "english_term", 'headerName': "术语英文",'width': 150},
+        { 'field': "definition", 'headerName': "术语定义", 'width': 400, 'autoHeight': True, "wrapText": True, 'cellStyle': {
+                    'whiteSpace': 'pre-wrap',  # 保留原始换行符和空格
+                    'wordBreak': 'normal'      # 正常的单词换行规则
+                }},
+        { 'field': "standard_code", 'headerName': "标准号",'width': 150},
+        { 'field': "standard_name", 'headerName': "标准名称",'width': 150},
+        { 'field': "entry_code", 'headerName': "术语条目编号",'width': 100},
     ],
     'rowSelection': {
             'mode': 'singleRow',
             'checkboxes': False,
             'enableClickSelection': True
         },
-        "autoSizeStrategy": {
-            "type": "fitCellContents"
-        },
+        # "autoSizeStrategy": {
+        #     "type": "fitCellContents"
+        # },
         "pagination": True,
         ##"paginationAutoPageSize": True,
         "paginationPageSize": 50
