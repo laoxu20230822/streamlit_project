@@ -258,48 +258,48 @@ class WhereCause:
             )
             """
         return sql
-    def to_sql(self):
-        sql = " WHERE 1=1 "
-        if self.search_term:
-            # sql += f" AND standard_content like '%{self.search_term}%' "
-            sql += f"""and (
-            standard_content like '%{self.search_term}%' 
-            OR performance_indicator_level1 LIKE '%{self.search_term}%'
-            OR performance_indicator_level2 LIKE '%{self.search_term}%'
-            OR method_name LIKE '%{self.search_term}%'
-            OR sample_preparation LIKE '%{self.search_term}%'
-            OR equipment_materials LIKE '%{self.search_term}%'
-            OR product_category1 LIKE '%{self.search_term}%'
-            OR product_category2 LIKE '%{self.search_term}%'
-            OR product_name LIKE '%{self.search_term}%'
-            OR oil_gas_resource_type LIKE '%{self.search_term}%'
-            OR product LIKE '%{self.search_term}%'
-            OR process1 LIKE '%{self.search_term}%'
-            OR process2 LIKE '%{self.search_term}%'
-            OR stimulation_business_level1 LIKE '%{self.search_term}%'
-            OR stimulation_business_level2 LIKE '%{self.search_term}%'
-            OR stimulation_business_level3 LIKE '%{self.search_term}%'
-            OR stimulation_business_level4 LIKE '%{self.search_term}%'
-            OR stimulation_business_level5 LIKE '%{self.search_term}%'
-            OR quality_control LIKE '%{self.search_term}%'
-            OR hse_requirements LIKE '%{self.search_term}%'
-            OR quality_supervision LIKE '%{self.search_term}%'
-            OR designer LIKE '%{self.search_term}%'
-            OR format_template LIKE '%{self.search_term}%'
-            OR parameter_nature LIKE '%{self.search_term}%'
-            OR parameter_category LIKE '%{self.search_term}%'
-            OR parameter LIKE '%{self.search_term}%'
-            OR method1 LIKE '%{self.search_term}%'
-            OR method2 LIKE '%{self.search_term}%'
-            OR wellbore_type1 LIKE '%{self.search_term}%'
-            OR wellbore_type2 LIKE '%{self.search_term}%'
-            OR process_tech1 LIKE '%{self.search_term}%'
-            OR process_tech2 LIKE '%{self.search_term}%'
-            OR process_tech3 LIKE '%{self.search_term}%'
-            OR offshore LIKE '%{self.search_term}%'
-            )
-            """
-        return sql
+    # def to_sql(self):
+    #     sql = " WHERE 1=1 "
+    #     if self.search_term:
+    #         # sql += f" AND standard_content like '%{self.search_term}%' "
+    #         sql += f"""and (
+    #         standard_content like '%{self.search_term}%' 
+    #         OR performance_indicator_level1 LIKE '%{self.search_term}%'
+    #         OR performance_indicator_level2 LIKE '%{self.search_term}%'
+    #         OR method_name LIKE '%{self.search_term}%'
+    #         OR sample_preparation LIKE '%{self.search_term}%'
+    #         OR equipment_materials LIKE '%{self.search_term}%'
+    #         OR product_category1 LIKE '%{self.search_term}%'
+    #         OR product_category2 LIKE '%{self.search_term}%'
+    #         OR product_name LIKE '%{self.search_term}%'
+    #         OR oil_gas_resource_type LIKE '%{self.search_term}%'
+    #         OR product LIKE '%{self.search_term}%'
+    #         OR process1 LIKE '%{self.search_term}%'
+    #         OR process2 LIKE '%{self.search_term}%'
+    #         OR stimulation_business_level1 LIKE '%{self.search_term}%'
+    #         OR stimulation_business_level2 LIKE '%{self.search_term}%'
+    #         OR stimulation_business_level3 LIKE '%{self.search_term}%'
+    #         OR stimulation_business_level4 LIKE '%{self.search_term}%'
+    #         OR stimulation_business_level5 LIKE '%{self.search_term}%'
+    #         OR quality_control LIKE '%{self.search_term}%'
+    #         OR hse_requirements LIKE '%{self.search_term}%'
+    #         OR quality_supervision LIKE '%{self.search_term}%'
+    #         OR designer LIKE '%{self.search_term}%'
+    #         OR format_template LIKE '%{self.search_term}%'
+    #         OR parameter_nature LIKE '%{self.search_term}%'
+    #         OR parameter_category LIKE '%{self.search_term}%'
+    #         OR parameter LIKE '%{self.search_term}%'
+    #         OR method1 LIKE '%{self.search_term}%'
+    #         OR method2 LIKE '%{self.search_term}%'
+    #         OR wellbore_type1 LIKE '%{self.search_term}%'
+    #         OR wellbore_type2 LIKE '%{self.search_term}%'
+    #         OR process_tech1 LIKE '%{self.search_term}%'
+    #         OR process_tech2 LIKE '%{self.search_term}%'
+    #         OR process_tech3 LIKE '%{self.search_term}%'
+    #         OR offshore LIKE '%{self.search_term}%'
+    #         )
+    #         """
+    #     return sql
     
 
 class StandardDB:
@@ -442,7 +442,7 @@ class StandardDB:
     #条款数据查询
     def list_for_tiaokuan(self,filter:WhereCause = WhereCause()):
         c = self.conn.cursor()
-        sql=f"SELECT serial_number,standard_code, standard_name, standard_content, min_chapter_clause_code FROM standard_system {filter.to_sql()} order by serial_number asc "
+        sql=f"SELECT serial_number,standard_code, standard_name, standard_content, min_chapter_clause_code FROM standard_system {filter.to_sql_new()} order by serial_number asc "
         c.execute(sql)
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]

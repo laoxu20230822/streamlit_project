@@ -12,6 +12,7 @@ from database.page import Pageable
 from database.page import PageResult
 
 import database.sql as sql
+from utils.utils import build_single_column_search
 
 ### 标准号	流水号	提及位置流水号	图片性质	文中编号	文中名称	图文件名称	章条号	正文起始页	页数	页码
 
@@ -70,12 +71,18 @@ class StandardChart:
             db_columns = [row[1] for row in cursor.fetchall()]  # 获取所有数据库列名
 
     def list_all(self,image_type:str,search_term:str=''):
+        in_text_name_cause=build_single_column_search(search_term,'c.in_text_name')
+        image_file_name_cause=build_single_column_search(search_term,'c.image_file_name')
+        where_cause=f"""
+        c.image_type like '%{image_type}%' and ({in_text_name_cause if in_text_name_cause else '1=1'} or {image_file_name_cause if image_file_name_cause else '1=1'})
+        """
         c = self.conn.cursor()
         SQL=f"""
         select c.*,i.standard_name from standard_chart c
         LEFT JOIN standard_index i ON c.standard_code = i.standard_code
-        where c.image_type like '%{image_type}%' and (c.in_text_name like '%{search_term}%' or c.image_file_name like '%{search_term}%')
+        WHERE {where_cause}
         """
+        print(SQL)
         c.execute(
             SQL
         )
