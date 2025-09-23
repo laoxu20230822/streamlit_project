@@ -74,7 +74,7 @@ class StandardChart:
         in_text_name_cause=build_single_column_search(search_term,'c.in_text_name')
         image_file_name_cause=build_single_column_search(search_term,'c.image_file_name')
         where_cause=f"""
-        c.image_type like '%{image_type}%' and ({in_text_name_cause if in_text_name_cause else '1=1'} or {image_file_name_cause if image_file_name_cause else '1=1'})
+        c.image_type like '%{image_type}%' and ({in_text_name_cause} or {image_file_name_cause})
         """
         c = self.conn.cursor()
         SQL=f"""
@@ -82,7 +82,6 @@ class StandardChart:
         LEFT JOIN standard_index i ON c.standard_code = i.standard_code
         WHERE {where_cause}
         """
-        print(SQL)
         c.execute(
             SQL
         )

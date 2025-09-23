@@ -469,10 +469,13 @@ class StandardDB:
         return PageResult(data,total_page,pageable)
     
     def query_by_stimulation_business_level2(self,search_term:str=''):
+        method1_cause=build_single_column_search(search_term,'method1')
+        method2_cause=build_single_column_search(search_term,'method2')
+        method_name_cause=build_single_column_search(search_term,'method_name')
         sql = f"""
 SELECT standard_code, standard_name, standard_content, stimulation_business_level2
 FROM standard_system where stimulation_business_level2 in ('方法提要','试验步骤','试验数据处理','仪器设备、试剂或材料') 
-and (method1 like '%{search_term}%' or method2 like '%{search_term}%' or method_name like '%{search_term}%')
+and ({method1_cause} or {method2_cause} or {method_name_cause})
 """
         c = self.conn.cursor()
         c.execute(sql)

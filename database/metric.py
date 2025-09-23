@@ -11,6 +11,7 @@ from database.page import Pageable
 from database.page import PageResult
 
 import database.sql as sql
+from utils.utils import build_single_column_search
 
 CREATE_TABLE_METRICS_SQL="""CREATE TABLE metrics (
     id INTEGER PRIMARY KEY AUTOINCREMENT,  -- 自增主键
@@ -128,11 +129,7 @@ class Metric:
     #     return data
     
     def list_by_search_term(self,search_term:str):
-        c = self.conn.cursor()
-        SELECT_SQL=f"""
-        SELECT m.*, i.standard_name 
-        FROM metrics m 
-        LEFT JOIN standard_index i ON m.standard_code = i.standard_code
+        """
         where
         indicator_item like '%{search_term}%' or
         product_category like '%{search_term}%' or
@@ -140,6 +137,26 @@ class Metric:
         table_header_product_name like '%{search_term}%' or
         primary_project like '%{search_term}%' or
         secondary_project like '%{search_term}%'
+        """
+
+        indicator_item_cause=build_single_column_search(search_term,'indicator_item')
+        product_category_cause=build_single_column_search(search_term,'product_category')
+        product_name_cause=build_single_column_search(search_term,'product_name')
+        table_header_product_name_cause=build_single_column_search(search_term,'table_header_product_name')
+        primary_project_cause=build_single_column_search(search_term,'primary_project')
+        secondary_project_cause=build_single_column_search(search_term,'secondary_project')
+        c = self.conn.cursor()
+        SELECT_SQL=f"""
+        SELECT m.*, i.standard_name 
+        FROM metrics m 
+        LEFT JOIN standard_index i ON m.standard_code = i.standard_code
+        where
+        {indicator_item_cause} or
+        {product_category_cause} or
+        {product_name_cause} or
+        {table_header_product_name_cause} or
+        {primary_project_cause} or
+        {secondary_project_cause}
         """
         c.execute(SELECT_SQL)
         

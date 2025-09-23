@@ -5,7 +5,7 @@ def build_single_column_search(search_term, column):
     """为单个列构建搜索条件，将搜索词按空格分割后生成OR连接的LIKE条件"""
     # 检查输入是否有效
     if not search_term or not column:
-        return ""
+        return "1=1"
 
     # 按空格分割搜索词，并过滤掉空字符串
     search_parts = [part for part in re.split(r"\s+", search_term.strip()) if part]

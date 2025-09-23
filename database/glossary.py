@@ -12,6 +12,7 @@ from database.page import Pageable
 from database.page import PageResult
 
 import database.sql as sql
+from utils.utils import build_single_column_search
 
 
 CREATE_TABLE_GLOSSARY="""
@@ -110,7 +111,9 @@ class Glossary:
     
     def list(self,search_term:str):
         c = self.conn.cursor()
-        c.execute(f"select * from glossary where term like '%{search_term}%' or english_term like '%{search_term}%'")
+        term_cause=build_single_column_search(search_term,'term')
+        english_term_cause=build_single_column_search(search_term,'english_term')
+        c.execute(f"select * from glossary where ({term_cause} or {english_term_cause})")
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
