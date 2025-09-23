@@ -84,7 +84,7 @@ def show_grid(data,key:str):
     return AgGrid(
         df, 
         gridOptions=grid_options,
-        height=300,
+        height=600,
         key=key,
         fit_columns_on_grid_load=True,
         allow_unsafe_jscode=True,
