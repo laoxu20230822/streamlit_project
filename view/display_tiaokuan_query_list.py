@@ -27,7 +27,7 @@ def display_grid(data:list[dict],key:str):
         'columnDefs': [
         { 'field': "standard_code", 'headerName': "标准号",'hide':True},
         { 'field': "standard_name", 'headerName': "标准名称",'hide':True},
-        { 'field': "min_chapter_clause_code", 'headerName': "最小章节编号"},
+        { 'field': "min_chapter_clause_code", 'headerName': "最小章节编号",'hide':True},
         { 'field': "standard_content", 'headerName': "标准内容"},
     ],
     'rowSelection': {

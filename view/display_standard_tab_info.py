@@ -42,9 +42,9 @@ def display_standard_cotent(standard_code: str):
     standard_db = init_standard_db()
     standard_detail = standard_db.standard_detail(standard_code)
     t21, t22 = st.columns([4, 6])
-    with t21.container(border=True, height=400):
+    with t21.container(border=True, height=600):
         display_standard_structure(standard_code)
-    with t22.container(border=True, height=400):
+    with t22.container(border=True, height=600):
         if "chapter" in st.session_state and "chapter_content" in st.session_state:
             contents = get_chapter_content(standard_detail, st.session_state.chapter)
             st.markdown("\n\n".join(contents))
