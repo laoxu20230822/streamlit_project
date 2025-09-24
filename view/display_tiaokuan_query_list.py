@@ -14,7 +14,9 @@ def display_grid(data:list[dict],key:str):
         'min_chapter_clause_code': '最小章节编号',
         'standard_content': '标准内容',
     })
-
+    #对df的某一列进行过滤，不包含某些内容
+    #去掉“前言”
+    df=df[~df['standard_content'].str.contains("前言",case=False,na=False)]
     grid_options = {
         "defaultColDef": {
             "filter": True,           # 开启过滤
