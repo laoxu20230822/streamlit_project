@@ -519,12 +519,40 @@ and ({method1_cause} or {method2_cause} or {method_name_cause})
         c.execute("DROP TABLE IF EXISTS standard_system")
         self.conn.commit()
         #conn.close()
+    def query_stimulation_business_level1(self):
+        c = self.conn.cursor()
+        c.execute(f"SELECT distinct stimulation_business_level1 FROM standard_system")
+        #查询结果展示一个list
+        business_levels = [row[0] for row in c.fetchall()]
+        return business_levels
+    def query_stimulation_business_level2(self,level1:str=''):
+        c = self.conn.cursor()
+        c.execute(f"SELECT distinct stimulation_business_level2 FROM standard_system where stimulation_business_level1='{level1}'")
+        #查询结果展示一个list
+        business_levels = [row[0] for row in c.fetchall()]
+        return business_levels
+    def query_stimulation_business_level3(self,level1:str='',level2:str=''):
+        c = self.conn.cursor()
+        c.execute(f"SELECT distinct stimulation_business_level3 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}'")
+        #查询结果展示一个list
+        business_levels = [row[0] for row in c.fetchall()]
+        return business_levels
+    def query_stimulation_business_level4(self,level1:str='',level2:str='',level3:str=''):
+        c = self.conn.cursor()
+        c.execute(f"SELECT distinct stimulation_business_level4 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}' and stimulation_business_level3='{level3}'")
+        #查询结果展示一个list
+        business_levels = [row[0] for row in c.fetchall()]
+        return business_levels
+    def query_stimulation_business_level5(self,level1:str='',level2:str='',level3:str='',level4:str=''):
+        c = self.conn.cursor()
+        c.execute(f"SELECT distinct stimulation_business_level5 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}' and stimulation_business_level3='{level3}' and stimulation_business_level4='{level4}'")
+        #查询结果展示一个list
+        business_levels = [row[0] for row in c.fetchall()]
+        return business_levels
 
 @st.cache_resource
 def init_standard_db():
     print("init standard_db")
     return StandardDB()
-
-
 
 

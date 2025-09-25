@@ -67,6 +67,7 @@ def display_standard_query_list():
     # 获取standard 列表数据
     # 查询standard大表数据
     standard_db = init_standard_db()
+
     page_result = standard_db.list(
         filter=WhereCause(st.session_state.search_term), pageable=Pageable(1, 50)
     )
@@ -91,20 +92,20 @@ def display_standard_query_list():
 
     grid_options = {
         "defaultColDef": {
-            "filter": True,           # 开启过滤
-            #"floatingFilter": True,   # 列头下方的小输入框
-            "sortable": True,         # 可排序
-            "resizable": True         # 可拖动列宽
+            "filter": True,  # 开启过滤
+            # "floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,  # 可排序
+            "resizable": True,  # 可拖动列宽
         },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         ##"cellSelection": True,
         # "enableRangeSelection": True,
         "defaultColDef": {
-            "filter": True,           # 开启过滤
-            #"floatingFilter": True,   # 列头下方的小输入框
-            "sortable": True,         # 可排序
-            "resizable": True         # 可拖动列宽
+            "filter": True,  # 开启过滤
+            # "floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,  # 可排序
+            "resizable": True,  # 可拖动列宽
         },
         "columnDefs": [
             {"field": "standard_code", "headerName": "标准号"},
