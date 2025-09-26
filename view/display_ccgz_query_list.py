@@ -64,9 +64,8 @@ def show_grid(data):
 
 def display_ccgz_query_list(search_term):
     # standard_index = init_standard_index_db()
-    
+
     standard_db = init_standard_db()
-    st.session_state.level1
     data=standard_db.fetch_by_ccgz(
         st.session_state.level1,
         st.session_state.level2,
