@@ -7,6 +7,7 @@ from st_aggrid import AgGrid
 import pandas as pd
 from view.display_standard_tab_info import display_standard_tab_info
 
+
 def show_grid(data):
     df = pd.DataFrame(
         data if data else [],
@@ -20,12 +21,19 @@ def show_grid(data):
     )
     df.insert(0, "seq", range(1, len(df) + 1))
     df["standard_info"] = df["standard_code"] + " " + df["standard_name"] + ""
+    #展示短文本
+    # 生成短文本列（前 50 字）
+    MAX_CHARS = 50
+    df["standard_info_short"] = df["standard_info"].apply(lambda s: s if len(str(s)) <= MAX_CHARS else str(s)[:MAX_CHARS] + "...")
+
+
     grid_options = {
         "defaultColDef": {
             "filter": True,  # 开启过滤
             # "floatingFilter": True,   # 列头下方的小输入框
             "sortable": True,  # 可排序
             "resizable": True,  # 可拖动列宽
+            "tooltipComponent": None,  # 使用内置 tooltip
         },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
@@ -36,8 +44,14 @@ def show_grid(data):
                 "width": 60,
                 "suppressSizeToFit": True,
             },
-            {"field": "standard_info", "headerName": "标准来源", "width": 400},
-             {
+            {
+                "field": "standard_info",
+                "headerName": "标准来源",
+                "width": 400,
+                #"valueFormatter": "x.data.standard_info ? x.data.standard_info.substring(0,3) : ''",
+                "tooltipField": "standard_info",
+            },
+            {
                 "field": "standard_code",
                 "headerName": "标准号",
                 "hide": True,
@@ -53,6 +67,7 @@ def show_grid(data):
         "pagination": True,
         ##"paginationAutoPageSize": True,
         "paginationPageSize": 50,
+        #"animateRows": True,
     }
     return AgGrid(
         df,
@@ -62,17 +77,19 @@ def show_grid(data):
         allow_unsafe_jscode=True,
     )
 
+
 def display_ccgz_query_list(search_term):
     # standard_index = init_standard_index_db()
 
     standard_db = init_standard_db()
-    data=standard_db.fetch_by_ccgz(
+    data = standard_db.fetch_by_ccgz(
         st.session_state.level1,
         st.session_state.level2,
         st.session_state.level3,
         st.session_state.level4,
-        st.session_state.level5)
-    
+        st.session_state.level5,
+    )
+
     grid_response = show_grid(data)
     selected_rows = grid_response["selected_rows"]
     if selected_rows is not None:
