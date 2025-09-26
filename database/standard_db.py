@@ -13,7 +13,7 @@ from database.page import PageResult
 
 import database.sql as sql
 
-CREATE_SQL="""
+CREATE_SQL = """
 CREATE TABLE standard_system (
     id INTEGER PRIMARY KEY AUTOINCREMENT,  -- 自增主键
     system_serial_number TEXT,  -- 体系序号
@@ -210,12 +210,14 @@ VALUES (
     ?,?,?,?,?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?,?
 )"""
+
+
 class WhereCause:
     search_term: str
-    
-    def __init__(self,search_term:str=""):
-        self.search_term= search_term
-    
+
+    def __init__(self, search_term: str = ""):
+        self.search_term = search_term
+
     def to_sql_new(self):
         sql = " WHERE 1=1 "
         if self.search_term:
@@ -258,12 +260,13 @@ class WhereCause:
             )
             """
         return sql
+
     # def to_sql(self):
     #     sql = " WHERE 1=1 "
     #     if self.search_term:
     #         # sql += f" AND standard_content like '%{self.search_term}%' "
     #         sql += f"""and (
-    #         standard_content like '%{self.search_term}%' 
+    #         standard_content like '%{self.search_term}%'
     #         OR performance_indicator_level1 LIKE '%{self.search_term}%'
     #         OR performance_indicator_level2 LIKE '%{self.search_term}%'
     #         OR method_name LIKE '%{self.search_term}%'
@@ -300,39 +303,45 @@ class WhereCause:
     #         )
     #         """
     #     return sql
-    
+
 
 class StandardDB:
     conn: sqlite3.Connection
+
     def __init__(self):
-        db_path = Path(__file__).parent.parent / 'standard.db'
-        self.conn=sqlite3.connect(db_path,check_same_thread=False)
+        db_path = Path(__file__).parent.parent / "standard.db"
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
         c = self.conn.cursor()
-        c.execute("""
+        c.execute(
+            """
         SELECT name FROM sqlite_master WHERE type='table' AND name='standard_system'
-        """)
+        """
+        )
         if not c.fetchone():
             c.execute(CREATE_SQL)
             self.conn.commit()
         else:
             cursor = c.execute("PRAGMA table_info(standard_system)")
             db_columns = [row[1] for row in cursor.fetchall()]  # 获取所有数据库列名
-    
+
     def create_table(self):
         c = self.conn.cursor()
-        c.execute("""
+        c.execute(
+            """
         SELECT name FROM sqlite_master WHERE type='table' AND name='standard_system'
-        """)
+        """
+        )
         if not c.fetchone():
             c.execute(CREATE_SQL)
             self.conn.commit()
+
     def count(self):
         c = self.conn.cursor()
         c.execute("select count(1) from standard_system")
         return c.fetchone()[0]
-    
-    def standard_detail(self,standard_code:str):
-        SELECT_STATEMENT=f"""
+
+    def standard_detail(self, standard_code: str):
+        SELECT_STATEMENT = f"""
         select * from standard_system where standard_code='{standard_code}' order by serial_number asc
         """
         c = self.conn.cursor()
@@ -340,18 +349,18 @@ class StandardDB:
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
-    
+
     ## 新增 performance_indicator_level1 TEXT,  -- 性能指标一级
     ##performance_indicator_level2 TEXT,  -- 性能指标二级
     ## method_name TEXT,  -- 方法名称
     ## method2
     # def standard_detail_by_method_query(self,standard_code:str,search_term:str):
     #     SELECT_STATEMENT=f"""
-    #     select * from standard_system where 
-    #     standard_code='{standard_code}' and 
-    #     (method_name like '%{search_term}%' or 
-    #     method2 like '%{search_term}%' or 
-    #     performance_indicator_level1 like '%{search_term}%' or 
+    #     select * from standard_system where
+    #     standard_code='{standard_code}' and
+    #     (method_name like '%{search_term}%' or
+    #     method2 like '%{search_term}%' or
+    #     performance_indicator_level1 like '%{search_term}%' or
     #     performance_indicator_level2 like '%{search_term}%'
     #      )  order by serial_number asc
     #     """
@@ -360,9 +369,9 @@ class StandardDB:
     #     columns = [col[0] for col in c.description]
     #     data = [dict(zip(columns, row)) for row in c.fetchall()]
     #     return data
-        
-    def product_list(self,standard_code:str):
-        SELECT_STATEMENT=f"""
+
+    def product_list(self, standard_code: str):
+        SELECT_STATEMENT = f"""
         select 
         standard_code,
         performance_indicator_level1,
@@ -388,10 +397,9 @@ class StandardDB:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-
-    def craft_list(self,standard_code:str):
+    def craft_list(self, standard_code: str):
         c = self.conn.cursor()
-        craft_statement=f"""
+        craft_statement = f"""
         select 
         standard_code,
         quality_control,
@@ -433,45 +441,65 @@ class StandardDB:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-
-    def query_category_level1_code(self,standard_code:str):
+    def query_category_level1_code(self, standard_code: str):
         c = self.conn.cursor()
-        c.execute(f"SELECT distinct category_level1_code FROM standard_system where standard_code='{standard_code}'")
+        c.execute(
+            f"SELECT distinct category_level1_code FROM standard_system where standard_code='{standard_code}'"
+        )
         return c.fetchone()
 
-    #条款数据查询
-    def list_for_tiaokuan(self,filter:WhereCause = WhereCause()):
+    # 条款数据查询
+    def list_for_tiaokuan(self, filter: WhereCause = WhereCause()):
         c = self.conn.cursor()
-        sql=f"SELECT serial_number,standard_code, standard_name, standard_content, min_chapter_clause_code FROM standard_system {filter.to_sql_new()} order by serial_number asc "
+        sql = f"SELECT serial_number,standard_code, standard_name, standard_content, min_chapter_clause_code FROM standard_system {filter.to_sql_new()} order by serial_number asc "
         c.execute(sql)
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-    def list(self,filter:WhereCause = WhereCause(),pageable:Pageable = Pageable(1,10)) -> PageResult:
+    def fetch_by_ccgz(
+        self, level1: str='', level2: str='', level3: str='', level4: str='', level5: str=''
+    ):
+        c = self.conn.cursor()
+        c.execute(
+            f"""SELECT standard_code, standard_name FROM standard_system 
+            where stimulation_business_level1 like '%{level1.strip()}%' 
+            and stimulation_business_level2 like '%{level2.strip()}%' 
+            and stimulation_business_level3 like '%{level3.strip()}%' 
+            and stimulation_business_level4 like '%{level4.strip()}%' 
+            and stimulation_business_level5 like '%{level5.strip()}%'
+            group by standard_code,standard_name """
+        )
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        return data
+
+    def list(
+        self, filter: WhereCause = WhereCause(), pageable: Pageable = Pageable(1, 10)
+    ) -> PageResult:
         c = self.conn.cursor()
 
-        #build sql???
-        sql=f"SELECT standard_code, standard_name  FROM standard_system {filter.to_sql_new()} group by standard_code,standard_name"
-        count_sql=f"select count(1) from ({sql})"
-        sql_with_page=f"{sql} {pageable.limit_sql()}"
+        # build sql???
+        sql = f"SELECT standard_code, standard_name  FROM standard_system {filter.to_sql_new()} group by standard_code,standard_name"
+        count_sql = f"select count(1) from ({sql})"
+        sql_with_page = f"{sql} {pageable.limit_sql()}"
 
         c.execute(count_sql)
-        total=c.fetchone()[0]
+        total = c.fetchone()[0]
 
         c.execute(sql_with_page)
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
-        #conn.close()
-        total_page=total//pageable.size
-        if total%pageable.size>0:
-            total_page+=1
-        return PageResult(data,total_page,pageable)
-    
-    def query_by_stimulation_business_level2(self,search_term:str=''):
-        method1_cause=build_single_column_search(search_term,'method1')
-        method2_cause=build_single_column_search(search_term,'method2')
-        method_name_cause=build_single_column_search(search_term,'method_name')
+        # conn.close()
+        total_page = total // pageable.size
+        if total % pageable.size > 0:
+            total_page += 1
+        return PageResult(data, total_page, pageable)
+
+    def query_by_stimulation_business_level2(self, search_term: str = ""):
+        method1_cause = build_single_column_search(search_term, "method1")
+        method2_cause = build_single_column_search(search_term, "method2")
+        method_name_cause = build_single_column_search(search_term, "method_name")
         sql = f"""
 SELECT standard_code, standard_name, standard_content, stimulation_business_level2
 FROM standard_system where stimulation_business_level2 in ('方法提要','试验步骤','试验数据处理','仪器设备、试剂或材料') 
@@ -483,11 +511,12 @@ and ({method1_cause} or {method2_cause} or {method_name_cause})
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-    def query_by_metrics(self,metric:str,standard_code:str):
+    def query_by_metrics(self, metric: str, standard_code: str):
         c = self.conn.cursor()
-    #      performance_indicator_level1 TEXT,  -- 性能指标一级
-    # performance_indicator_level2 TEXT,  -- 性能指标二级
-        c.execute(f"""SELECT  standard_code,standard_name, standard_content
+        #      performance_indicator_level1 TEXT,  -- 性能指标一级
+        # performance_indicator_level2 TEXT,  -- 性能指标二级
+        c.execute(
+            f"""SELECT  standard_code,standard_name, standard_content
          FROM standard_system 
          where 
          standard_code='{standard_code}' 
@@ -495,64 +524,79 @@ and ({method1_cause} or {method2_cause} or {method_name_cause})
          (performance_indicator_level1 like '%{metric}%' 
          or 
          performance_indicator_level2 like '%{metric}%')
-         """)
+         """
+        )
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-
-    def batch_insert(self,df:DataFrame):
+    def batch_insert(self, df: DataFrame):
         # 转换为元组列表（适配 executemany 的参数格式）
         data = [tuple(row) for row in df.itertuples(index=False)]
         c = self.conn.cursor()
         c.executemany(INSERT_STATEMENT, data)
         self.conn.commit()
-        #conn.close()
+        # conn.close()
 
-    def load_from_excel(self,file_path:str):
-        df = pd.read_excel(file_path, engine='openpyxl',header=0).fillna('')
+    def load_from_excel(self, file_path: str):
+        df = pd.read_excel(file_path, engine="openpyxl", header=0).fillna("")
         self.batch_insert(df)
-
 
     def drop(self):
         c = self.conn.cursor()
         c.execute("DROP TABLE IF EXISTS standard_system")
         self.conn.commit()
-        #conn.close()
+        # conn.close()
+
     def query_stimulation_business_level1(self):
         c = self.conn.cursor()
         c.execute(f"SELECT distinct stimulation_business_level1 FROM standard_system")
-        #查询结果展示一个list
+        # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall()]
         return business_levels
-    def query_stimulation_business_level2(self,level1:str=''):
+
+    def query_stimulation_business_level2(self, level1: str = ""):
         c = self.conn.cursor()
-        c.execute(f"SELECT distinct stimulation_business_level2 FROM standard_system where stimulation_business_level1='{level1}'")
-        #查询结果展示一个list
+        c.execute(
+            f"SELECT distinct stimulation_business_level2 FROM standard_system where stimulation_business_level1='{level1}'"
+        )
+        # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall()]
         return business_levels
-    def query_stimulation_business_level3(self,level1:str='',level2:str=''):
+
+    def query_stimulation_business_level3(self, level1: str = "", level2: str = ""):
         c = self.conn.cursor()
-        c.execute(f"SELECT distinct stimulation_business_level3 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}'")
-        #查询结果展示一个list
+        c.execute(
+            f"SELECT distinct stimulation_business_level3 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}'"
+        )
+        # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall()]
         return business_levels
-    def query_stimulation_business_level4(self,level1:str='',level2:str='',level3:str=''):
+
+    def query_stimulation_business_level4(
+        self, level1: str = "", level2: str = "", level3: str = ""
+    ):
         c = self.conn.cursor()
-        c.execute(f"SELECT distinct stimulation_business_level4 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}' and stimulation_business_level3='{level3}'")
-        #查询结果展示一个list
+        c.execute(
+            f"SELECT distinct stimulation_business_level4 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}' and stimulation_business_level3='{level3}'"
+        )
+        # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall()]
         return business_levels
-    def query_stimulation_business_level5(self,level1:str='',level2:str='',level3:str='',level4:str=''):
+
+    def query_stimulation_business_level5(
+        self, level1: str = "", level2: str = "", level3: str = "", level4: str = ""
+    ):
         c = self.conn.cursor()
-        c.execute(f"SELECT distinct stimulation_business_level5 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}' and stimulation_business_level3='{level3}' and stimulation_business_level4='{level4}'")
-        #查询结果展示一个list
+        c.execute(
+            f"SELECT distinct stimulation_business_level5 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}' and stimulation_business_level3='{level3}' and stimulation_business_level4='{level4}'"
+        )
+        # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall()]
         return business_levels
+
 
 @st.cache_resource
 def init_standard_db():
     print("init standard_db")
     return StandardDB()
-
-

@@ -80,3 +80,8 @@ def display_navigator_tab():
         )
 
         tab2.button("查询",on_click=onchange_for_level)
+        st.session_state.level1 = level1
+        st.session_state.level2 = level2
+        st.session_state.level3 = level3
+        st.session_state.level4 = level4
+        st.session_state.level5 = level5
