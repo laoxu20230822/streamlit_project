@@ -460,14 +460,20 @@ class StandardDB:
     def fetch_by_ccgz(
         self, level1: str='', level2: str='', level3: str='', level4: str='', level5: str=''
     ):
+        level1 = level1.strip() if level1 is not None else ""
+        level2 = level2.strip() if level2 is not None else ""
+        level3 = level3.strip() if level3 is not None else ""
+        level4 = level4.strip() if level4 is not None else ""
+        level5 = level5.strip() if level5 is not None else ""
+
         c = self.conn.cursor()
         c.execute(
             f"""SELECT standard_code, standard_name FROM standard_system 
-            where stimulation_business_level1 like '%{level1.strip()}%' 
-            and stimulation_business_level2 like '%{level2.strip()}%' 
-            and stimulation_business_level3 like '%{level3.strip()}%' 
-            and stimulation_business_level4 like '%{level4.strip()}%' 
-            and stimulation_business_level5 like '%{level5.strip()}%'
+            where stimulation_business_level1 like '%{level1}%' 
+            and stimulation_business_level2 like '%{level2}%' 
+            and stimulation_business_level3 like '%{level3}%' 
+            and stimulation_business_level4 like '%{level4}%' 
+            and stimulation_business_level5 like '%{level5}%'
             group by standard_code,standard_name """
         )
         columns = [col[0] for col in c.description]
