@@ -12,6 +12,7 @@ from database.page import Pageable
 from database.page import PageResult
 
 import database.sql as sql
+from collections import defaultdict
 
 CREATE_SQL = """
 CREATE TABLE standard_system (
@@ -458,7 +459,12 @@ class StandardDB:
         return data
 
     def fetch_by_ccgz(
-        self, level1: str='', level2: str='', level3: str='', level4: str='', level5: str=''
+        self,
+        level1: str = "",
+        level2: str = "",
+        level3: str = "",
+        level4: str = "",
+        level5: str = "",
     ):
         level1 = level1.strip() if level1 is not None else ""
         level2 = level2.strip() if level2 is not None else ""
@@ -468,7 +474,7 @@ class StandardDB:
 
         c = self.conn.cursor()
         c.execute(
-            f"""SELECT standard_code, standard_name FROM standard_system 
+            f"""SELECT standard_code, standard_name,standard_content,min_chapter_clause_code FROM standard_system 
             where stimulation_business_level1 like '%{level1}%' 
             and stimulation_business_level2 like '%{level2}%' 
             and stimulation_business_level3 like '%{level3}%' 
@@ -478,7 +484,23 @@ class StandardDB:
         )
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
-        return data
+        
+        ## 按照standard_code分组
+        grouped = defaultdict(lambda: {"standard_code": "", "standard_name": "", "standard_content": [], "min_chapter_clause_code": ""})
+
+        for item in data:
+            code = item["standard_code"]
+            grouped[code]["standard_code"] = code
+            grouped[code]["standard_name"] = item["standard_name"]
+            grouped[code]["standard_content"].append(item["standard_content"])
+            grouped[code]["min_chapter_clause_code"] = item["min_chapter_clause_code"]
+        
+        # 拼接内容并转换为新的列表
+        new_data = []
+        for v in grouped.values():
+            v["standard_content"] = "\n".join(v["standard_content"])  # 用中文分号拼接
+            new_data.append(v)
+        return new_data
 
     def list(
         self, filter: WhereCause = WhereCause(), pageable: Pageable = Pageable(1, 10)
@@ -558,7 +580,7 @@ and ({method1_cause} or {method2_cause} or {method_name_cause})
         c = self.conn.cursor()
         c.execute(f"SELECT distinct stimulation_business_level1 FROM standard_system")
         # 查询结果展示一个list
-        #如果获取的每一条记录里面有空字符串,这个数组元素的数据需要被剔除掉
+        # 如果获取的每一条记录里面有空字符串,这个数组元素的数据需要被剔除掉
         business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
         return business_levels
 

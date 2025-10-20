@@ -14,13 +14,13 @@ def show_grid(data):
         columns={
             "standard_code": "标准号",
             "standard_name": "标准名称",
-            "in_text_number": "文中编号",
-            "in_text_name": "文中名称",
-            "image_file_name": "图文件名称",
+            "standard_content": "标准内容",
+            "min_chapter_clause_code": "最小章节条款号",
         },
     )
     df.insert(0, "seq", range(1, len(df) + 1))
     df["standard_info"] = df["standard_code"] + " " + df["standard_name"] + ""
+    df['standard_content'] = df['min_chapter_clause_code'] + '\n' + df['standard_content']
     #展示短文本
     # 生成短文本列（前 50 字）
     MAX_CHARS = 50
@@ -47,7 +47,7 @@ def show_grid(data):
             {
                 "field": "standard_info",
                 "headerName": "标准来源",
-                "width": 400,
+                "width": 250,
                 #"valueFormatter": "x.data.standard_info ? x.data.standard_info.substring(0,3) : ''",
                 "tooltipField": "standard_info",
             },
@@ -57,6 +57,11 @@ def show_grid(data):
                 "hide": True,
             },
             {"field": "standard_name", "headerName": "标准名称", "hide": True},
+            {"field": "standard_content", "headerName": "标准内容",'tooltipField':'standard_content',
+             "width": 400, 'autoHeight': True, "wrapText": True, 'cellStyle': {
+                    'whiteSpace': 'pre-wrap',  # 保留原始换行符和空格
+                    'wordBreak': 'normal'      # 正常的单词换行规则
+                }},
         ],
         "rowSelection": {
             "mode": "singleRow",
@@ -97,6 +102,7 @@ def display_ccgz_query_list(search_term):
             {
                 "standard_code": row["standard_code"],
                 "standard_name": row["standard_name"],
+                
             }
             for _, row in selected_rows.iterrows()
         ]
