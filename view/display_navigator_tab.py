@@ -54,32 +54,43 @@ def display_navigator_tab():
                 del st.session_state["selected_rows"]
         standard_db = init_standard_db()
         business_level1_options = standard_db.query_stimulation_business_level1()
+        #business_level1_options 再增加一个元素，全部储层改造业务
+        business_level1_options.insert(0,"全部")
         level1 = tab2.selectbox(
         "**储层改造业务1级**",
-        business_level1_options,
+        business_level1_options,on_change=onchange_for_level
         )
+        level1=level1 if level1!="全部" else ''
         business_level2_options = standard_db.query_stimulation_business_level2(level1)
+        business_level2_options.insert(0,"全部")
         level2 = tab2.selectbox(
         "**储层改造业务2级**",
-        business_level2_options,
+        business_level2_options,on_change=onchange_for_level
         )
+        level2=level2 if level2!="全部" else ''
         business_level3_options = standard_db.query_stimulation_business_level3(level1,level2)
+        business_level3_options.insert(0,"全部")
         level3 = tab2.selectbox(
         "**储层改造业务3级**",
-        business_level3_options,
+        business_level3_options,on_change=onchange_for_level
         )
+        level3=level3 if level3!="全部" else ''
         business_level4_options = standard_db.query_stimulation_business_level4(level1,level2,level3)
+        business_level4_options.insert(0,"全部")
         level4 = tab2.selectbox(
         "**储层改造业务4级**",
-        business_level4_options,
+        business_level4_options,on_change=onchange_for_level
         )
+        level4=level4 if level4!="全部" else ''
         business_level5_options = standard_db.query_stimulation_business_level5(level1,level2,level3,level4)
+        business_level5_options.insert(0,"全部")
         level5 = tab2.selectbox(
         "**储层改造业务5级**",
-        business_level5_options
+        business_level5_options,on_change=onchange_for_level
         )
+        level5=level5 if level5!="全部" else ''
 
-        tab2.button("查询",on_click=onchange_for_level)
+        ##tab2.button("查询",on_click=onchange_for_level)
         st.session_state.level1 = level1
         st.session_state.level2 = level2
         st.session_state.level3 = level3

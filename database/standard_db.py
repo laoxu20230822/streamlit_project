@@ -565,7 +565,7 @@ and ({method1_cause} or {method2_cause} or {method_name_cause})
     def query_stimulation_business_level2(self, level1: str = ""):
         c = self.conn.cursor()
         c.execute(
-            f"SELECT distinct stimulation_business_level2 FROM standard_system where stimulation_business_level1='{level1}'"
+            f"SELECT distinct stimulation_business_level2 FROM standard_system where stimulation_business_level1 like '%{level1}%'"
         )
         # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
@@ -574,7 +574,7 @@ and ({method1_cause} or {method2_cause} or {method_name_cause})
     def query_stimulation_business_level3(self, level1: str = "", level2: str = ""):
         c = self.conn.cursor()
         c.execute(
-            f"SELECT distinct stimulation_business_level3 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}'"
+            f"SELECT distinct stimulation_business_level3 FROM standard_system where stimulation_business_level1 like '%{level1}%' and stimulation_business_level2 like '%{level2}%'"
         )
         # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
@@ -585,7 +585,7 @@ and ({method1_cause} or {method2_cause} or {method_name_cause})
     ):
         c = self.conn.cursor()
         c.execute(
-            f"SELECT distinct stimulation_business_level4 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}' and stimulation_business_level3='{level3}'"
+            f"SELECT distinct stimulation_business_level4 FROM standard_system where stimulation_business_level1 like '%{level1}%' and stimulation_business_level2 like '%{level2}%' and stimulation_business_level3 like '%{level3}%'"
         )
         # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
@@ -596,7 +596,7 @@ and ({method1_cause} or {method2_cause} or {method_name_cause})
     ):
         c = self.conn.cursor()
         c.execute(
-            f"SELECT distinct stimulation_business_level5 FROM standard_system where stimulation_business_level1='{level1}' and stimulation_business_level2='{level2}' and stimulation_business_level3='{level3}' and stimulation_business_level4='{level4}'"
+            f"SELECT distinct stimulation_business_level5 FROM standard_system where stimulation_business_level1 like '%{level1}%' and stimulation_business_level2 like '%{level2}%' and stimulation_business_level3 like '%{level3}%' and stimulation_business_level4 like '%{level4}%'"
         )
         # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
