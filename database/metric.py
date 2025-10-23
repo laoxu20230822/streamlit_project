@@ -18,7 +18,10 @@ CREATE_TABLE_METRICS_SQL="""CREATE TABLE metrics (
     serial_number INTEGER,  -- 序号
     performance TEXT,  -- 性能
     project TEXT,  -- 项目
+    product_category TEXT,  -- 产品类别 new
     table_header_product_name TEXT,  -- 表头产品名称
+    product_name TEXT,  -- 产品名称 new
+    product_model TEXT,  -- 产品型号 new
     standard_code TEXT,  -- 标准号
     table_code TEXT,  -- 表编号
     table_name TEXT,  -- 表名称
@@ -26,15 +29,18 @@ CREATE_TABLE_METRICS_SQL="""CREATE TABLE metrics (
     primary_project TEXT,  -- 一级项目名称
     secondary_project TEXT,  -- 二级项目名称
     footnote_symbol TEXT,  -- 脚注符号
-    unit TEXT,  -- 单位
+    unit TEXT,  -- 计量单位
     experimental_condition TEXT,  -- 实验条件
     indicator_requirement TEXT,  -- 指标要求
     remarks TEXT,  -- 备注
     table_footnote TEXT,  -- 表脚注
     indicator_item TEXT,  -- 指标项/项目
-    product_category TEXT,  -- 产品类别
-    product_name TEXT,  -- 产品名称
-    product_model TEXT  -- 产品型号
+    experimental_condition_type TEXT,  -- 试验条件性质 new
+    application_process TEXT,  -- 应用工艺 new
+    first_classification TEXT,  -- 一级分类 new
+    second_classification TEXT,  -- 二级分类 new
+    third_classification TEXT,  -- 三级分类 new
+    fourth_classification TEXT  -- 四级分类 new
 );
 """
 INSET_METRIC="""
@@ -42,7 +48,10 @@ INSERT INTO metrics (
     serial_number,
     performance,
     project,
+    product_category,
     table_header_product_name,
+    product_name,  
+    product_model, 
     standard_code,
     table_code,
     table_name,
@@ -56,13 +65,16 @@ INSERT INTO metrics (
     remarks,
     table_footnote,
     indicator_item,
-    product_category,
-    product_name,
-    product_model
+    experimental_condition_type,  
+    application_process,  
+    first_classification,  
+    second_classification,  
+    third_classification,  
+    fourth_classification
 ) VALUES (
     ?,?,?,?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?,?,
-    ?,?
+    ?,?,?,?,?,?,?,?
 );
 """   
 class Metric:
@@ -93,6 +105,17 @@ class Metric:
         self.conn.commit()
         #conn.close()
 
+    def query_product_category(self):
+        c = self.conn.cursor()
+        c.execute("select distinct product_category from metrics")
+        return [row[0] for row in c.fetchall()]
+    
+    def query_product_name(self,product_category:str):
+        c = self.conn.cursor()
+        c.execute("select distinct product_name from metrics where product_category=?",(product_category,))
+        return [row[0] for row in c.fetchall()]
+    
+    
     def load_from_excel(self,file_path:str):
         df = pd.read_excel(file_path, engine='openpyxl',header=0).fillna('')
         self.batch_insert(df)
