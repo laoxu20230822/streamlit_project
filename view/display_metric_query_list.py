@@ -5,7 +5,7 @@ from database.metric import init_metric_db
 from database.standard_index import StandardIndex
 from database.standard_db import Pageable, StandardDB
 from database.standard_db import WhereCause
-from st_aggrid import AgGrid,JsCode
+from st_aggrid import AgGrid, JsCode
 from database.standard_structure import StandardStructure
 from view.display_standard_tab_info import display_standard_tab_info
 
@@ -26,10 +26,10 @@ def display_details(data: list[dict]):
 
     grid_options = {
         "defaultColDef": {
-            "filter": True,           # 开启过滤
-            #"floatingFilter": True,   # 列头下方的小输入框
-            "sortable": True,         # 可排序
-            "resizable": True         # 可拖动列宽
+            "filter": True,  # 开启过滤
+            # "floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,  # 可排序
+            "resizable": True,  # 可拖动列宽
         },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
@@ -72,7 +72,7 @@ def display_details(data: list[dict]):
         # key='asdjflasdjkfl'
     )
     selected_rows = grid_response["selected_rows"]
-    
+
     # if selected_rows is not None:
     #    standard_content= [row['standard_content'] for _, row in selected_rows.iterrows()][0]
     #    st.container(border=True).markdown(standard_content)
@@ -87,14 +87,36 @@ def display_details(data: list[dict]):
 
 def display_metric_query_list(search_term: str):
     ##获取左侧的selectbox内容
-    product_category = st.session_state.product_category if st.session_state.product_category != '全部' else ''
-    product_name = st.session_state.product_name if st.session_state.product_name != '全部' else ''
-    experimental_condition = st.session_state.experimental_condition if st.session_state.experimental_condition != '全部' else ''
-    indicator_item = st.session_state.indicator_item if st.session_state.indicator_item != '全部' else ''
-    
-    metric = init_metric_db()
-    data = metric.list_by_search_term(search_term,product_category,product_name,experimental_condition,indicator_item)
+    product_category = (
+        st.session_state.product_category
+        if st.session_state.product_category != "全部"
+        else ""
+    )
+    product_name = (
+        st.session_state.product_name if st.session_state.product_name != "全部" else ""
+    )
+    experimental_condition = (
+        st.session_state.experimental_condition
+        if st.session_state.experimental_condition != "全部"
+        else ""
+    )
+    indicator_item = (
+        st.session_state.indicator_item
+        if st.session_state.indicator_item != "全部"
+        else ""
+    )
 
+    metric = init_metric_db()
+    data = metric.list_by_search_term(
+        search_term,
+        product_category,
+        product_name,
+        experimental_condition,
+        indicator_item,
+    )
+    
+    
+    
     """
     标准号，表编号，表名称，一级项目名称，二级项目名称,单位，实验条件，指标要求,备注,表脚注
     standard_code,table_code,table_name,primary_project,secondary_project,unit,experimental_condition,indicator_requirement,remarks,table_footnote
@@ -118,11 +140,11 @@ def display_metric_query_list(search_term: str):
             # "secondary_project": "二级项目名称",
             # "remarks": "备注",
         },
-    
     )
-    df.insert(0, 'seq', range(1, len(df) + 1))
+    df.insert(0, "seq", range(1, len(df) + 1))
     df["standard_info"] = df["standard_code"] + " " + df["standard_name"] + ""
-    cell_renderer_for_name = JsCode("""
+    cell_renderer_for_name = JsCode(
+        """
         class NameRenderer {
             init(params) {
             this.eGui = document.createElement('div');
@@ -135,33 +157,50 @@ def display_metric_query_list(search_term: str):
                 return this.eGui;
             }
         }
-    """)
+    """
+    )
     grid_options = {
         "defaultColDef": {
-            "filter": True,           # 开启过滤
-            #"floatingFilter": True,   # 列头下方的小输入框
-            "sortable": True,         # 可排序
-            "resizable": True         # 可拖动列宽
+            "filter": True,  # 开启过滤
+            # "floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,  # 可排序
+            "resizable": True,  # 可拖动列宽
         },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
         "columnDefs": [
-            {"field": "seq", "headerName": "序号","width":50},
-            {"field": "product_category", "headerName": "产品类别","width":100},
-            {"field": "product_name", "headerName": "产品名称","width":120},
-            {"field": "project", "headerName": "检测项目","width":120,
-            "cellRenderer": cell_renderer_for_name},
-            {"field": "unit", "headerName": "单位","width":60},
-            {"field": "indicator_requirement", "headerName": "指标要求","width":100},
-            {"field": "experimental_condition", "headerName": "实验条件","width":150},
-            {"field": "table_footnote", "headerName": "表脚注","autoHeight":True,"width":200,"wrapText": True},
-            {"field": "standard_code", "headerName": "标准号","hide":True},
-            {"field": "standard_name", "headerName": "标准名称","hide":True},
+            {"field": "seq", "headerName": "序号", "width": 50},
+            {"field": "product_category", "headerName": "产品类别", "width": 100},
+            {"field": "product_name", "headerName": "产品名称", "width": 120},
+            {
+                "field": "project",
+                "headerName": "检测项目",
+                "width": 120,
+                "cellRenderer": cell_renderer_for_name,
+            },
+            {"field": "unit", "headerName": "单位", "width": 60},
+            {"field": "indicator_requirement", "headerName": "指标要求", "width": 100},
+            {"field": "experimental_condition", "headerName": "实验条件", "width": 150},
+            {
+                "field": "table_footnote",
+                "headerName": "表脚注",
+                "autoHeight": True,
+                "width": 200,
+                "wrapText": True,
+            },
+            {"field": "standard_code", "headerName": "标准号", "hide": True},
+            {"field": "standard_name", "headerName": "标准名称", "hide": True},
             # {"field": "table_code", "headerName": "表编号"},
             # {"field": "table_name", "headerName": "表名称"},
             # {"field": "product_name", "headerName": "产品名称"},
-            {"field": "indicator_item", "headerName": "指标项","hide":True},
-            {"field": "standard_info", "headerName": "标准来源","wrapText": True, "autoHeight": True,"width":300},
+            {"field": "indicator_item", "headerName": "指标项", "hide": True},
+            {
+                "field": "standard_info",
+                "headerName": "标准来源",
+                "wrapText": True,
+                "autoHeight": True,
+                "width": 300,
+            },
             # {"field": "primary_project", "headerName": "一级项目名称"},
             # {"field": "secondary_project", "headerName": "二级项目名称"},
             # {"field": "remarks", "headerName": "备注"},
@@ -197,9 +236,16 @@ def display_metric_query_list(search_term: str):
     #     filtered_df = df[df["standard_code"] == standard_code]
     #     display_details_new(standard_code, filtered_df)
     if selected_rows is not None:
-        st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
+        st.session_state.selected_rows = [
+            {
+                "standard_code": row["standard_code"],
+                "standard_name": row["standard_name"],
+            }
+            for _, row in selected_rows.iterrows()
+        ]
     if "selected_rows" in st.session_state:
         display_standard_tab_info()
+
 
 def display_details_new(standard_code: str, df: pd.DataFrame):
     # 获取标准号，标准名称，标准内容（目前在02标准中没有产品名称无法进行过滤）
@@ -217,7 +263,6 @@ def display_details_new(standard_code: str, df: pd.DataFrame):
         },
     )
 
-    
     standard_content_list = standard_df["standard_content"].tolist()
     # return "\n\n".join(
     #     [
@@ -248,32 +293,33 @@ def display_details_new(standard_code: str, df: pd.DataFrame):
             with col1:
                 show_metric_grid(df[df["product_name"] == tab_name], i)
             with col2:
-                #content = structure_db.detail_to_markdown(standard_code)
+                # content = structure_db.detail_to_markdown(standard_code)
                 show_content(standard_df)
-                #st.container(border=True).markdown(content, unsafe_allow_html=True)
+                # st.container(border=True).markdown(content, unsafe_allow_html=True)
 
 
 def show_content(df: pd.DataFrame):
     """
-            standard_code": "标准号",
-            "standard_name": "标准名称",
-            "standard_content": "标准内容",
-            "paragraph_nature": "段落性质",
+    standard_code": "标准号",
+    "standard_name": "标准名称",
+    "standard_content": "标准内容",
+    "paragraph_nature": "段落性质",
     """
 
-    all_lines=[]
+    all_lines = []
     for index, row in df.iterrows():
-        all_lines.append(row['standard_content'])
-    st.container(border=True,height=400).markdown("\n\n".join(all_lines))
+        all_lines.append(row["standard_content"])
+    st.container(border=True, height=400).markdown("\n\n".join(all_lines))
+
 
 # 选择一个标准号之后，显示该标准号下的所有指标，需要按照产品名称进行过滤
 def show_metric_grid(df: pd.DataFrame, tab_index: int):
     grid_options = {
         "defaultColDef": {
-            "filter": True,           # 开启过滤
-            #"floatingFilter": True,   # 列头下方的小输入框
-            "sortable": True,         # 可排序
-            "resizable": True         # 可拖动列宽
+            "filter": True,  # 开启过滤
+            # "floatingFilter": True,   # 列头下方的小输入框
+            "sortable": True,  # 可排序
+            "resizable": True,  # 可拖动列宽
         },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
@@ -311,3 +357,50 @@ def show_metric_grid(df: pd.DataFrame, tab_index: int):
     #     st.write(f"产品名称: {product_name}")
     #     st.write(group)
     #     st.write("\n\n")  # 分隔不同产品的输出
+def onchange_for_product():
+    st.session_state.submit_type = "zhibiao"
+        #st.session_state.search_term = st.session_state.standard_term
+    if "selected_rows" in st.session_state:
+        del st.session_state["selected_rows"]
+def show_metric_select_boxes():
+    metric_db = init_metric_db()
+    
+
+    c1,c2,c3,c4=st.columns(4)
+    with c1:
+        product_category_options = metric_db.query_product_category()
+        product_category_options.insert(0,"全部")
+        product_category = st.selectbox(
+        "**产品类别**",
+        product_category_options,on_change=onchange_for_product
+        )
+    with c2:
+        product_name_options = metric_db.query_product_name(product_category)
+        product_name_options.insert(0,"全部")
+        product_name=st.selectbox(
+        "**产品名称**",
+        product_name_options,on_change=onchange_for_product
+        )
+        ## 实验条件
+    with c3:
+        experimental_condition_options = metric_db.query_experimental_condition()
+        experimental_condition_options.insert(0,"全部")
+        experimental_condition=st.selectbox(
+        "**实验条件**",
+        experimental_condition_options,on_change=onchange_for_product
+        )
+
+
+    with c4:
+        indicator_item_options = metric_db.query_indicator_item()
+        indicator_item_options.insert(0,"全部")
+        indicator_item=st.selectbox(
+        "**检测项目**",
+        indicator_item_options,on_change=onchange_for_product
+        )
+
+    st.session_state.product_category = product_category
+    st.session_state.product_name = product_name
+    st.session_state.experimental_condition = experimental_condition
+    st.session_state.indicator_item = indicator_item
+

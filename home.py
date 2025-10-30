@@ -31,6 +31,9 @@ from view.display_ccgz_query_list import display_ccgz_query_list
 from base64 import b64encode
 from view.showimg import showimg
 from view.display_navigator_tab import display_navigator_tab
+from view.display_metric_query_list import show_metric_select_boxes
+
+
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -267,6 +270,7 @@ with placeholder.container(border=True):
         elif submit_type == "shuyu":
             display_glossary_query_list(st.session_state.search_term)
         elif submit_type == "zhibiao":
+            show_metric_select_boxes()
             display_metric_query_list(st.session_state.search_term)
         elif submit_type == "canshu":
             #display_method_query_list(st.session_state.search_term)
