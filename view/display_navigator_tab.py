@@ -1,8 +1,10 @@
 import streamlit as st
 
 from database.standard_db import init_standard_db
+from database.metric import init_metric_db
+
 def display_navigator_tab():
-    tab1,tab2=st.sidebar.tabs(["标准体系", "储层改造业务5级"])
+    tab1,tab2,tab3=st.sidebar.tabs(["标准体系", "储层改造业务5级","指标查询"])
 
     with tab1:
         def onchange():
@@ -96,3 +98,46 @@ def display_navigator_tab():
         st.session_state.level3 = level3
         st.session_state.level4 = level4
         st.session_state.level5 = level5
+    with tab3:
+        def onchange_for_product():
+            st.session_state.submit_type = "zhibiao"
+            #st.session_state.search_term = st.session_state.standard_term
+            if "selected_rows" in st.session_state:
+                del st.session_state["selected_rows"]
+        
+        metric_db = init_metric_db()
+        product_category_options = metric_db.query_product_category()
+        product_category_options.insert(0,"全部")
+        product_category = tab3.selectbox(
+        "**产品类别**",
+        product_category_options,on_change=onchange_for_product
+        )
+        product_name_options = metric_db.query_product_name(product_category)
+        product_name_options.insert(0,"全部")
+        product_name=tab3.selectbox(
+        "**产品名称**",
+        product_name_options,on_change=onchange_for_product
+        )
+        ## 实验条件
+        experimental_condition_options = metric_db.query_experimental_condition()
+        experimental_condition_options.insert(0,"全部")
+        experimental_condition=tab3.selectbox(
+        "**实验条件**",
+        experimental_condition_options,on_change=onchange_for_product
+        )
+
+
+        indicator_item_options = metric_db.query_indicator_item()
+        indicator_item_options.insert(0,"全部")
+        indicator_item=tab3.selectbox(
+        "**检测项目**",
+        indicator_item_options,on_change=onchange_for_product
+        )
+
+        st.session_state.product_category = product_category
+        st.session_state.product_name = product_name
+        st.session_state.experimental_condition = experimental_condition
+        st.session_state.indicator_item = indicator_item
+        
+
+

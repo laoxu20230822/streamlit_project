@@ -86,8 +86,14 @@ def display_details(data: list[dict]):
 
 
 def display_metric_query_list(search_term: str):
+    ##获取左侧的selectbox内容
+    product_category = st.session_state.product_category if st.session_state.product_category != '全部' else ''
+    product_name = st.session_state.product_name if st.session_state.product_name != '全部' else ''
+    experimental_condition = st.session_state.experimental_condition if st.session_state.experimental_condition != '全部' else ''
+    indicator_item = st.session_state.indicator_item if st.session_state.indicator_item != '全部' else ''
+    
     metric = init_metric_db()
-    data = metric.list_by_search_term(search_term)
+    data = metric.list_by_search_term(search_term,product_category,product_name,experimental_condition,indicator_item)
 
     """
     标准号，表编号，表名称，一级项目名称，二级项目名称,单位，实验条件，指标要求,备注,表脚注

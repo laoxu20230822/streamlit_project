@@ -13,7 +13,7 @@ from database.page import PageResult
 import database.sql as sql
 from utils.utils import build_single_column_search
 
-CREATE_TABLE_METRICS_SQL="""CREATE TABLE metrics (
+CREATE_TABLE_METRICS_SQL = """CREATE TABLE metrics (
     id INTEGER PRIMARY KEY AUTOINCREMENT,  -- 自增主键
     serial_number INTEGER,  -- 序号
     performance TEXT,  -- 性能
@@ -43,7 +43,7 @@ CREATE_TABLE_METRICS_SQL="""CREATE TABLE metrics (
     fourth_classification TEXT  -- 四级分类 new
 );
 """
-INSET_METRIC="""
+INSET_METRIC = """
 INSERT INTO metrics (
     serial_number,
     performance,
@@ -76,55 +76,73 @@ INSERT INTO metrics (
     ?,?,?,?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?
 );
-"""   
+"""
+
+
 class Metric:
     def __init__(self):
-        db_path = Path(__file__).parent.parent / 'standard.db'
-        self.conn=sqlite3.connect(db_path,check_same_thread=False)
+        db_path = Path(__file__).parent.parent / "standard.db"
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
         c = self.conn.cursor()
-        c.execute("""
+        c.execute(
+            """
         SELECT name FROM sqlite_master WHERE type='table' AND name='metrics'
-        """)
+        """
+        )
         if not c.fetchone():
             c.execute(CREATE_TABLE_METRICS_SQL)
             self.conn.commit()
         else:
             cursor = c.execute("PRAGMA table_info(metrics)")
             db_columns = [row[1] for row in cursor.fetchall()]  # 获取所有数据库列名
-    
+
     def count(self):
         c = self.conn.cursor()
         c.execute("select count(1) from metrics")
         return c.fetchone()[0]
 
-    def batch_insert(self,df:DataFrame):
+    def batch_insert(self, df: DataFrame):
         # 转换为元组列表（适配 executemany 的参数格式）
         data = [tuple(row) for row in df.itertuples(index=False)]
         c = self.conn.cursor()
         c.executemany(INSET_METRIC, data)
         self.conn.commit()
-        #conn.close()
+        # conn.close()
 
     def query_product_category(self):
         c = self.conn.cursor()
         c.execute("select distinct product_category from metrics")
-        return [row[0] for row in c.fetchall()]
-    
-    def query_product_name(self,product_category:str):
+        return [row[0] for row in c.fetchall() if row[0].strip() != ""]
+
+    def query_product_name(self, product_category: str):
         c = self.conn.cursor()
-        c.execute("select distinct product_name from metrics where product_category=?",(product_category,))
-        return [row[0] for row in c.fetchall()]
+        c.execute(
+            "select distinct product_name from metrics where product_category=?",
+            (product_category,),
+        )
+        return [row[0] for row in c.fetchall() if row[0].strip() != ""]
+
+    def query_indicator_item(self):
+        c = self.conn.cursor()
+        c.execute("select distinct indicator_item from metrics")
+        return [row[0] for row in c.fetchall() if row[0].strip() != ""]
     
-    
-    def load_from_excel(self,file_path:str):
-        df = pd.read_excel(file_path, engine='openpyxl',header=0).fillna('')
+    def query_experimental_condition(self):
+        c = self.conn.cursor()
+        c.execute("select distinct experimental_condition from metrics")
+        return [row[0] for row in c.fetchall() if row[0].strip() != ""]
+
+    def load_from_excel(self, file_path: str):
+        df = pd.read_excel(file_path, engine="openpyxl", header=0).fillna("")
         self.batch_insert(df)
-    
+
     def create_table(self):
         c = self.conn.cursor()
-        c.execute("""
+        c.execute(
+            """
         SELECT name FROM sqlite_master WHERE type='table' AND name='metrics'
-        """)
+        """
+        )
         if not c.fetchone():
             c.execute(CREATE_TABLE_METRICS_SQL)
             self.conn.commit()
@@ -146,12 +164,12 @@ class Metric:
     #     secondary_project like '%{search_term}%' group by standard_code
     #     """
     #     c.execute(SELECT_SQL)
-        
+
     #     columns = [col[0] for col in c.description]
     #     data = [dict(zip(columns, row)) for row in c.fetchall()]
     #     return data
-    
-    def list_by_search_term(self,search_term:str):
+
+    def list_by_search_term(self, search_term: str,product_category: str,product_name: str,experimental_condition: str,indicator_item: str):
         """
         where
         indicator_item like '%{search_term}%' or
@@ -162,37 +180,51 @@ class Metric:
         secondary_project like '%{search_term}%'
         """
 
-        indicator_item_cause=build_single_column_search(search_term,'indicator_item')
-        product_category_cause=build_single_column_search(search_term,'product_category')
-        product_name_cause=build_single_column_search(search_term,'product_name')
-        table_header_product_name_cause=build_single_column_search(search_term,'table_header_product_name')
-        primary_project_cause=build_single_column_search(search_term,'primary_project')
-        secondary_project_cause=build_single_column_search(search_term,'secondary_project')
+        indicator_item_cause = build_single_column_search(search_term, "indicator_item")
+        product_category_cause = build_single_column_search(
+            search_term, "product_category"
+        )
+        product_name_cause = build_single_column_search(search_term, "product_name")
+        table_header_product_name_cause = build_single_column_search(
+            search_term, "table_header_product_name"
+        )
+        primary_project_cause = build_single_column_search(
+            search_term, "primary_project"
+        )
+        secondary_project_cause = build_single_column_search(
+            search_term, "secondary_project"
+        )
         c = self.conn.cursor()
-        SELECT_SQL=f"""
+        SELECT_SQL = f"""
         SELECT m.*, i.standard_name 
         FROM metrics m 
         LEFT JOIN standard_index i ON m.standard_code = i.standard_code
         where
-        {indicator_item_cause} or
+        ( {indicator_item_cause} or
         {product_category_cause} or
         {product_name_cause} or
         {table_header_product_name_cause} or
         {primary_project_cause} or
-        {secondary_project_cause}
+        {secondary_project_cause} ) and 
+        m.product_category like '%{product_category}%' and
+        m.product_name like '%{product_name}%' and  
+        m.experimental_condition like '%{experimental_condition}%' and
+        m.indicator_item like '%{indicator_item}%'
         """
         c.execute(SELECT_SQL)
-        
+
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
+
 
 @st.cache_resource
 def init_metric_db():
     print("init metrics db")
     return Metric()
+
+
 """
 指标项，产品类别，产品名称，表头产品名称，一级项目名称，二级项目名称
 indicator_item,product_category,product_name,table_header_product_name,primary_project,secondary_project
 """
-    
