@@ -10,3 +10,8 @@ wheels/
 .venv
 .env
 
+# Local config
+CLAUDE.md
+GEMINI.md
+.claude/
+
