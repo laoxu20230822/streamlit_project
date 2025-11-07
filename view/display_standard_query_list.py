@@ -129,7 +129,7 @@ def display_standard_query_list():
     grid_response = AgGrid(
         df,
         gridOptions=grid_options,
-        height=300,
+        height=500,
         # enable_enterprise_modules=True,
         # key='asdjflasdjkfl'
     )

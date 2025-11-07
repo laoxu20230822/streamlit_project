@@ -67,7 +67,7 @@ if "search_term" not in st.session_state:
 # 标题
 with st.container():
     st.markdown(
-        f"""<div><h2 style='text-align: center; color: blue; margin-top: 0rem; margin-bottom: 1rem; padding-top: 0.5rem;'>储层改造标准知识服务系统</h2></div>""",
+        f"""<div><h3 style='text-align: center; color: blue; margin-top: 0rem; margin-bottom: 1rem; padding-top: 0.5rem;'>储层改造标准知识服务系统</h3></div>""",
         unsafe_allow_html=True,
     )
 
@@ -75,7 +75,7 @@ with st.container():
 
 # showimg()
 
-with st.form("standard_search_form"):
+with st.form("standard_search_form",height="stretch",border=False):
     # 调整按钮点击样式
     st.markdown(
         """
@@ -85,6 +85,16 @@ with st.form("standard_search_form"):
             color: white !important;
             border-radius: 10px;
             border-color: #007BFF !important;
+            
+           
+        }
+        </style>
+        <style>
+        div.stFormSubmitButton > button {
+            min-height: 0px; 
+            height: 40px;         /* 改按钮高度 */
+            width: 100px;         /* 改按钮宽度 */
+            font-size: 20px !important;    /* 改字体大小 */
         }
         </style>
         """,
@@ -103,7 +113,7 @@ with st.form("standard_search_form"):
 
     
 
-    col1, col2, col3, col4 = st.columns([0.2, 0.2, 0.2, 0.2])
+    col1, col2, col3, col4,button1, button2, button3, button4 = st.columns([0.5, 0.2, 0.2, 0.2,0.2,0.2,0.2,0.2])
     # col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
     search_term = col1.text_input(
         "标准名称",
@@ -114,7 +124,7 @@ with st.form("standard_search_form"):
         value="",
     )
     standard_submit = col2.form_submit_button(
-        "标准查询",
+        "标准",
         use_container_width=True,
         kwargs={"submit_type": "standard"},
         on_click=button_submit,
@@ -126,7 +136,7 @@ with st.form("standard_search_form"):
         ),
     )
     tiaokuan_submit = col3.form_submit_button(
-        "条款查询",
+        "条款",
         use_container_width=True,
         kwargs={"submit_type": "tiaokuan"},
         on_click=button_submit,
@@ -139,7 +149,7 @@ with st.form("standard_search_form"):
     )
 
     chart_submit= col4.form_submit_button(
-        "图-表-公式查询",
+        "图表公式",
         use_container_width=True,
         kwargs={"submit_type": "chart"},
         on_click=button_submit,
@@ -151,10 +161,10 @@ with st.form("standard_search_form"):
         ),
     )
 
-    button1, button2, button3, button4 = st.columns([0.2, 0.2, 0.2, 0.2])
+    #button1, button2, button3, button4 = st.columns([0.2, 0.2, 0.2, 0.2])
 
     button1.form_submit_button(
-        "标准体系",
+        "体系",
         use_container_width=True,
         kwargs={"submit_type": "tixi"},
         on_click=button_submit,
@@ -166,7 +176,7 @@ with st.form("standard_search_form"):
         ),
     )
     button2.form_submit_button(
-        "术语查询",
+        "术语",
         use_container_width=True,
         kwargs={"submit_type": "shuyu"},
         on_click=button_submit,
@@ -178,7 +188,7 @@ with st.form("standard_search_form"):
         ),
     )
     button3.form_submit_button(
-        "指标查询",
+        "指标",
         use_container_width=True,
         kwargs={"submit_type": "zhibiao"},
         on_click=button_submit,
@@ -190,7 +200,7 @@ with st.form("standard_search_form"):
         ),
     )
     button4.form_submit_button(
-        "方法查询",
+        "方法",
         use_container_width=True,
         kwargs={"submit_type": "canshu"},
         on_click=button_submit,

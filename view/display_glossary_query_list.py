@@ -119,7 +119,7 @@ def display_glossary_query_list(search_term:str):
     grid_response = AgGrid(
         df, 
         gridOptions=grid_options,
-        height=300
+        height=500
         #key='asdjflasdjkfl'
         )  
 

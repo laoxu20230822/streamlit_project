@@ -219,7 +219,7 @@ def display_metric_query_list(search_term: str):
     grid_response = AgGrid(
         df,
         gridOptions=grid_options,
-        height=300,
+        height=400,
         allow_unsafe_jscode=True,
         # key='asdjflasdjkfl'
     )
@@ -351,7 +351,7 @@ def show_metric_grid(df: pd.DataFrame, tab_index: int):
         df,
         gridOptions=grid_options,
         key=f"grid_{tab_index}",
-        height=300,
+        height=500,
     )
     # for product_name, group in grouped_df:
     #     st.write(f"产品名称: {product_name}")
