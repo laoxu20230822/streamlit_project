@@ -506,6 +506,15 @@ class StandardDB:
         else:
             return "1=1"
 
+    def get_chapter(self,standard_code: str,chapter: str):
+        c = self.conn.cursor()
+        c.execute(
+            f"SELECT standard_code, standard_name,standard_content FROM standard_system where standard_code='{standard_code}' and min_chapter_clause_code='{chapter}%'"
+        )
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        c.close()
+        return data
     def fetch_by_ccgz(
         self,
         level1: str = "",
@@ -515,7 +524,15 @@ class StandardDB:
         level5: str = "",
     ):
         where_clause = self.build_where_clause(level1, level2, level3, level4, level5)
-        print(where_clause)
+        
+        c = self.conn.cursor()
+        
+        data_all=c.execute(
+            f"""SELECT standard_code, standard_name,standard_content,min_chapter_clause_code FROM standard_system"""
+        )
+        columns = [col[0] for col in c.description]
+        data_all = [dict(zip(columns, row)) for row in data_all]
+        c.close()
         c = self.conn.cursor()
 
         c.execute(
@@ -524,23 +541,30 @@ class StandardDB:
         )
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
+        c.close()
+        # 按照standard_code分组
+        from collections import defaultdict
+        grouped_data = defaultdict(lambda: {
+            "standard_code": "",
+            "standard_name": "",
+            "standard_content": [],
+            "min_chapter_clause_code": ""
+        })
 
-        ## 按照standard_code分组
-        # grouped = defaultdict(lambda: {"standard_code": "", "standard_name": "", "standard_content": [], "min_chapter_clause_code": ""})
+        for item in data:
+            code = item["standard_code"]
+            grouped_data[code]["standard_code"] = code
+            grouped_data[code]["standard_name"] = "#"+item["standard_name"]+"#"
+            grouped_data[code]["standard_content"].append(item["standard_content"])
+            grouped_data[code]["min_chapter_clause_code"] = item["min_chapter_clause_code"]
 
-        # for item in data:
-        #     code = item["standard_code"]
-        #     grouped[code]["standard_code"] = code
-        #     grouped[code]["standard_name"] = item["standard_name"]
-        #     grouped[code]["standard_content"].append(item["standard_content"])
-        #     grouped[code]["min_chapter_clause_code"] = item["min_chapter_clause_code"]
-
-        # # 拼接内容并转换为新的列表
-        # new_data = []
-        # for v in grouped.values():
-        #     v["standard_content"] = "\n".join(v["standard_content"])  # 用中文分号拼接
-        #     new_data.append(v)
-        return data
+        # 拼接内容并转换为新的列表
+        new_data = []
+        for v in grouped_data.values():
+            # 用回车符（\n）拼接内容
+            v["standard_content"] = "\n".join(v["standard_content"])
+            new_data.append(v)
+        return new_data
 
     def list(
         self, filter: WhereCause = WhereCause(), pageable: Pageable = Pageable(1, 10)

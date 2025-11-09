@@ -95,6 +95,10 @@ def display_ccgz_query_list(search_term):
         st.session_state.level5,
     )
 
+
+    
+    #--------
+
     grid_response = show_grid(data)
     selected_rows = grid_response["selected_rows"]
     if selected_rows is not None:
