@@ -20,7 +20,7 @@ def show_grid(data):
     )
     df.insert(0, "seq", range(1, len(df) + 1))
     df["standard_info"] = df["standard_code"] + " " + df["standard_name"] + ""
-    df['standard_content'] = df['min_chapter_clause_code'] + '\n' + df['standard_content']
+    #df['standard_content'] = df['min_chapter_clause_code'] + '\n' + df['standard_content']
     #展示短文本
     # 生成短文本列（前 50 字）
     MAX_CHARS = 50

@@ -458,6 +458,54 @@ class StandardDB:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
+    def build_where_clause(
+        self,
+        level1: str = "",
+        level2: str = "",
+        level3: str = "",
+        level4: str = "",
+        level5: str = "",
+    ) -> str:
+        """
+        根据level1～level5参数动态生成WHERE语句，空字符串的参数会被忽略
+
+        Args:
+            level1: 一级业务层级
+            level2: 二级业务层级
+            level3: 三级业务层级
+            level4: 四级业务层级
+            level5: 五级业务层级
+
+        Returns:
+            str: 生成的WHERE语句，如果没有有效参数则返回空字符串
+        """
+        # 清理参数，去除None值和前后空格
+        level1 = level1.strip() if level1 is not None else ""
+        level2 = level2.strip() if level2 is not None else ""
+        level3 = level3.strip() if level3 is not None else ""
+        level4 = level4.strip() if level4 is not None else ""
+        level5 = level5.strip() if level5 is not None else ""
+
+        # 构建条件列表
+        conditions = []
+
+        if level1:
+            conditions.append(f"stimulation_business_level1 like '%{level1}%'")
+        if level2:
+            conditions.append(f"stimulation_business_level2 like '%{level2}%'")
+        if level3:
+            conditions.append(f"stimulation_business_level3 like '%{level3}%'")
+        if level4:
+            conditions.append(f"stimulation_business_level4 like '%{level4}%'")
+        if level5:
+            conditions.append(f"stimulation_business_level5 like '%{level5}%'")
+
+        # 组合WHERE语句
+        if conditions:
+            return " and ".join(conditions)
+        else:
+            return "1=1"
+
     def fetch_by_ccgz(
         self,
         level1: str = "",
@@ -466,41 +514,33 @@ class StandardDB:
         level4: str = "",
         level5: str = "",
     ):
-        level1 = level1.strip() if level1 is not None else ""
-        level2 = level2.strip() if level2 is not None else ""
-        level3 = level3.strip() if level3 is not None else ""
-        level4 = level4.strip() if level4 is not None else ""
-        level5 = level5.strip() if level5 is not None else ""
-
+        where_clause = self.build_where_clause(level1, level2, level3, level4, level5)
+        print(where_clause)
         c = self.conn.cursor()
+
         c.execute(
             f"""SELECT standard_code, standard_name,standard_content,min_chapter_clause_code FROM standard_system 
-            where stimulation_business_level1 like '%{level1}%' 
-            and stimulation_business_level2 like '%{level2}%' 
-            and stimulation_business_level3 like '%{level3}%' 
-            and stimulation_business_level4 like '%{level4}%' 
-            and stimulation_business_level5 like '%{level5}%'
-            group by standard_code,standard_name """
+            where   {where_clause} """
         )
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
-        
-        ## 按照standard_code分组
-        grouped = defaultdict(lambda: {"standard_code": "", "standard_name": "", "standard_content": [], "min_chapter_clause_code": ""})
 
-        for item in data:
-            code = item["standard_code"]
-            grouped[code]["standard_code"] = code
-            grouped[code]["standard_name"] = item["standard_name"]
-            grouped[code]["standard_content"].append(item["standard_content"])
-            grouped[code]["min_chapter_clause_code"] = item["min_chapter_clause_code"]
-        
-        # 拼接内容并转换为新的列表
-        new_data = []
-        for v in grouped.values():
-            v["standard_content"] = "\n".join(v["standard_content"])  # 用中文分号拼接
-            new_data.append(v)
-        return new_data
+        ## 按照standard_code分组
+        # grouped = defaultdict(lambda: {"standard_code": "", "standard_name": "", "standard_content": [], "min_chapter_clause_code": ""})
+
+        # for item in data:
+        #     code = item["standard_code"]
+        #     grouped[code]["standard_code"] = code
+        #     grouped[code]["standard_name"] = item["standard_name"]
+        #     grouped[code]["standard_content"].append(item["standard_content"])
+        #     grouped[code]["min_chapter_clause_code"] = item["min_chapter_clause_code"]
+
+        # # 拼接内容并转换为新的列表
+        # new_data = []
+        # for v in grouped.values():
+        #     v["standard_content"] = "\n".join(v["standard_content"])  # 用中文分号拼接
+        #     new_data.append(v)
+        return data
 
     def list(
         self, filter: WhereCause = WhereCause(), pageable: Pageable = Pageable(1, 10)
