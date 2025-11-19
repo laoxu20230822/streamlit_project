@@ -7,6 +7,8 @@ from database.standard_index import StandardIndex
 from database.standard_db import Pageable
 from database.standard_db import WhereCause
 from st_aggrid import AgGrid
+from view.display_standard_tab_info import display_standard_tab_info
+
 
 
 def display_grid(data:list[dict]):
@@ -123,6 +125,17 @@ def display_glossary_query_list(search_term:str):
         #key='asdjflasdjkfl'
         )  
 
-
+    selected_rows = grid_response["selected_rows"]
+  
+    if selected_rows is not None:
+        st.session_state.selected_rows = [
+            {
+                "standard_code": row["standard_code"],
+                "standard_name": row["standard_name"],
+            }
+            for _, row in selected_rows.iterrows()
+        ]
+    if "selected_rows" in st.session_state:
+        display_standard_tab_info()
 
     

@@ -224,17 +224,7 @@ def display_metric_query_list(search_term: str):
         # key='asdjflasdjkfl'
     )
     selected_rows = grid_response["selected_rows"]
-    #  if selected_rows is not None:
-    # st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
-    # if selected_rows is not None:
-    #     metric_term = [row["indicator_item"] for _, row in selected_rows.iterrows()][0]
-    #     standard_code = [row["standard_code"] for _, row in selected_rows.iterrows()][0]
-    #     standard_db = StandardDB()
-    #     metrics_for_standard = standard_db.query_by_metrics(metric_term, standard_code)
-    #     # display_details(metrics_for_standard)
-
-    #     filtered_df = df[df["standard_code"] == standard_code]
-    #     display_details_new(standard_code, filtered_df)
+  
     if selected_rows is not None:
         st.session_state.selected_rows = [
             {

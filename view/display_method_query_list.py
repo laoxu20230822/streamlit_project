@@ -8,6 +8,7 @@ from database.standard_db import WhereCause
 from st_aggrid import AgGrid,GridOptionsBuilder
 
 from database.standard_structure import StandardStructure
+from view.display_standard_tab_info import display_standard_tab_info
 
 
 
@@ -123,7 +124,7 @@ def display_method_query_list_new(search_term:str):
         'rowSelection': {
                 'mode': 'singleRow',
                 'checkboxes': False,
-                'enableClickSelection': False 
+                'enableClickSelection': True 
             },
         # "autoSizeStrategy": {
         #     "type": "fitCellContents"
@@ -141,5 +142,17 @@ def display_method_query_list_new(search_term:str):
             height=500,
             #key='asdjflasdjkfl'
             ) 
+    selected_rows = grid_response["selected_rows"]
+  
+    if selected_rows is not None:
+        st.session_state.selected_rows = [
+            {
+                "standard_code": row["standard_code"],
+                "standard_name": row["standard_name"],
+            }
+            for _, row in selected_rows.iterrows()
+        ]
+    if "selected_rows" in st.session_state:
+        display_standard_tab_info()
 
     

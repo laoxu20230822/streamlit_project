@@ -6,6 +6,7 @@ from database.page import Pageable
 from database.standard_db import WhereCause
 from st_aggrid import AgGrid
 import pandas as pd
+from view.display_standard_tab_info import display_standard_tab_info
 
 
 def display_tixi_query_list2(primary:str,secondary:str):
@@ -56,13 +57,19 @@ def display_tixi_query_list2(primary:str,secondary:str):
         height=500,
         #key='asdjflasdjkfl'
         )
-    #selected_rows=grid_response['selected_rows']
-    #if selected_rows is not None:
-        #st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
-        #st.write(test)       # standard_code=row['standard_code']
-            # standard_name=row['standard_name']
-    #return grid_response
-
+    selected_rows = grid_response["selected_rows"]
+  
+    if selected_rows is not None:
+        st.session_state.selected_rows = [
+            {
+                "standard_code": row["standard_code"],
+                "standard_name": row["standard_name"],
+            }
+            for _, row in selected_rows.iterrows()
+        ]
+    if "selected_rows" in st.session_state:
+        display_standard_tab_info() 
+    
 
 def display_tixi_query_list(search_term:str,primary:str,secondary:str):
     print(primary,secondary)
