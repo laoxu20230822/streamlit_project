@@ -6,9 +6,9 @@ def display_standard_references(standard_code:str):
     reference_standards=init_reference_standards_db()
     data=reference_standards.detail(standard_code)
     df=pd.DataFrame(data,columns={
-        'cited_standard_original': '引用文件标准号',
-        'cited_standard_normalized': '引用文件标准号（规范后）',
-        'standard_name_normalized': '引用文件标准名称（规范后）',
+        'cited_standard_original': '规范性引用文件号（原文）',
+        'cited_standard_normalized': '标准号',
+        'standard_name_normalized': '标准名称',
         'status': '状态'
         })
     #st.subheader('引用列表')
@@ -18,16 +18,16 @@ def display_standard_references(standard_code:str):
     use_container_width=True,
     column_config={
         "cited_standard_original": st.column_config.TextColumn(
-            "引用文件标准号",
-            help="引用文件标准号"
+            "规范性引用文件号（原文）",
+            help="规范性引用文件号（原文）"
         ),
         "cited_standard_normalized": st.column_config.TextColumn(
-            "引用文件标准号（规范后）",
-            help="引用文件标准号（规范后）"
+            "标准号",
+            help="标准号"
         ),
         "standard_name_normalized": st.column_config.TextColumn(
-            "引用文件标准名称（规范后）",
-            help="引用文件标准名称（规范后）"
+            "标准名称",
+            help="标准名称"
         ),
         "status": st.column_config.TextColumn(
             "状态",

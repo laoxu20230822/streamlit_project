@@ -81,8 +81,8 @@ def display_standard_tab_info():
         t1, t2, t3, t4, t5 = st.tabs(
             [
                 "**基本信息**",
-                "**标准目次信息**",
-                "**引用文件信息**",
+                "**目次及原文**",
+                "**规范性引用清单**",
                 "**术语**",
                 "**" + product_or_craft_tab_name + "**",
             ]
