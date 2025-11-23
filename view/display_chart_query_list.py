@@ -21,19 +21,120 @@ import urllib.parse
 imageRenderer = JsCode(
     """
     class ImageRenderer {
-            init(params) {
+        init(params) {
+            this.params = params;
             this.eGui = document.createElement('img');
             this.eGui.setAttribute('src', params.value);
             this.eGui.setAttribute('width', '100');
             this.eGui.setAttribute('height', '100');
             this.eGui.style.objectFit = 'cover';
             this.eGui.style.cursor = 'pointer';
-            }
-            getGui() {
-                console.log(this.eGui);
-                return this.eGui;
-            }
+            
+            // 添加点击事件监听器
+            this.eGui.addEventListener('click', () => this.showImageModal());
         }
+        
+        getGui() {
+            return this.eGui;
+        }
+        
+        // 显示图片模态对话框
+        showImageModal() {
+            // 获取完整图片路径（大图）
+            const fullImagePath = this.params.value;
+            const imageName = this.params.data.in_text_name;
+            
+            // 创建模态对话框
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '9999';
+            modal.style.cursor = 'pointer';
+            
+            // 创建图片容器
+            const imageContainer = document.createElement('div');
+            imageContainer.style.position = 'relative';
+            imageContainer.style.maxWidth = '90%';
+            imageContainer.style.maxHeight = '90%';
+            imageContainer.style.backgroundColor = 'white';
+            imageContainer.style.borderRadius = '8px';
+            imageContainer.style.padding = '20px';
+            imageContainer.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+            
+            // 创建标题
+            const title = document.createElement('h3');
+            title.textContent = imageName;
+            title.style.margin = '0 0 15px 0';
+            title.style.textAlign = 'center';
+            title.style.color = '#333';
+            title.style.fontSize = '18px';
+            
+            // 创建大图
+            const largeImage = document.createElement('img');
+            largeImage.setAttribute('src', fullImagePath);
+            largeImage.style.maxWidth = '100%';
+            largeImage.style.maxHeight = '70vh';
+            largeImage.style.objectFit = 'contain';
+            largeImage.style.borderRadius = '4px';
+            
+            // 创建关闭按钮
+            const closeButton = document.createElement('button');
+            closeButton.innerHTML = '✕';
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '10px';
+            closeButton.style.right = '10px';
+            closeButton.style.backgroundColor = '#ff4444';
+            closeButton.style.color = 'white';
+            closeButton.style.border = 'none';
+            closeButton.style.borderRadius = '50%';
+            closeButton.style.width = '30px';
+            closeButton.style.height = '30px';
+            closeButton.style.cursor = 'pointer';
+            closeButton.style.fontSize = '18px';
+            closeButton.style.fontWeight = 'bold';
+            closeButton.style.display = 'flex';
+            closeButton.style.alignItems = 'center';
+            closeButton.style.justifyContent = 'center';
+            
+            // 添加关闭事件
+            const closeModal = () => {
+                document.body.removeChild(modal);
+            };
+            
+            closeButton.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            // ESC键关闭
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            });
+            
+            // 组装模态框
+            imageContainer.appendChild(closeButton);
+            imageContainer.appendChild(title);
+            imageContainer.appendChild(largeImage);
+            modal.appendChild(imageContainer);
+            
+            // 显示模态框
+            document.body.appendChild(modal);
+            
+            console.log('Modal opened for image:', fullImagePath);
+        }
+    }
 """
 )
 
@@ -118,7 +219,7 @@ def show_grid(data, key: str):
     return AgGrid(
         df,
         gridOptions=grid_options,
-        height=600,
+        height=400,
         key=key,
         fit_columns_on_grid_load=True,
         allow_unsafe_jscode=True,
@@ -140,30 +241,50 @@ def display_chart_query_list(search_term: str):
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
             st.session_state.selected_rows = [
-                {"image_info_path": row["image_info_path"]}
-                for _, row in selected_rows.iterrows()
-            ]
-            show_chart()
+            {
+                "standard_code": row["standard_code"],
+                "standard_name": row["standard_name"],
+                "image_info_path": row["image_info_path"]
+            }
+            for _, row in selected_rows.iterrows()
+        ]
+            # show_chart()
+        if "selected_rows" in st.session_state:
+            display_standard_tab_info()
     with t2:
         data = standard_chart.list_all("表格", search_term)
         grid_response = show_grid(data, "table")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
+            
             st.session_state.selected_rows = [
-                {"image_info_path": row["image_info_path"]}
-                for _, row in selected_rows.iterrows()
-            ]
-            show_chart()
+            {
+                "standard_code": row["standard_code"],
+                "standard_name": row["standard_name"],
+                "image_info_path": row["image_info_path"]
+            }
+            for _, row in selected_rows.iterrows()
+        ]
+            # show_chart()
+        if "selected_rows" in st.session_state:
+            display_standard_tab_info()
     with t3:
         data = standard_chart.list_all("公式", search_term)
         grid_response = show_grid(data, "formula")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
+           
             st.session_state.selected_rows = [
-                {"image_info_path": row["image_info_path"]}
-                for _, row in selected_rows.iterrows()
+            {
+                "standard_code": row["standard_code"],
+                "standard_name": row["standard_name"],
+                "image_info_path": row["image_info_path"]
+            }
+            for _, row in selected_rows.iterrows()
             ]
-            show_chart()
+            # show_chart()
+        if "selected_rows" in st.session_state:
+            display_standard_tab_info()
 
     # df=pd.DataFrame(data if data else [],columns={
     #         'standard_code': '标准号',
@@ -209,13 +330,13 @@ def display_chart_query_list(search_term: str):
     #     st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
 
 
-def show_chart():
-    if "selected_rows" in st.session_state:
-        image_info_path = st.session_state["selected_rows"][0]["image_info_path"]
-        show_image_detail(image_info_path)
+# def show_chart():
+#     if "selected_rows" in st.session_state:
+#         image_info_path = st.session_state["selected_rows"][0]["image_info_path"]
+#         # show_image_detail(image_info_path)
 
 
-@st.dialog("图片详情", width="large")
-def show_image_detail(image_info_path: str):
-    encoded_path = urllib.parse.quote(image_info_path)
-    st.markdown(f"![Selected Image]({encoded_path})", unsafe_allow_html=True)
+# @st.dialog("图片详情", width="large")
+# def show_image_detail(image_info_path: str):
+#     encoded_path = urllib.parse.quote(image_info_path)
+#     st.markdown(f"![Selected Image]({encoded_path})", unsafe_allow_html=True)
