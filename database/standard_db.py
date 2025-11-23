@@ -589,18 +589,32 @@ class StandardDB:
         return PageResult(data, total_page, pageable)
 
     def query_by_stimulation_business_level2(self, search_term: str = ""):
-        method1_cause = build_single_column_search(search_term, "method1")
-        method2_cause = build_single_column_search(search_term, "method2")
+        performance_indicator_level1_cause = build_single_column_search(search_term, "performance_indicator_level1")
+        performance_indicator_level2_cause = build_single_column_search(search_term, "performance_indicator_level2")
+        #method1_cause = build_single_column_search(search_term, "method1")
+        #method2_cause = build_single_column_search(search_term, "method2")
         method_name_cause = build_single_column_search(search_term, "method_name")
+        product_category1_cause = build_single_column_search(search_term, "product_category1")
+        product_category2_cause = build_single_column_search(search_term, "product_category2")
+        product_name_cause = build_single_column_search(search_term, "product_name")
         sql = f"""
 SELECT standard_code, standard_name, standard_content, stimulation_business_level2
 FROM standard_system where stimulation_business_level2 in ('方法提要','试验步骤','试验数据处理','仪器设备、试剂或材料') 
-and ({method1_cause} or {method2_cause} or {method_name_cause})
+and 
+(
+{performance_indicator_level1_cause} or 
+{performance_indicator_level2_cause} or 
+{method_name_cause} or
+{product_category1_cause} or
+{product_category2_cause} or
+{product_name_cause}
+)
 """
         c = self.conn.cursor()
         c.execute(sql)
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
+        
         return data
 
     def query_by_metrics(self, metric: str, standard_code: str):

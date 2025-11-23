@@ -200,7 +200,7 @@ with st.form("standard_search_form",height="stretch",border=False):
         ),
     )
     button4.form_submit_button(
-        "方法",
+        "实验方法",
         use_container_width=True,
         kwargs={"submit_type": "canshu"},
         on_click=button_submit,
