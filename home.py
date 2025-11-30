@@ -35,7 +35,6 @@ from view.display_metric_query_list import show_metric_select_boxes
 from view.display_method_query_list import show_method_select_boxes
 
 
-
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -125,7 +124,7 @@ with st.form("standard_search_form", height="stretch", border=False):
     )
     standard_submit = col2.form_submit_button(
         "标准",
-        use_container_width=True,
+        width="stretch",
         kwargs={"submit_type": "standard"},
         on_click=button_submit,
         type=(
@@ -137,7 +136,7 @@ with st.form("standard_search_form", height="stretch", border=False):
     )
     tiaokuan_submit = col3.form_submit_button(
         "条款",
-        use_container_width=True,
+        width="stretch",
         kwargs={"submit_type": "tiaokuan"},
         on_click=button_submit,
         type=(
@@ -150,7 +149,7 @@ with st.form("standard_search_form", height="stretch", border=False):
 
     chart_submit = col4.form_submit_button(
         "图表公式",
-        use_container_width=True,
+        width="stretch",
         kwargs={"submit_type": "chart"},
         on_click=button_submit,
         type=(
@@ -165,7 +164,7 @@ with st.form("standard_search_form", height="stretch", border=False):
 
     button1.form_submit_button(
         "体系",
-        use_container_width=True,
+        width="stretch",
         kwargs={"submit_type": "tixi"},
         on_click=button_submit,
         type=(
@@ -177,7 +176,7 @@ with st.form("standard_search_form", height="stretch", border=False):
     )
     button2.form_submit_button(
         "术语",
-        use_container_width=True,
+        width="stretch",
         kwargs={"submit_type": "shuyu"},
         on_click=button_submit,
         type=(
@@ -189,7 +188,7 @@ with st.form("standard_search_form", height="stretch", border=False):
     )
     button3.form_submit_button(
         "指标",
-        use_container_width=True,
+        width="stretch",
         kwargs={"submit_type": "zhibiao"},
         on_click=button_submit,
         type=(
@@ -201,7 +200,7 @@ with st.form("standard_search_form", height="stretch", border=False):
     )
     button4.form_submit_button(
         "试验方法",
-        use_container_width=True,
+        width="stretch",
         kwargs={"submit_type": "canshu"},
         on_click=button_submit,
         type=(

@@ -1,12 +1,15 @@
+import uuid
 import streamlit as st
-from database.standard_db import  init_standard_db
-from database.standard_index import  init_standard_index_db
+from database.standard_db import init_standard_db
+from database.standard_index import init_standard_index_db
 from view.display_standard_detail import display_standard_detail
 from view.display_standard_glossary import display_standard_glossary
 from view.display_standard_references import display_standard_references
 from view.display_product_standard import display_product_standard
 from view.display_craft_standard import display_craft_standard
 from view.display_standard_structure import display_standard_structure
+import uuid
+from streamlit_extras.stylable_container import stylable_container
 
 
 def get_chapter_content(data_list, selected_chapter):
@@ -25,18 +28,14 @@ def get_chapter_content(data_list, selected_chapter):
 
 
 def display_standard_info(standard_code, standard_name):
-    # col1,col2 = st.columns(2)
     html_stype = "<hr style='margin: 0.5rem 0; border-color: grey;'></hr>"
-    st.write(f"""标准号：{standard_code}""", unsafe_allow_html=True)
-    st.write(
-        f"""标准名称：{standard_name}   
-    {html_stype}""",
-        unsafe_allow_html=True,
-    )
+
+    st.write(f"**标准号**：{standard_code}")
     # st.markdown(f"""
     # >:blue[{standard_code}]\n
     # >#### {standard_name}
     # """)
+
 
 def display_standard_cotent(standard_code: str):
     standard_db = init_standard_db()
@@ -54,7 +53,6 @@ def display_standard_cotent(standard_code: str):
             #     st.markdown(head)
             #     for content in content_arr[1:]:
             #         st.markdown(content)
-
 
 
 def display_standard_tab_info():
@@ -78,7 +76,9 @@ def display_standard_tab_info():
         else:
             product_or_craft_tab_name = "其他"
             st.session_state.pc_type = "other"
-        t1, t2, t3, t4, t5 = st.tabs(
+        col1, col2 = st.columns([9, 1])
+
+        t1, t2, t3, t4, t5 = col1.tabs(
             [
                 "**基本信息**",
                 "**目次及原文**",
@@ -120,4 +120,21 @@ def display_standard_tab_info():
             else:
                 st.write("other")
 
+        with col2:
+            # 处理PDF文件名：将standard_code中的"/"替换为下划线
+            pdf_filename = standard_code.replace("/", "_") + ".pdf"
+            pdf_path = f"static/{pdf_filename}"
+            # 检查PDF文件是否存在，如果存在则将标准号显示为可点击的链接
+            import os
 
+            if os.path.exists(pdf_path):
+                # 创建对话框来显示PDF
+                @st.dialog(f"{standard_code}", width="large")
+                def show_pdf_dialog():
+                    st.pdf(pdf_path, height=400)
+
+                if st.button(f"PDF"):
+                    show_pdf_dialog()
+            else:
+                st.markdown(f"**文件不存在**", unsafe_allow_html=True)
+                    
