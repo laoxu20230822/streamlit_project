@@ -34,7 +34,6 @@ from view.display_navigator_tab import display_navigator_tab
 from view.display_metric_query_list import show_metric_select_boxes
 
 
-
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -75,7 +74,7 @@ with st.container():
 
 # showimg()
 
-with st.form("standard_search_form",height="stretch",border=False):
+with st.form("standard_search_form", height="stretch", border=False):
     # 调整按钮点击样式
     st.markdown(
         """
@@ -109,11 +108,10 @@ with st.form("standard_search_form",height="stretch",border=False):
             del st.session_state["selected_rows"]
 
     display_navigator_tab()
-    
 
-    
-
-    col1, col2, col3, col4,button1, button2, button3, button4 = st.columns([0.5, 0.2, 0.2, 0.2,0.2,0.2,0.2,0.2])
+    col1, col2, col3, col4, button1, button2, button3, button4 = st.columns(
+        [0.5, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+    )
     # col.markdown('<div> 输入标准名称</div>',unsafe_allow_html=True)
     search_term = col1.text_input(
         "标准名称",
@@ -148,7 +146,7 @@ with st.form("standard_search_form",height="stretch",border=False):
         ),
     )
 
-    chart_submit= col4.form_submit_button(
+    chart_submit = col4.form_submit_button(
         "图表公式",
         use_container_width=True,
         kwargs={"submit_type": "chart"},
@@ -161,7 +159,7 @@ with st.form("standard_search_form",height="stretch",border=False):
         ),
     )
 
-    #button1, button2, button3, button4 = st.columns([0.2, 0.2, 0.2, 0.2])
+    # button1, button2, button3, button4 = st.columns([0.2, 0.2, 0.2, 0.2])
 
     button1.form_submit_button(
         "体系",
@@ -200,7 +198,7 @@ with st.form("standard_search_form",height="stretch",border=False):
         ),
     )
     button4.form_submit_button(
-        "实验方法",
+        "试验方法",
         use_container_width=True,
         kwargs={"submit_type": "canshu"},
         on_click=button_submit,
@@ -273,21 +271,23 @@ with placeholder.container(border=True):
         elif submit_type == "tiaokuan":
             display_tiaokuan_query_list(st.session_state.search_term)
         elif submit_type == "tixi":
-            #st.session_state.primary = primary
-            #st.session_state.secondary = secondary
+            # st.session_state.primary = primary
+            # st.session_state.secondary = secondary
             # display_tixi_query_list(st.session_state.search_term,primary,secondary)
-            display_tixi_query_list2(st.session_state.primary, st.session_state.secondary)
+            display_tixi_query_list2(
+                st.session_state.primary, st.session_state.secondary
+            )
         elif submit_type == "shuyu":
             display_glossary_query_list(st.session_state.search_term)
         elif submit_type == "zhibiao":
             show_metric_select_boxes()
             display_metric_query_list(st.session_state.search_term)
         elif submit_type == "canshu":
-            #display_method_query_list(st.session_state.search_term)
-            display_method_query_list_new(st.session_state.search_term)   
+            # display_method_query_list(st.session_state.search_term)
+            display_method_query_list_new(st.session_state.search_term)
         elif submit_type == "chart":
             display_chart_query_list(st.session_state.search_term)
-        elif submit_type == "ccgz": # 储层改造业务5级
+        elif submit_type == "ccgz":  # 储层改造业务5级
             display_ccgz_query_list(st.session_state.search_term)
         else:
             print("")
