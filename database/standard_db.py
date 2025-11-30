@@ -465,6 +465,11 @@ class StandardDB:
         level3: str = "",
         level4: str = "",
         level5: str = "",
+        oil_gas_resource_type: str = "",
+        process1: str = "",
+        process2: str = "",
+        wellbore_type1: str = "",
+        wellbore_type2: str = "",
     ) -> str:
         """
         根据level1～level5参数动态生成WHERE语句，空字符串的参数会被忽略
@@ -475,6 +480,11 @@ class StandardDB:
             level3: 三级业务层级
             level4: 四级业务层级
             level5: 五级业务层级
+            oil_gas_resource_type: 油藏资源类型
+            process1: 工艺类型1
+            process2: 工艺类型2
+            wellbore_type1: 井体类型1
+            wellbore_type2: 井体类型2
 
         Returns:
             str: 生成的WHERE语句，如果没有有效参数则返回空字符串
@@ -499,7 +509,17 @@ class StandardDB:
             conditions.append(f"stimulation_business_level4 like '%{level4}%'")
         if level5:
             conditions.append(f"stimulation_business_level5 like '%{level5}%'")
-
+        if oil_gas_resource_type:
+            conditions.append(f"oil_gas_resource_type like '%{oil_gas_resource_type}%'")
+        if process1:
+            conditions.append(f"process_tech1 like '%{process1}%'")
+        if process2:
+            conditions.append(f"process_tech2 like '%{process2}%'")
+        if wellbore_type1:
+            conditions.append(f"wellbore_type1 like '%{wellbore_type1}%'")
+        if wellbore_type2:
+            conditions.append(f"wellbore_type2 like '%{wellbore_type2}%'")
+        
         # 组合WHERE语句
         if conditions:
             return " and ".join(conditions)
@@ -523,8 +543,24 @@ class StandardDB:
         level3: str = "",
         level4: str = "",
         level5: str = "",
+        oil_gas_resource_type: str = "",
+        process1: str = "",
+        process2: str = "",
+        wellbore_type1: str = "",
+        wellbore_type2: str = "",
     ):
-        where_clause = self.build_where_clause(level1, level2, level3, level4, level5)
+        where_clause = self.build_where_clause(
+            level1,
+            level2,
+            level3,
+            level4,
+            level5,
+            oil_gas_resource_type,
+            process1,
+            process2,
+            wellbore_type1,
+            wellbore_type2,
+        )
 
         c = self.conn.cursor()
 
@@ -594,7 +630,9 @@ class StandardDB:
             total_page += 1
         return PageResult(data, total_page, pageable)
 
-    def query_by_stimulation_business_level2(self, search_term: str = "",
+    def query_by_stimulation_business_level2(
+        self,
+        search_term: str = "",
         performance_indicator_level1: str = "",
         performance_indicator_level2: str = "",
         method_name: str = "",
@@ -782,6 +820,51 @@ and
         c = self.conn.cursor()
         c.execute(
             "SELECT DISTINCT product_name FROM standard_system WHERE product_name IS NOT NULL AND product_name != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_oil_gas_resource_type(self):
+        """获取油气资源类别非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT oil_gas_resource_type FROM standard_system WHERE oil_gas_resource_type IS NOT NULL AND oil_gas_resource_type != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_process1(self):
+        """获取工艺1非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT process1 FROM standard_system WHERE process1 IS NOT NULL AND process1 != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_process2(self):
+        """获取工艺2非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT process2 FROM standard_system WHERE process2 IS NOT NULL AND process2 != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_wellbore_type1(self):
+        """获取井筒类型分类1非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT wellbore_type1 FROM standard_system WHERE wellbore_type1 IS NOT NULL AND wellbore_type1 != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_wellbore_type2(self):
+        """获取井筒类型分类2非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT wellbore_type2 FROM standard_system WHERE wellbore_type2 IS NOT NULL AND wellbore_type2 != ''"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels

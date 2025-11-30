@@ -93,6 +93,11 @@ def display_ccgz_query_list(search_term):
         st.session_state.level3,
         st.session_state.level4,
         st.session_state.level5,
+        st.session_state.oil_gas_resource_type,
+        st.session_state.process1,
+        st.session_state.process2,
+        st.session_state.wellbore_type1,
+        st.session_state.wellbore_type2,
     )
 
 
