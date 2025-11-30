@@ -17,6 +17,7 @@ from view.display_craft_standard import display_craft_standard
 from view.display_standard_structure import display_standard_structure
 from view.display_standard_tab_info import display_standard_tab_info
 import urllib.parse
+from pathlib import Path
 
 imageRenderer = JsCode(
     """
@@ -155,12 +156,16 @@ def show_grid(data, key: str):
 
     # 使用下划线
     # df["image_file_name"]="Q_SY 01017-2018岩石物理分析成果数据存储文件结构"
-    df["image_info_path"] = (
-        "app/static/" + df["image_file_name"].str.replace("/", "_") + ".png"
-    )
-    df["image_info"] = (
-        "/app/static/" + df["image_file_name"].str.replace("/", "_") + ".png"
-    )
+
+    def get_safe_image_path(image_file_name):
+        result = get_image_path_safe(image_file_name, base_path="static")
+        print(result)
+        return result["actual_path"] if result["exists"] else None
+
+    df["image_info_path"] = "app/" + df["image_file_name"].apply(get_safe_image_path)
+    # 过滤掉图片不存在的行
+    #df = df[df["image_info_path"].notna()].copy()
+    df["image_info"] = "/app/"+ df["image_file_name"].apply(get_safe_image_path)
     df["in_text_name"] = df["in_text_number"] + " " + df["in_text_name"]
     grid_options = {
         "defaultColDef": {
@@ -241,13 +246,13 @@ def display_chart_query_list(search_term: str):
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
             st.session_state.selected_rows = [
-            {
-                "standard_code": row["standard_code"],
-                "standard_name": row["standard_name"],
-                "image_info_path": row["image_info_path"]
-            }
-            for _, row in selected_rows.iterrows()
-        ]
+                {
+                    "standard_code": row["standard_code"],
+                    "standard_name": row["standard_name"],
+                    "image_info_path": row["image_info_path"],
+                }
+                for _, row in selected_rows.iterrows()
+            ]
             # show_chart()
         if "selected_rows" in st.session_state:
             display_standard_tab_info()
@@ -256,15 +261,15 @@ def display_chart_query_list(search_term: str):
         grid_response = show_grid(data, "table")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
-            
+
             st.session_state.selected_rows = [
-            {
-                "standard_code": row["standard_code"],
-                "standard_name": row["standard_name"],
-                "image_info_path": row["image_info_path"]
-            }
-            for _, row in selected_rows.iterrows()
-        ]
+                {
+                    "standard_code": row["standard_code"],
+                    "standard_name": row["standard_name"],
+                    "image_info_path": row["image_info_path"],
+                }
+                for _, row in selected_rows.iterrows()
+            ]
             # show_chart()
         if "selected_rows" in st.session_state:
             display_standard_tab_info()
@@ -273,14 +278,14 @@ def display_chart_query_list(search_term: str):
         grid_response = show_grid(data, "formula")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
-           
+
             st.session_state.selected_rows = [
-            {
-                "standard_code": row["standard_code"],
-                "standard_name": row["standard_name"],
-                "image_info_path": row["image_info_path"]
-            }
-            for _, row in selected_rows.iterrows()
+                {
+                    "standard_code": row["standard_code"],
+                    "standard_name": row["standard_name"],
+                    "image_info_path": row["image_info_path"],
+                }
+                for _, row in selected_rows.iterrows()
             ]
             # show_chart()
         if "selected_rows" in st.session_state:
@@ -340,3 +345,56 @@ def display_chart_query_list(search_term: str):
 # def show_image_detail(image_info_path: str):
 #     encoded_path = urllib.parse.quote(image_info_path)
 #     st.markdown(f"![Selected Image]({encoded_path})", unsafe_allow_html=True)
+
+
+def get_image_path_safe(image_file_name, base_path="static"):
+    """
+    安全的图片路径获取函数，支持多种后缀名检查
+
+    Args:
+        image_file_name: 图片文件名（不含后缀）
+        base_path: 基础路径，默认为"static"
+
+    Returns:
+        dict: 包含路径信息和状态的字典
+        {
+            'original_path': 原始构造路径,
+            'actual_path': 实际存在的路径,
+            'exists': 是否存在,
+            'available_extensions': 可用的后缀名列表,
+            'error': 错误信息（如果有）
+        }
+    """
+    # 清理文件名，替换特殊字符
+    clean_file_name = image_file_name.replace("/", "_").replace("\\", "_")
+
+    # 支持的后缀名列表，按优先级排序
+    supported_extensions = [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg"]
+
+    # 基础路径处理
+    base_path_obj = Path(base_path)
+
+    # 构造原始路径（保持兼容性）
+    original_path = f"{base_path}/{clean_file_name}.png"
+
+    # 检查各种后缀的文件是否存在
+    available_paths = []
+    actual_path = None
+
+    for ext in supported_extensions:
+        test_path = base_path_obj / f"{clean_file_name}{ext}"
+        if test_path.exists():
+            available_paths.append(str(test_path))
+            if actual_path is None:  # 优先使用第一个找到的
+                actual_path = str(test_path)
+
+    # 返回结果字典
+    result = {
+        "original_path": original_path,
+        "actual_path": actual_path or original_path,  # 如果没有找到，使用原始路径
+        "exists": actual_path is not None,
+        "available_extensions": available_paths,
+        "error": None if actual_path else f"未找到图片文件: {clean_file_name}",
+    }
+
+    return result
