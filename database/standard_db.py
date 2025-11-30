@@ -506,7 +506,7 @@ class StandardDB:
         else:
             return "1=1"
 
-    def get_chapter(self,standard_code: str,chapter: str):
+    def get_chapter(self, standard_code: str, chapter: str):
         c = self.conn.cursor()
         c.execute(
             f"SELECT standard_code, standard_name,standard_content FROM standard_system where standard_code='{standard_code}' and min_chapter_clause_code='{chapter}%'"
@@ -515,6 +515,7 @@ class StandardDB:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         c.close()
         return data
+
     def fetch_by_ccgz(
         self,
         level1: str = "",
@@ -524,10 +525,10 @@ class StandardDB:
         level5: str = "",
     ):
         where_clause = self.build_where_clause(level1, level2, level3, level4, level5)
-        
+
         c = self.conn.cursor()
-        
-        data_all=c.execute(
+
+        data_all = c.execute(
             f"""SELECT standard_code, standard_name,standard_content,min_chapter_clause_code FROM standard_system"""
         )
         columns = [col[0] for col in c.description]
@@ -544,19 +545,24 @@ class StandardDB:
         c.close()
         # 按照standard_code分组
         from collections import defaultdict
-        grouped_data = defaultdict(lambda: {
-            "standard_code": "",
-            "standard_name": "",
-            "standard_content": [],
-            "min_chapter_clause_code": ""
-        })
+
+        grouped_data = defaultdict(
+            lambda: {
+                "standard_code": "",
+                "standard_name": "",
+                "standard_content": [],
+                "min_chapter_clause_code": "",
+            }
+        )
 
         for item in data:
             code = item["standard_code"]
             grouped_data[code]["standard_code"] = code
-            grouped_data[code]["standard_name"] = "#"+item["standard_name"]+"#"
+            grouped_data[code]["standard_name"] = "#" + item["standard_name"] + "#"
             grouped_data[code]["standard_content"].append(item["standard_content"])
-            grouped_data[code]["min_chapter_clause_code"] = item["min_chapter_clause_code"]
+            grouped_data[code]["min_chapter_clause_code"] = item[
+                "min_chapter_clause_code"
+            ]
 
         # 拼接内容并转换为新的列表
         new_data = []
@@ -588,14 +594,29 @@ class StandardDB:
             total_page += 1
         return PageResult(data, total_page, pageable)
 
-    def query_by_stimulation_business_level2(self, search_term: str = ""):
-        performance_indicator_level1_cause = build_single_column_search(search_term, "performance_indicator_level1")
-        performance_indicator_level2_cause = build_single_column_search(search_term, "performance_indicator_level2")
-        #method1_cause = build_single_column_search(search_term, "method1")
-        #method2_cause = build_single_column_search(search_term, "method2")
+    def query_by_stimulation_business_level2(self, search_term: str = "",
+        performance_indicator_level1: str = "",
+        performance_indicator_level2: str = "",
+        method_name: str = "",
+        product_category1: str = "",
+        product_category2: str = "",
+        product_name: str = "",
+    ):
+        performance_indicator_level1_cause = build_single_column_search(
+            search_term, "performance_indicator_level1"
+        )
+        performance_indicator_level2_cause = build_single_column_search(
+            search_term, "performance_indicator_level2"
+        )
+        # method1_cause = build_single_column_search(search_term, "method1")
+        # method2_cause = build_single_column_search(search_term, "method2")
         method_name_cause = build_single_column_search(search_term, "method_name")
-        product_category1_cause = build_single_column_search(search_term, "product_category1")
-        product_category2_cause = build_single_column_search(search_term, "product_category2")
+        product_category1_cause = build_single_column_search(
+            search_term, "product_category1"
+        )
+        product_category2_cause = build_single_column_search(
+            search_term, "product_category2"
+        )
         product_name_cause = build_single_column_search(search_term, "product_name")
         sql = f"""
 SELECT standard_code, standard_name, standard_content, stimulation_business_level2
@@ -609,12 +630,21 @@ and
 {product_category2_cause} or
 {product_name_cause}
 )
+and 
+(
+    performance_indicator_level1 like '%{performance_indicator_level1}%' and
+    performance_indicator_level2 like '%{performance_indicator_level2}%' and
+    method_name like '%{method_name}%' and
+    product_category1 like '%{product_category1}%' and
+    product_category2 like '%{product_category2}%' and
+    product_name like '%{product_name}%'
+)
 """
         c = self.conn.cursor()
         c.execute(sql)
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
-        
+
         return data
 
     def query_by_metrics(self, metric: str, standard_code: str):
@@ -701,6 +731,60 @@ and
         # 查询结果展示一个list
         business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
         return business_levels
+
+    def query_performance_indicator_level1(self):
+        """获取性能指标一级非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT performance_indicator_level1 FROM standard_system WHERE performance_indicator_level1 IS NOT NULL AND performance_indicator_level1 != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_performance_indicator_level2(self):
+        """获取性能指标二级非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT performance_indicator_level2 FROM standard_system WHERE performance_indicator_level2 IS NOT NULL AND performance_indicator_level2 != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_method_name(self):
+        """获取方法名称非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT method_name FROM standard_system WHERE method_name IS NOT NULL AND method_name != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_product_category1(self):
+        """获取产品类别1非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT product_category1 FROM standard_system WHERE product_category1 IS NOT NULL AND product_category1 != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_product_category2(self):
+        """获取产品类别2非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT product_category2 FROM standard_system WHERE product_category2 IS NOT NULL AND product_category2 != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_product_name(self):
+        """获取产品名称非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT product_name FROM standard_system WHERE product_name IS NOT NULL AND product_name != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
 
 
 @st.cache_resource

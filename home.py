@@ -32,6 +32,8 @@ from base64 import b64encode
 from view.showimg import showimg
 from view.display_navigator_tab import display_navigator_tab
 from view.display_metric_query_list import show_metric_select_boxes
+from view.display_method_query_list import show_method_select_boxes
+
 
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -284,6 +286,7 @@ with placeholder.container(border=True):
             display_metric_query_list(st.session_state.search_term)
         elif submit_type == "canshu":
             # display_method_query_list(st.session_state.search_term)
+            show_method_select_boxes()
             display_method_query_list_new(st.session_state.search_term)
         elif submit_type == "chart":
             display_chart_query_list(st.session_state.search_term)
