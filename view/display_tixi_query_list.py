@@ -72,7 +72,6 @@ def display_tixi_query_list2(primary:str,secondary:str):
     
 
 def display_tixi_query_list(search_term:str,primary:str,secondary:str):
-    print(primary,secondary)
     category_db=init_standard_category_db()
     data=category_db.list_by_categroy(search_term)
 

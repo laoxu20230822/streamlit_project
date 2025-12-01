@@ -159,13 +159,12 @@ def show_grid(data, key: str):
 
     def get_safe_image_path(image_file_name):
         result = get_image_path_safe(image_file_name, base_path="static")
-        print(result)
         return result["actual_path"] if result["exists"] else None
 
     df["image_info_path"] = "app/" + df["image_file_name"].apply(get_safe_image_path)
     # 过滤掉图片不存在的行
-    #df = df[df["image_info_path"].notna()].copy()
-    df["image_info"] = "/app/"+ df["image_file_name"].apply(get_safe_image_path)
+    # df = df[df["image_info_path"].notna()].copy()
+    df["image_info"] = "/app/" + df["image_file_name"].apply(get_safe_image_path)
     df["in_text_name"] = df["in_text_number"] + " " + df["in_text_name"]
     grid_options = {
         "defaultColDef": {
