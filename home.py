@@ -33,6 +33,8 @@ from view.showimg import showimg
 from view.display_navigator_tab import display_navigator_tab
 from view.display_metric_query_list import show_metric_select_boxes
 from view.display_method_query_list import show_method_select_boxes
+from view.display_ccgz_query_list import show_ccgz_select_boxes
+
 
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -290,6 +292,7 @@ with placeholder.container(border=True):
         elif submit_type == "chart":
             display_chart_query_list(st.session_state.search_term)
         elif submit_type == "ccgz":  # 储层改造业务5级
+            show_ccgz_select_boxes()
             display_ccgz_query_list(st.session_state.search_term)
         else:
             print("")

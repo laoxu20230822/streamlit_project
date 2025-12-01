@@ -84,6 +84,7 @@ def show_grid(data):
 
 
 def display_ccgz_query_list(search_term):
+    
     # standard_index = init_standard_index_db()
 
     standard_db = init_standard_db()
@@ -116,3 +117,55 @@ def display_ccgz_query_list(search_term):
             for _, row in selected_rows.iterrows()
         ]
     display_standard_tab_info()
+
+def show_ccgz_select_boxes():
+    def onchange_for_level():
+        st.session_state.submit_type = "ccgz"
+        # st.session_state.search_term = st.session_state.standard_term
+        if "selected_rows" in st.session_state:
+            del st.session_state["selected_rows"]
+    standard_db = init_standard_db()
+    col1, col2, col3, col4, col5 = st.columns(5)
+    # 新增五个选择框
+    oil_gas_resource_options = standard_db.query_oil_gas_resource_type()
+    oil_gas_resource_options.insert(0, "全部")
+    oil_gas_resource = col1.selectbox(
+        "**油气资源类别**", oil_gas_resource_options, on_change=onchange_for_level
+    )
+    oil_gas_resource = oil_gas_resource if oil_gas_resource != "全部" else ""
+
+    process1_options = standard_db.query_process1()
+    process1_options.insert(0, "全部")
+    process1 = col2.selectbox(
+        "**工艺类型1**", process1_options, on_change=onchange_for_level
+    )
+    process1 = process1 if process1 != "全部" else ""
+
+    process2_options = standard_db.query_process2()
+    process2_options.insert(0, "全部")
+    process2 = col3.selectbox(  
+        "**工艺类型2**", process2_options, on_change=onchange_for_level
+    )
+    process2 = process2 if process2 != "全部" else ""
+
+    wellbore_type1_options = standard_db.query_wellbore_type1()
+    wellbore_type1_options.insert(0, "全部")
+    wellbore_type1 = col4.selectbox(
+        "**井筒类型1**", wellbore_type1_options, on_change=onchange_for_level
+    )
+    wellbore_type1 = wellbore_type1 if wellbore_type1 != "全部" else ""
+
+    wellbore_type2_options = standard_db.query_wellbore_type2()
+    wellbore_type2_options.insert(0, "全部")
+    wellbore_type2 = col5.selectbox(
+        "**井筒类型2**", wellbore_type2_options, on_change=onchange_for_level
+    )
+    wellbore_type2 = wellbore_type2 if wellbore_type2 != "全部" else ""
+
+    ##tab2.button("查询",on_click=onchange_for_level)
+    st.session_state.oil_gas_resource_type = oil_gas_resource
+    st.session_state.process1 = process1
+    st.session_state.process2 = process2
+    st.session_state.wellbore_type1 = wellbore_type1
+    st.session_state.wellbore_type2 = wellbore_type2
+    
