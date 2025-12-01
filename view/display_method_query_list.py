@@ -22,7 +22,7 @@ def display_method_query_list_new(search_term: str):
     performance_indicator_level2 = st.session_state.get(
         "performance_indicator_level2", ""
     )
-    method_name = st.session_state.get("method_name", "")
+    #method_name = st.session_state.get("method_name", "")
     product_category1 = st.session_state.get("product_category1", "")
     product_category2 = st.session_state.get("product_category2", "")
     product_name = st.session_state.get("product_name", "")
@@ -31,7 +31,6 @@ def display_method_query_list_new(search_term: str):
         search_term,
         performance_indicator_level1,
         performance_indicator_level2,
-        method_name,
         product_category1,
         product_category2,
         product_name,
@@ -155,7 +154,7 @@ def show_method_select_boxes():
     """显示试验方法筛选框，参考show_metric_select_boxes实现"""
     standard_db = StandardDB()
 
-    c1, c2, c3, c4, c5, c6 = st.columns(6)
+    c1, c2, c4, c5, c6 = st.columns(5)
 
     with c1:
         performance_indicator_level1_options = (
@@ -163,7 +162,7 @@ def show_method_select_boxes():
         )
         performance_indicator_level1_options.insert(0, "全部")
         performance_indicator_level1 = st.selectbox(
-            "**性能指标一级**",
+            "**检测项目一级**",
             performance_indicator_level1_options,
             on_change=onchange_for_method,
         )
@@ -175,17 +174,11 @@ def show_method_select_boxes():
         )
         performance_indicator_level2_options.insert(0, "全部")
         performance_indicator_level2 = st.selectbox(
-            "**性能指标二级**",
+            "**检测项目二级**",
             performance_indicator_level2_options,
             on_change=onchange_for_method,
         )
 
-    with c3:
-        method_name_options = standard_db.query_method_name()
-        method_name_options.insert(0, "全部")
-        method_name = st.selectbox(
-            "**方法名称**", method_name_options, on_change=onchange_for_method
-        )
 
     with c4:
         product_category1_options = standard_db.query_product_category1()
@@ -215,7 +208,7 @@ def show_method_select_boxes():
     st.session_state.performance_indicator_level2 = (
         "" if performance_indicator_level2 == "全部" else performance_indicator_level2
     )
-    st.session_state.method_name = "" if method_name == "全部" else method_name
+    #st.session_state.method_name = "" if method_name == "全部" else method_name
     st.session_state.product_category1 = (
         "" if product_category1 == "全部" else product_category1
     )

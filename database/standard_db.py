@@ -635,7 +635,6 @@ class StandardDB:
         search_term: str = "",
         performance_indicator_level1: str = "",
         performance_indicator_level2: str = "",
-        method_name: str = "",
         product_category1: str = "",
         product_category2: str = "",
         product_name: str = "",
@@ -672,7 +671,6 @@ and
 (
     performance_indicator_level1 like '%{performance_indicator_level1}%' and
     performance_indicator_level2 like '%{performance_indicator_level2}%' and
-    method_name like '%{method_name}%' and
     product_category1 like '%{product_category1}%' and
     product_category2 like '%{product_category2}%' and
     product_name like '%{product_name}%'
