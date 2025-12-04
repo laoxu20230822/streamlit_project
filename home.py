@@ -109,6 +109,12 @@ with st.form("standard_search_form", height="stretch", border=False):
         st.session_state.search_term = st.session_state.standard_term
         if "selected_rows" in st.session_state:
             del st.session_state["selected_rows"]
+        #初始化session_state中的所有参数
+        st.session_state.performance_indicator_level1="全部"
+        st.session_state.performance_indicator_level2="全部"
+        st.session_state.product_category1="全部"
+        st.session_state.product_category2="全部"
+        st.session_state.product_name="全部"
 
     display_navigator_tab()
 
@@ -296,65 +302,3 @@ with placeholder.container(border=True):
             display_ccgz_query_list(st.session_state.search_term)
         else:
             print("")
-
-    # if "selected_rows" in st.session_state:
-    #     standard_code = st.session_state["selected_rows"][0]["standard_code"]
-    #     standard_name = st.session_state["selected_rows"][0]["standard_name"]
-    #     # 查询一级门类编号
-    #     standard_db = init_standard_db()
-    #     level1_code_data = standard_db.query_category_level1_code(standard_code)
-    #     if level1_code_data is not None and level1_code_data[0] == "104":
-    #         level1_code = level1_code_data[0]
-    #         product_or_craft_tab_name = "相关产品"
-    #         st.session_state.pc_type = "product"
-    #     elif level1_code_data is not None and level1_code_data[0] in [
-    #         "103",
-    #         "106",
-    #         "107",
-    #     ]:
-    #         product_or_craft_tab_name = "工业标准"
-    #         st.session_state.pc_type = "craft"
-    #     else:
-    #         st.session_state.pc_type = "other"
-    #     t1, t2, t3, t4, t5 = st.tabs(
-    #         [
-    #             "**基本信息**",
-    #             "**标准目次信息**",
-    #             "**引用文件信息**",
-    #             "**术语**",
-    #             "**" + product_or_craft_tab_name + "**",
-    #         ]
-    #     )
-    #     # standard_code = df.iloc[selected_row]['standard_code']
-
-    #     ## 显示标准详情
-    #     with t1:
-    #         display_standard_info(standard_code, standard_name)
-    #         display_standard_detail(standard_code)
-
-    #     # 显示目次信息
-    #     with t2:
-
-    #         display_standard_info(standard_code, standard_name)
-    #         display_standard_cotent(standard_code)
-    #     # st.markdown("---")
-
-    #     # 引用文件
-    #     with t3:
-    #         display_standard_info(standard_code, standard_name)
-    #         display_standard_references(standard_code)
-
-    #     # 术语信息
-    #     with t4:
-    #         display_standard_info(standard_code, standard_name)
-    #         display_standard_glossary(standard_code)
-
-    #     # 工艺标准 or 产品标准
-    #     with t5:
-    #         display_standard_info(standard_code, standard_name)
-    #         if st.session_state.pc_type == "product":
-    #             display_product_standard(standard_code)
-    #         elif st.session_state.pc_type == "craft":
-    #             display_craft_standard(standard_code)
-    #         else:
-    #             st.write("other")

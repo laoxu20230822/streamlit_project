@@ -768,56 +768,117 @@ and
         business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
         return business_levels
 
-    def query_performance_indicator_level1(self):
-        """获取性能指标一级非空distinct值"""
+    def query_performance_indicator_level1(self, performance_indicator_level2: str = "", product_category1: str = "", product_category2: str = "", product_name: str = ""):
+        """获取性能指标一级非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
+        
+        # 构建WHERE条件
+        conditions = []
+        if performance_indicator_level2:
+            conditions.append(f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'")
+        if product_category1:
+            conditions.append(f"product_category1 LIKE '%{product_category1}%'")
+        if product_category2:
+            conditions.append(f"product_category2 LIKE '%{product_category2}%'")
+        if product_name:
+            conditions.append(f"product_name LIKE '%{product_name}%'")
+        
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+        
         c.execute(
-            "SELECT DISTINCT performance_indicator_level1 FROM standard_system WHERE performance_indicator_level1 IS NOT NULL AND performance_indicator_level1 != ''"
+            f"SELECT DISTINCT performance_indicator_level1 FROM standard_system WHERE performance_indicator_level1 IS NOT NULL AND performance_indicator_level1 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_performance_indicator_level2(self):
-        """获取性能指标二级非空distinct值"""
+    def query_performance_indicator_level2(self, performance_indicator_level1: str = "", product_category1: str = "", product_category2: str = "", product_name: str = ""):
+        """获取性能指标二级非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
+        
+        # 构建WHERE条件
+        conditions = []
+        if performance_indicator_level1:
+            conditions.append(f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'")
+        if product_category1:
+            conditions.append(f"product_category1 LIKE '%{product_category1}%'")
+        if product_category2:
+            conditions.append(f"product_category2 LIKE '%{product_category2}%'")
+        if product_name:
+            conditions.append(f"product_name LIKE '%{product_name}%'")
+        
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+        
         c.execute(
-            "SELECT DISTINCT performance_indicator_level2 FROM standard_system WHERE performance_indicator_level2 IS NOT NULL AND performance_indicator_level2 != ''"
+            f"SELECT DISTINCT performance_indicator_level2 FROM standard_system WHERE performance_indicator_level2 IS NOT NULL AND performance_indicator_level2 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_method_name(self):
-        """获取方法名称非空distinct值"""
+    def query_product_category1(self, performance_indicator_level1: str = "", performance_indicator_level2: str = "", product_category2: str = "", product_name: str = ""):
+        """获取产品类别1非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
+        
+        # 构建WHERE条件
+        conditions = []
+        if performance_indicator_level1:
+            conditions.append(f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'")
+        if performance_indicator_level2:
+            conditions.append(f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'")
+        if product_category2:
+            conditions.append(f"product_category2 LIKE '%{product_category2}%'")
+        if product_name:
+            conditions.append(f"product_name LIKE '%{product_name}%'")
+        
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+        
         c.execute(
-            "SELECT DISTINCT method_name FROM standard_system WHERE method_name IS NOT NULL AND method_name != ''"
+            f"SELECT DISTINCT product_category1 FROM standard_system WHERE product_category1 IS NOT NULL AND product_category1 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_product_category1(self):
-        """获取产品类别1非空distinct值"""
+    def query_product_category2(self, performance_indicator_level1: str = "", performance_indicator_level2: str = "", product_category1: str = "", product_name: str = ""):
+        """获取产品类别2非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
+        
+        # 构建WHERE条件
+        conditions = []
+        if performance_indicator_level1:
+            conditions.append(f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'")
+        if performance_indicator_level2:
+            conditions.append(f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'")
+        if product_category1:
+            conditions.append(f"product_category1 LIKE '%{product_category1}%'")
+        if product_name:
+            conditions.append(f"product_name LIKE '%{product_name}%'")
+        
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+        
         c.execute(
-            "SELECT DISTINCT product_category1 FROM standard_system WHERE product_category1 IS NOT NULL AND product_category1 != ''"
+            f"SELECT DISTINCT product_category2 FROM standard_system WHERE product_category2 IS NOT NULL AND product_category2 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_product_category2(self):
-        """获取产品类别2非空distinct值"""
+    def query_product_name(self, performance_indicator_level1: str = "", performance_indicator_level2: str = "", product_category1: str = "", product_category2: str = ""):
+        """获取产品名称非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
+        
+        # 构建WHERE条件
+        conditions = []
+        if performance_indicator_level1:
+            conditions.append(f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'")
+        if performance_indicator_level2:
+            conditions.append(f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'")
+        if product_category1:
+            conditions.append(f"product_category1 LIKE '%{product_category1}%'")
+        if product_category2:
+            conditions.append(f"product_category2 LIKE '%{product_category2}%'")
+        
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+        
         c.execute(
-            "SELECT DISTINCT product_category2 FROM standard_system WHERE product_category2 IS NOT NULL AND product_category2 != ''"
-        )
-        levels = [row[0] for row in c.fetchall()]
-        return levels
-
-    def query_product_name(self):
-        """获取产品名称非空distinct值"""
-        c = self.conn.cursor()
-        c.execute(
-            "SELECT DISTINCT product_name FROM standard_system WHERE product_name IS NOT NULL AND product_name != ''"
+            f"SELECT DISTINCT product_name FROM standard_system WHERE product_name IS NOT NULL AND product_name != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels

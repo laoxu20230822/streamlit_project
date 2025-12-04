@@ -38,5 +38,7 @@ def display_standard_detail(standard_code:str):
     #st.markdown("##### 起草单位及其他")
     st.markdown(f"""**起草单位：** {detail['drafting_unit']}  
     {html_stype}""",unsafe_allow_html=True)
+    st.markdown(f"""**起草人：** {detail['drafters']}  
+    {html_stype}""",unsafe_allow_html=True)
     st.markdown(f"""**技术委员会（或技术归口单位）：** {detail['responsible_unit']}  
     {html_stype}""",unsafe_allow_html=True)
