@@ -360,48 +360,137 @@ def show_metric_grid(df: pd.DataFrame, tab_index: int):
     #     st.write(f"产品名称: {product_name}")
     #     st.write(group)
     #     st.write("\n\n")  # 分隔不同产品的输出
-def onchange_for_product():
+def onchange_for_metric(select_box_key: str, option_list: list = []):
+    """处理指标查询筛选框变更事件"""
+    # 获取当前选择值
+    current_value = st.session_state.get(select_box_key, "全部")
+
+    # 根据不同的key更新对应的session_state
+    if select_box_key == "product_category_key":
+        st.session_state.product_category = current_value
+        if current_value != "全部":
+            st.session_state.product_category_option = option_list
+    elif select_box_key == "product_name_key":
+        st.session_state.product_name = current_value
+        if current_value != "全部":
+            st.session_state.product_name_option = option_list
+    elif select_box_key == "experimental_condition_key":
+        st.session_state.experimental_condition = current_value
+        if current_value != "全部":
+            st.session_state.experimental_condition_option = option_list
+    elif select_box_key == "indicator_item_key":
+        st.session_state.indicator_item = current_value
+        if current_value != "全部":
+            st.session_state.indicator_item_option = option_list
+
     st.session_state.submit_type = "zhibiao"
-        #st.session_state.search_term = st.session_state.standard_term
     if "selected_rows" in st.session_state:
         del st.session_state["selected_rows"]
+
+
 def show_metric_select_boxes():
+    """显示指标查询的级联筛选框"""
     metric_db = init_metric_db()
-    
 
-    c1,c2,c3,c4=st.columns(4)
+    # 从session_state获取当前选择的值，如果不存在则默认为"全部"
+    product_category = st.session_state.get("product_category", "全部")
+    product_name = st.session_state.get("product_name", "全部")
+    experimental_condition = st.session_state.get("experimental_condition", "全部")
+    indicator_item = st.session_state.get("indicator_item", "全部")
+
+    # 转换为查询参数（"全部"转换为空字符串）
+    product_category_param = product_category if product_category != "全部" else ""
+    product_name_param = product_name if product_name != "全部" else ""
+    experimental_condition_param = experimental_condition if experimental_condition != "全部" else ""
+    indicator_item_param = indicator_item if indicator_item != "全部" else ""
+
+    c1, c2, c3, c4 = st.columns(4)
+
     with c1:
-        product_category_options = metric_db.query_product_category()
-        product_category_options.insert(0,"全部")
-        product_category = st.selectbox(
-        "**产品类别**",
-        product_category_options,on_change=onchange_for_product
+        # 根据其他三个条件查询产品类别
+        product_category_options = metric_db.query_product_category(
+            product_name_param, experimental_condition_param, indicator_item_param
         )
-    with c2:
-        product_name_options = metric_db.query_product_name(product_category)
-        product_name_options.insert(0,"全部")
-        product_name=st.selectbox(
-        "**产品名称**",
-        product_name_options,on_change=onchange_for_product
-        )
-        ## 实验条件
-    with c3:
-        experimental_condition_options = metric_db.query_experimental_condition()
-        experimental_condition_options.insert(0,"全部")
-        experimental_condition=st.selectbox(
-        "**实验条件**",
-        experimental_condition_options,on_change=onchange_for_product
+        product_category_options.insert(0, "全部")
+
+        # 确保当前选择在选项列表中
+        if product_category not in product_category_options:
+            product_category = "全部"
+
+        index = product_category_options.index(product_category)
+        st.selectbox(
+            "**产品类别**",
+            product_category_options,
+            index=index,
+            key="product_category_key",
+            args=("product_category_key", product_category_options),
+            on_change=onchange_for_metric,
         )
 
+    with c2:
+        # 根据其他三个条件查询产品名称
+        product_name_options = metric_db.query_product_name(
+            product_category_param, experimental_condition_param, indicator_item_param
+        )
+        product_name_options.insert(0, "全部")
+
+        # 确保当前选择在选项列表中
+        if product_name not in product_name_options:
+            product_name = "全部"
+
+        index = product_name_options.index(product_name)
+        product_name = st.selectbox(
+            "**产品名称**",
+            product_name_options,
+            index=index,
+            key="product_name_key",
+            args=("product_name_key", product_name_options),
+            on_change=onchange_for_metric,
+        )
+
+    with c3:
+        # 根据其他三个条件查询实验条件
+        experimental_condition_options = metric_db.query_experimental_condition(
+            product_category_param, product_name_param, indicator_item_param
+        )
+        experimental_condition_options.insert(0, "全部")
+
+        # 确保当前选择在选项列表中
+        if experimental_condition not in experimental_condition_options:
+            experimental_condition = "全部"
+
+        index = experimental_condition_options.index(experimental_condition)
+        experimental_condition = st.selectbox(
+            "**实验条件**",
+            experimental_condition_options,
+            index=index,
+            key="experimental_condition_key",
+            args=("experimental_condition_key", experimental_condition_options),
+            on_change=onchange_for_metric,
+        )
 
     with c4:
-        indicator_item_options = metric_db.query_indicator_item()
-        indicator_item_options.insert(0,"全部")
-        indicator_item=st.selectbox(
-        "**检测项目**",
-        indicator_item_options,on_change=onchange_for_product
+        # 根据其他三个条件查询检测项目
+        indicator_item_options = metric_db.query_indicator_item(
+            product_category_param, product_name_param, experimental_condition_param
+        )
+        indicator_item_options.insert(0, "全部")
+
+        # 确保当前选择在选项列表中
+        if indicator_item not in indicator_item_options:
+            indicator_item = "全部"
+
+        index = indicator_item_options.index(indicator_item)
+        indicator_item = st.selectbox(
+            "**检测项目**",
+            indicator_item_options,
+            index=index,
+            key="indicator_item_key",
+            args=("indicator_item_key", indicator_item_options),
+            on_change=onchange_for_metric,
         )
 
+    # 更新session_state
     st.session_state.product_category = product_category
     st.session_state.product_name = product_name
     st.session_state.experimental_condition = experimental_condition

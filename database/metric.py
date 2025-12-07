@@ -109,28 +109,41 @@ class Metric:
         self.conn.commit()
         # conn.close()
 
-    def query_product_category(self):
+    def query_product_category(self, product_name="", experimental_condition="", indicator_item=""):
         c = self.conn.cursor()
-        c.execute("select distinct product_category from metrics")
-        return [row[0] for row in c.fetchall() if row[0].strip() != ""]
+        SELECT_SQL = """
+        select distinct product_category from metrics
+        where product_name like ? and experimental_condition like ? and indicator_item like ?
+        """
+        c.execute(SELECT_SQL, (f"%{product_name}%", f"%{experimental_condition}%", f"%{indicator_item}%"))
+        return [row[0] for row in c.fetchall() if row[0] and row[0].strip() != ""]
 
-    def query_product_name(self, product_category: str):
+    def query_product_name(self, product_category="", experimental_condition="", indicator_item=""):
         c = self.conn.cursor()
-        c.execute(
-            "select distinct product_name from metrics where product_category=?",
-            (product_category,),
-        )
-        return [row[0] for row in c.fetchall() if row[0].strip() != ""]
+        SELECT_SQL = """
+        select distinct product_name from metrics
+        where product_category like ? and experimental_condition like ? and indicator_item like ?
+        """
+        c.execute(SELECT_SQL, (f"%{product_category}%", f"%{experimental_condition}%", f"%{indicator_item}%"))
+        return [row[0] for row in c.fetchall() if row[0] and row[0].strip() != ""]
 
-    def query_indicator_item(self):
+    def query_indicator_item(self, product_category="", product_name="", experimental_condition=""):
         c = self.conn.cursor()
-        c.execute("select distinct indicator_item from metrics")
-        return [row[0] for row in c.fetchall() if row[0].strip() != ""]
-    
-    def query_experimental_condition(self):
+        SELECT_SQL = """
+        select distinct indicator_item from metrics
+        where product_category like ? and product_name like ? and experimental_condition like ?
+        """
+        c.execute(SELECT_SQL, (f"%{product_category}%", f"%{product_name}%", f"%{experimental_condition}%"))
+        return [row[0] for row in c.fetchall() if row[0] and row[0].strip() != ""]
+
+    def query_experimental_condition(self, product_category="", product_name="", indicator_item=""):
         c = self.conn.cursor()
-        c.execute("select distinct experimental_condition from metrics")
-        return [row[0] for row in c.fetchall() if row[0].strip() != ""]
+        SELECT_SQL = """
+        select distinct experimental_condition from metrics
+        where product_category like ? and product_name like ? and indicator_item like ?
+        """
+        c.execute(SELECT_SQL, (f"%{product_category}%", f"%{product_name}%", f"%{indicator_item}%"))
+        return [row[0] for row in c.fetchall() if row[0] and row[0].strip() != ""]
 
     def load_from_excel(self, file_path: str):
         df = pd.read_excel(file_path, engine="openpyxl", header=0).fillna("")
