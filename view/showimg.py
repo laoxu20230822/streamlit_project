@@ -3,6 +3,7 @@ import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 from streamlit.elements.lib.layout_utils import Height
 import os
+from utils.data_utils import count_unique_standard_codes
 ##https://discuss.streamlit.io/t/display-images-in-aggrid-table/18434/10
 
 
@@ -84,6 +85,10 @@ def showimg():
     gb.configure_column("Thumbnail", cellRenderer=cell_renderer_for_img, header_name="Thumbnail",width=300,autoHeight=True)
     gb.configure_column("Name",cellRenderer=cell_renderer_for_name,header_name="Name",width=100)
     grid_options = gb.build()
+
+    # 显示统计信息
+    unique_count = count_unique_standard_codes(df)
+    st.markdown(f"**查询标准总数: {unique_count}**")
 
     # 显示表格
     grid_response = AgGrid(

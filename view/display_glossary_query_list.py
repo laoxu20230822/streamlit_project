@@ -8,6 +8,7 @@ from database.standard_db import Pageable
 from database.standard_db import WhereCause
 from st_aggrid import AgGrid
 from view.display_standard_tab_info import display_standard_tab_info
+from utils.data_utils import count_unique_standard_codes
 
 
 
@@ -46,6 +47,10 @@ def display_grid(data:list[dict]):
         #"paginationAutoPageSize": True,
         "paginationPageSize": 50
     }
+    # 显示统计信息
+    unique_count = count_unique_standard_codes(df)
+    st.markdown(f"**查询标准总数: {unique_count}**")
+
     grid_response = AgGrid(
         df, 
         gridOptions=grid_options,
@@ -118,8 +123,12 @@ def display_glossary_query_list(search_term:str):
         ##"paginationAutoPageSize": True,
         "paginationPageSize": 50
     }
+    # 显示统计信息
+    unique_count = count_unique_standard_codes(df)
+    st.markdown(f"**查询标准总数: {unique_count}**")
+
     grid_response = AgGrid(
-        df, 
+        df,
         gridOptions=grid_options,
         height=500
         #key='asdjflasdjkfl'

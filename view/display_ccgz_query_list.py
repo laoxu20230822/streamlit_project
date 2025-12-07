@@ -6,6 +6,7 @@ from database.standard_db import init_standard_db
 from st_aggrid import AgGrid
 import pandas as pd
 from view.display_standard_tab_info import display_standard_tab_info
+from utils.data_utils import count_unique_standard_codes
 
 
 def show_grid(data):
@@ -74,6 +75,10 @@ def show_grid(data):
         "paginationPageSize": 50,
         #"animateRows": True,
     }
+    # 显示统计信息
+    unique_count = count_unique_standard_codes(df)
+    st.markdown(f"**查询标准总数: {unique_count}**")
+
     return AgGrid(
         df,
         gridOptions=grid_options,

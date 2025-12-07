@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 from st_aggrid import AgGrid
+from utils.data_utils import count_unique_standard_codes
 
 st.set_page_config(layout="wide")
 st.title("AG Grid Tooltip Demo（修正版）")
@@ -51,6 +52,10 @@ grid_options = {
 }
 
 st.markdown("表格仅显示 `description_short`（前 50 字），鼠标悬停将显示完整 `description` 文本。")
+
+# 显示统计信息
+unique_count = count_unique_standard_codes(df)
+st.markdown(f"**查询标准总数: {unique_count}**")
 
 # 渲染表格
 AgGrid(

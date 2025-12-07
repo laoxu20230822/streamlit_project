@@ -18,6 +18,7 @@ from view.display_standard_structure import display_standard_structure
 from view.display_standard_tab_info import display_standard_tab_info
 import urllib.parse
 from pathlib import Path
+from utils.data_utils import count_unique_standard_codes
 
 imageRenderer = JsCode(
     """
@@ -220,6 +221,10 @@ def show_grid(data, key: str):
         ##"paginationAutoPageSize": True,
         "paginationPageSize": 50,
     }
+    # 显示统计信息
+    unique_count = count_unique_standard_codes(df)
+    st.markdown(f"**查询标准总数: {unique_count}**")
+
     return AgGrid(
         df,
         gridOptions=grid_options,

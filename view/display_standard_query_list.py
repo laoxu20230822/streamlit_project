@@ -13,6 +13,7 @@ from view.display_product_standard import display_product_standard
 from view.display_craft_standard import display_craft_standard
 from view.display_standard_structure import display_standard_structure
 from view.display_standard_tab_info import display_standard_tab_info
+from utils.data_utils import count_unique_standard_codes
 
 
 def get_chapter_content(data_list, selected_chapter):
@@ -89,6 +90,10 @@ def display_standard_query_list():
             "implementation_date": "实施日期",
         },
     )
+
+    # 在表格上方显示统计信息
+    unique_count = count_unique_standard_codes(df)
+    st.markdown(f"**查询标准总数: {unique_count}**")
 
     grid_options = {
         "defaultColDef": {
