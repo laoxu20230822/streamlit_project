@@ -470,6 +470,8 @@ class StandardDB:
         process2: str = "",
         wellbore_type1: str = "",
         wellbore_type2: str = "",
+        quality_control: str = "",
+        hse_requirements: str = "",
     ) -> str:
         """
         根据level1～level5参数动态生成WHERE语句，空字符串的参数会被忽略
@@ -519,7 +521,11 @@ class StandardDB:
             conditions.append(f"wellbore_type1 like '%{wellbore_type1}%'")
         if wellbore_type2:
             conditions.append(f"wellbore_type2 like '%{wellbore_type2}%'")
-        
+        if quality_control:
+            conditions.append(f"quality_control like '%{quality_control}%'")
+        if hse_requirements:
+            conditions.append(f"hse_requirements like '%{hse_requirements}%'")
+
         # 组合WHERE语句
         if conditions:
             return " and ".join(conditions)
@@ -548,6 +554,8 @@ class StandardDB:
         process2: str = "",
         wellbore_type1: str = "",
         wellbore_type2: str = "",
+        quality_control: str = "",
+        hse_requirements: str = "",
     ):
         where_clause = self.build_where_clause(
             level1,
@@ -560,6 +568,8 @@ class StandardDB:
             process2,
             wellbore_type1,
             wellbore_type2,
+            quality_control,
+            hse_requirements,
         )
 
         c = self.conn.cursor()
@@ -924,6 +934,24 @@ and
         c = self.conn.cursor()
         c.execute(
             "SELECT DISTINCT wellbore_type2 FROM standard_system WHERE wellbore_type2 IS NOT NULL AND wellbore_type2 != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_quality_control(self):
+        """获取质量控制(施工方)非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT quality_control FROM standard_system WHERE quality_control IS NOT NULL AND quality_control != ''"
+        )
+        levels = [row[0] for row in c.fetchall()]
+        return levels
+
+    def query_hse_requirements(self):
+        """获取健康、安全与环境控制要求非空distinct值"""
+        c = self.conn.cursor()
+        c.execute(
+            "SELECT DISTINCT hse_requirements FROM standard_system WHERE hse_requirements IS NOT NULL AND hse_requirements != ''"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels

@@ -64,6 +64,10 @@ st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 
 if "search_term" not in st.session_state:
     st.session_state.search_term = ""
+if "quality_control" not in st.session_state:
+    st.session_state.quality_control = ""
+if "hse_requirements" not in st.session_state:
+    st.session_state.hse_requirements = ""
 
 
 # 标题
@@ -115,6 +119,8 @@ with st.form("standard_search_form", height="stretch", border=False):
         st.session_state.product_category1="全部"
         st.session_state.product_category2="全部"
         st.session_state.product_name="全部"
+        st.session_state.quality_control=""
+        st.session_state.hse_requirements=""
 
     display_navigator_tab()
 

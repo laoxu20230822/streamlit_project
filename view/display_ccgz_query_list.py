@@ -104,6 +104,8 @@ def display_ccgz_query_list(search_term):
         st.session_state.process2,
         st.session_state.wellbore_type1,
         st.session_state.wellbore_type2,
+        st.session_state.quality_control,
+        st.session_state.hse_requirements,
     )
 
 
@@ -130,7 +132,7 @@ def show_ccgz_select_boxes():
         if "selected_rows" in st.session_state:
             del st.session_state["selected_rows"]
     standard_db = init_standard_db()
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
     # 新增五个选择框
     oil_gas_resource_options = standard_db.query_oil_gas_resource_type()
     oil_gas_resource_options.insert(0, "全部")
@@ -167,10 +169,28 @@ def show_ccgz_select_boxes():
     )
     wellbore_type2 = wellbore_type2 if wellbore_type2 != "全部" else ""
 
+    # 新增质量控制(施工方)选择框
+    quality_control_options = standard_db.query_quality_control()
+    quality_control_options.insert(0, "全部")
+    quality_control = col6.selectbox(
+        "**管理控制点**", quality_control_options, on_change=onchange_for_level
+    )
+    quality_control = quality_control if quality_control != "全部" else ""
+
+    # 新增健康、安全与环境控制要求选择框
+    hse_requirements_options = standard_db.query_hse_requirements()
+    hse_requirements_options.insert(0, "全部")
+    hse_requirements = col7.selectbox(
+        "**知识属性**", hse_requirements_options, on_change=onchange_for_level
+    )
+    hse_requirements = hse_requirements if hse_requirements != "全部" else ""
+
     ##tab2.button("查询",on_click=onchange_for_level)
     st.session_state.oil_gas_resource_type = oil_gas_resource
     st.session_state.process1 = process1
     st.session_state.process2 = process2
     st.session_state.wellbore_type1 = wellbore_type1
     st.session_state.wellbore_type2 = wellbore_type2
+    st.session_state.quality_control = quality_control
+    st.session_state.hse_requirements = hse_requirements
     
