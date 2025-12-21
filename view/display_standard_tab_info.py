@@ -56,7 +56,7 @@ def display_standard_cotent(standard_code: str):
 
 
 def display_standard_tab_info():
-    if "selected_rows" in st.session_state:
+    if "selected_rows" in st.session_state and st.session_state["selected_rows"] and len(st.session_state["selected_rows"]) > 0:
         standard_code = st.session_state["selected_rows"][0]["standard_code"]
         standard_name = st.session_state["selected_rows"][0]["standard_name"]
         # 查询一级门类编号
