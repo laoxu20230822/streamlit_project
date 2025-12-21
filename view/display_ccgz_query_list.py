@@ -136,7 +136,6 @@ def show_ccgz_select_boxes():
     prefix = st.session_state.get('submit_type', 'ccgz')
 
     standard_db = init_standard_db()
-    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
 
     # 为不同的查询类型设置不同的 session_state key
     oil_gas_key = f"{prefix}_oil_gas_resource_type"
@@ -153,11 +152,19 @@ def show_ccgz_select_boxes():
         if key not in st.session_state:
             st.session_state[key] = ""
 
-    # 新增五个选择框
+    # 根据prefix决定显示的筛选框数量
+    if prefix == 'ccgz':
+        # 储层改造5级：显示全部7个筛选框
+        col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
+        show_extra_filters = True
+    else:
+        # 其他功能：只显示5个筛选框
+        col1, col2, col3, col4, col5 = st.columns(5)
+        show_extra_filters = False
+
+    # 油气资源类别
     oil_gas_resource_options = standard_db.query_oil_gas_resource_type()
     oil_gas_resource_options.insert(0, "全部")
-
-    # 获取当前值
     current_oil_gas = st.session_state[oil_gas_key] or "全部"
 
     oil_gas_resource = col1.selectbox(
@@ -216,29 +223,34 @@ def show_ccgz_select_boxes():
     )
     wellbore_type2 = wellbore_type2 if wellbore_type2 != "全部" else ""
 
-    # 管理控制点
-    quality_control_options = standard_db.query_quality_control()
-    quality_control_options.insert(0, "全部")
-    current_quality_control = st.session_state[quality_control_key] or "全部"
-    quality_control = col6.selectbox(
-        "**管理控制点**", quality_control_options,
-        index=quality_control_options.index(current_quality_control) if current_quality_control in quality_control_options else 0,
-        key=f"{quality_control_key}_selectbox",
-        on_change=onchange_for_level
-    )
-    quality_control = quality_control if quality_control != "全部" else ""
+    # 管理控制点和知识属性：只在储层改造5级中显示
+    quality_control = ""
+    hse_requirements = ""
 
-    # 知识属性
-    hse_requirements_options = standard_db.query_hse_requirements()
-    hse_requirements_options.insert(0, "全部")
-    current_hse = st.session_state[hse_key] or "全部"
-    hse_requirements = col7.selectbox(
-        "**知识属性**", hse_requirements_options,
-        index=hse_requirements_options.index(current_hse) if current_hse in hse_requirements_options else 0,
-        key=f"{hse_key}_selectbox",
-        on_change=onchange_for_level
-    )
-    hse_requirements = hse_requirements if hse_requirements != "全部" else ""
+    if show_extra_filters:
+        # 管理控制点
+        quality_control_options = standard_db.query_quality_control()
+        quality_control_options.insert(0, "全部")
+        current_quality_control = st.session_state[quality_control_key] or "全部"
+        quality_control = col6.selectbox(
+            "**管理控制点**", quality_control_options,
+            index=quality_control_options.index(current_quality_control) if current_quality_control in quality_control_options else 0,
+            key=f"{quality_control_key}_selectbox",
+            on_change=onchange_for_level
+        )
+        quality_control = quality_control if quality_control != "全部" else ""
+
+        # 知识属性
+        hse_requirements_options = standard_db.query_hse_requirements()
+        hse_requirements_options.insert(0, "全部")
+        current_hse = st.session_state[hse_key] or "全部"
+        hse_requirements = col7.selectbox(
+            "**知识属性**", hse_requirements_options,
+            index=hse_requirements_options.index(current_hse) if current_hse in hse_requirements_options else 0,
+            key=f"{hse_key}_selectbox",
+            on_change=onchange_for_level
+        )
+        hse_requirements = hse_requirements if hse_requirements != "全部" else ""
 
     # 更新对应的前缀的 session_state
     st.session_state[oil_gas_key] = oil_gas_resource
