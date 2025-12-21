@@ -458,6 +458,65 @@ class StandardDB:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
+    def list_for_tiaokuan_with_filters(self,
+                                      search_term: str = "",
+                                      oil_gas_resource_type: str = "",
+                                      process1: str = "",
+                                      process2: str = "",
+                                      wellbore_type1: str = "",
+                                      wellbore_type2: str = "",
+                                      quality_control: str = "",
+                                      hse_requirements: str = ""):
+        """
+        带筛选条件的条款查询方法
+        """
+        c = self.conn.cursor()
+
+        # 构建基础WHERE条件
+        where_conditions = []
+
+        # 如果有搜索词，添加搜索条件
+        if search_term:
+            filter = WhereCause(search_term)
+            # 获取搜索词的WHERE子句，去掉"WHERE "前缀
+            search_where = filter.to_sql_new().replace(" WHERE ", "")
+            where_conditions.append(search_where)
+
+        # 添加筛选条件
+        if oil_gas_resource_type:
+            where_conditions.append(f"oil_gas_resource_type like '%{oil_gas_resource_type}%'")
+        if process1:
+            where_conditions.append(f"process1 like '%{process1}%'")
+        if process2:
+            where_conditions.append(f"process2 like '%{process2}%'")
+        if wellbore_type1:
+            where_conditions.append(f"wellbore_type1 like '%{wellbore_type1}%'")
+        if wellbore_type2:
+            where_conditions.append(f"wellbore_type2 like '%{wellbore_type2}%'")
+        if quality_control:
+            where_conditions.append(f"quality_control like '%{quality_control}%'")
+        if hse_requirements:
+            where_conditions.append(f"hse_requirements like '%{hse_requirements}%'")
+
+        # 构建SQL
+        base_sql = "SELECT serial_number, standard_code, standard_name, standard_content, min_chapter_clause_code FROM standard_system"
+
+        if where_conditions:
+            # 有条件时添加WHERE子句
+            where_clause = " AND ".join(where_conditions)
+            final_sql = f"{base_sql} WHERE {where_clause}"
+        else:
+            # 没有条件时不加WHERE子句
+            final_sql = base_sql
+
+        final_sql += " ORDER BY serial_number ASC"
+
+        c.execute(final_sql)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        c.close()
+        return data
+
     def build_where_clause(
         self,
         level1: str = "",

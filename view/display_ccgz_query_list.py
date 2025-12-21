@@ -249,8 +249,8 @@ def show_ccgz_select_boxes():
     st.session_state[quality_control_key] = quality_control
     st.session_state[hse_key] = hse_requirements
 
-    # 为了兼容性，也更新原来的 session_state（仅当 submit_type 是 ccgz 时）
-    if prefix == 'ccgz':
+    # 为了兼容性，也更新原来的 session_state（仅当 submit_type 是 ccgz 或 tiaokuan 时）
+    if prefix in ['ccgz', 'tiaokuan']:
         st.session_state.oil_gas_resource_type = oil_gas_resource
         st.session_state.process1 = process1
         st.session_state.process2 = process2

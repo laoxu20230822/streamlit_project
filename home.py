@@ -159,6 +159,15 @@ with st.form("standard_search_form", height="stretch", border=False):
             st.session_state.chart_wellbore_type2 = ""
             st.session_state.chart_quality_control = ""
             st.session_state.chart_hse_requirements = ""
+        # 重置条款查询的筛选状态
+        elif submit_type == "tiaokuan":
+            st.session_state.tiaokuan_oil_gas_resource_type = ""
+            st.session_state.tiaokuan_process1 = ""
+            st.session_state.tiaokuan_process2 = ""
+            st.session_state.tiaokuan_wellbore_type1 = ""
+            st.session_state.tiaokuan_wellbore_type2 = ""
+            st.session_state.tiaokuan_quality_control = ""
+            st.session_state.tiaokuan_hse_requirements = ""
 
     display_navigator_tab()
 
@@ -322,7 +331,17 @@ with placeholder.container(border=True):
         if submit_type == "standard":
             display_standard_query_list()
         elif submit_type == "tiaokuan":
-            display_tiaokuan_query_list(st.session_state.search_term)
+            show_ccgz_select_boxes()
+            display_tiaokuan_query_list(
+                search_term=st.session_state.search_term,
+                oil_gas_resource_type=getattr(st.session_state, 'tiaokuan_oil_gas_resource_type', ''),
+                process1=getattr(st.session_state, 'tiaokuan_process1', ''),
+                process2=getattr(st.session_state, 'tiaokuan_process2', ''),
+                wellbore_type1=getattr(st.session_state, 'tiaokuan_wellbore_type1', ''),
+                wellbore_type2=getattr(st.session_state, 'tiaokuan_wellbore_type2', ''),
+                quality_control=getattr(st.session_state, 'tiaokuan_quality_control', ''),
+                hse_requirements=getattr(st.session_state, 'tiaokuan_hse_requirements', '')
+            )
         elif submit_type == "tixi":
             # st.session_state.primary = primary
             # st.session_state.secondary = secondary
