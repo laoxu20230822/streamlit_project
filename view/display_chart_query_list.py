@@ -235,7 +235,14 @@ def show_grid(data, key: str):
     )
 
 
-def display_chart_query_list(search_term: str):
+def display_chart_query_list(search_term: str,
+                             oil_gas_resource_type: str = "",
+                             process1: str = "",
+                             process2: str = "",
+                             wellbore_type1: str = "",
+                             wellbore_type2: str = "",
+                             quality_control: str = "",
+                             hse_requirements: str = ""):
     t1, t2, t3 = st.tabs(
         [
             "**图片**",
@@ -244,8 +251,24 @@ def display_chart_query_list(search_term: str):
         ]
     )
     standard_chart = init_standard_chart_db()
+
+    # 判断是否使用筛选查询
+    use_filters = any([oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements])
+
     with t1:
-        data = standard_chart.list_all("图片", search_term)
+        if use_filters:
+            data = standard_chart.list_all_with_filters(
+                "图片", search_term,
+                oil_gas_resource_type=oil_gas_resource_type,
+                process1=process1,
+                process2=process2,
+                wellbore_type1=wellbore_type1,
+                wellbore_type2=wellbore_type2,
+                quality_control=quality_control,
+                hse_requirements=hse_requirements
+            )
+        else:
+            data = standard_chart.list_all("图片", search_term)
         grid_response = show_grid(data, "image")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
@@ -261,7 +284,19 @@ def display_chart_query_list(search_term: str):
         if "selected_rows" in st.session_state:
             display_standard_tab_info()
     with t2:
-        data = standard_chart.list_all("表格", search_term)
+        if use_filters:
+            data = standard_chart.list_all_with_filters(
+                "表格", search_term,
+                oil_gas_resource_type=oil_gas_resource_type,
+                process1=process1,
+                process2=process2,
+                wellbore_type1=wellbore_type1,
+                wellbore_type2=wellbore_type2,
+                quality_control=quality_control,
+                hse_requirements=hse_requirements
+            )
+        else:
+            data = standard_chart.list_all("表格", search_term)
         grid_response = show_grid(data, "table")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
@@ -278,7 +313,19 @@ def display_chart_query_list(search_term: str):
         if "selected_rows" in st.session_state:
             display_standard_tab_info()
     with t3:
-        data = standard_chart.list_all("公式", search_term)
+        if use_filters:
+            data = standard_chart.list_all_with_filters(
+                "公式", search_term,
+                oil_gas_resource_type=oil_gas_resource_type,
+                process1=process1,
+                process2=process2,
+                wellbore_type1=wellbore_type1,
+                wellbore_type2=wellbore_type2,
+                quality_control=quality_control,
+                hse_requirements=hse_requirements
+            )
+        else:
+            data = standard_chart.list_all("公式", search_term)
         grid_response = show_grid(data, "formula")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:

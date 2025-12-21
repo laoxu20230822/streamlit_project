@@ -90,6 +90,61 @@ class StandardChart:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
+    def list_all_with_filters(self, image_type: str,
+                             search_term: str = "",
+                             oil_gas_resource_type: str = "",
+                             process1: str = "",
+                             process2: str = "",
+                             wellbore_type1: str = "",
+                             wellbore_type2: str = "",
+                             quality_control: str = "",
+                             hse_requirements: str = ""):
+        """
+        带筛选条件的图表公式查询方法
+        通过 standard_code 关联 standard_chart 和 standard_system 表
+        """
+        c = self.conn.cursor()
+
+        # 构建搜索条件
+        where_conditions = [f"c.image_type like '%{image_type}%'"]
+
+        if search_term:
+            in_text_name_cause = build_single_column_search(search_term, 'c.in_text_name')
+            image_file_name_cause = build_single_column_search(search_term, 'c.image_file_name')
+            where_conditions.append(f"({in_text_name_cause} or {image_file_name_cause})")
+
+        # 构建筛选条件
+        if oil_gas_resource_type:
+            where_conditions.append(f"s.oil_gas_resource_type like '%{oil_gas_resource_type}%'")
+        if process1:
+            where_conditions.append(f"s.process1 like '%{process1}%'")
+        if process2:
+            where_conditions.append(f"s.process2 like '%{process2}%'")
+        if wellbore_type1:
+            where_conditions.append(f"s.wellbore_type1 like '%{wellbore_type1}%'")
+        if wellbore_type2:
+            where_conditions.append(f"s.wellbore_type2 like '%{wellbore_type2}%'")
+        if quality_control:
+            where_conditions.append(f"s.quality_control like '%{quality_control}%'")
+        if hse_requirements:
+            where_conditions.append(f"s.hse_requirements like '%{hse_requirements}%'")
+
+        # 构建完整查询SQL
+        sql = f"""
+        SELECT c.*, i.standard_name
+        FROM standard_chart c
+        LEFT JOIN standard_index i ON c.standard_code = i.standard_code
+        LEFT JOIN standard_system s ON c.standard_code = s.standard_code
+        WHERE {' AND '.join(where_conditions)}
+        ORDER BY c.standard_code, c.in_text_number
+        """
+
+        c.execute(sql)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        c.close()
+        return data
+
     def count(self):
         c = self.conn.cursor()
         c.execute("select count(1) from standard_index")

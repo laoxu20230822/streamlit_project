@@ -141,6 +141,25 @@ with st.form("standard_search_form", height="stretch", border=False):
         st.session_state.wellbore_type1=""
         st.session_state.wellbore_type2=""
 
+        # 重置术语查询的筛选状态
+        if submit_type == "shuyu":
+            st.session_state.shuyu_oil_gas_resource_type = ""
+            st.session_state.shuyu_process1 = ""
+            st.session_state.shuyu_process2 = ""
+            st.session_state.shuyu_wellbore_type1 = ""
+            st.session_state.shuyu_wellbore_type2 = ""
+            st.session_state.shuyu_quality_control = ""
+            st.session_state.shuyu_hse_requirements = ""
+        # 重置图表公式的筛选状态
+        elif submit_type == "chart":
+            st.session_state.chart_oil_gas_resource_type = ""
+            st.session_state.chart_process1 = ""
+            st.session_state.chart_process2 = ""
+            st.session_state.chart_wellbore_type1 = ""
+            st.session_state.chart_wellbore_type2 = ""
+            st.session_state.chart_quality_control = ""
+            st.session_state.chart_hse_requirements = ""
+
     display_navigator_tab()
 
     col1, col2, col3, col4, button1, button2, button3, button4 = st.columns(
@@ -315,13 +334,13 @@ with placeholder.container(border=True):
             show_ccgz_select_boxes()
             display_glossary_query_list(
                 search_term=st.session_state.search_term,
-                oil_gas_resource_type=getattr(st.session_state, 'oil_gas_resource_type', ''),
-                process1=getattr(st.session_state, 'process1', ''),
-                process2=getattr(st.session_state, 'process2', ''),
-                wellbore_type1=getattr(st.session_state, 'wellbore_type1', ''),
-                wellbore_type2=getattr(st.session_state, 'wellbore_type2', ''),
-                quality_control=getattr(st.session_state, 'quality_control', ''),
-                hse_requirements=getattr(st.session_state, 'hse_requirements', '')
+                oil_gas_resource_type=getattr(st.session_state, 'shuyu_oil_gas_resource_type', ''),
+                process1=getattr(st.session_state, 'shuyu_process1', ''),
+                process2=getattr(st.session_state, 'shuyu_process2', ''),
+                wellbore_type1=getattr(st.session_state, 'shuyu_wellbore_type1', ''),
+                wellbore_type2=getattr(st.session_state, 'shuyu_wellbore_type2', ''),
+                quality_control=getattr(st.session_state, 'shuyu_quality_control', ''),
+                hse_requirements=getattr(st.session_state, 'shuyu_hse_requirements', '')
             )
         elif submit_type == "zhibiao":
             show_metric_select_boxes()
@@ -331,7 +350,17 @@ with placeholder.container(border=True):
             show_method_select_boxes()
             display_method_query_list_new(st.session_state.search_term)
         elif submit_type == "chart":
-            display_chart_query_list(st.session_state.search_term)
+            show_ccgz_select_boxes()
+            display_chart_query_list(
+                search_term=st.session_state.search_term,
+                oil_gas_resource_type=getattr(st.session_state, 'chart_oil_gas_resource_type', ''),
+                process1=getattr(st.session_state, 'chart_process1', ''),
+                process2=getattr(st.session_state, 'chart_process2', ''),
+                wellbore_type1=getattr(st.session_state, 'chart_wellbore_type1', ''),
+                wellbore_type2=getattr(st.session_state, 'chart_wellbore_type2', ''),
+                quality_control=getattr(st.session_state, 'chart_quality_control', ''),
+                hse_requirements=getattr(st.session_state, 'chart_hse_requirements', '')
+            )
         elif submit_type == "ccgz":  # 储层改造业务5级
             show_ccgz_select_boxes()
             display_ccgz_query_list(st.session_state.search_term)
