@@ -69,6 +69,18 @@ if "quality_control" not in st.session_state:
 if "hse_requirements" not in st.session_state:
     st.session_state.hse_requirements = ""
 
+# 初始化术语查询筛选参数
+if "oil_gas_resource_type" not in st.session_state:
+    st.session_state.oil_gas_resource_type = ""
+if "process1" not in st.session_state:
+    st.session_state.process1 = ""
+if "process2" not in st.session_state:
+    st.session_state.process2 = ""
+if "wellbore_type1" not in st.session_state:
+    st.session_state.wellbore_type1 = ""
+if "wellbore_type2" not in st.session_state:
+    st.session_state.wellbore_type2 = ""
+
 
 # 标题
 with st.container():
@@ -121,6 +133,13 @@ with st.form("standard_search_form", height="stretch", border=False):
         st.session_state.product_name="全部"
         st.session_state.quality_control=""
         st.session_state.hse_requirements=""
+
+        # 初始化术语查询相关的筛选参数
+        st.session_state.oil_gas_resource_type=""
+        st.session_state.process1=""
+        st.session_state.process2=""
+        st.session_state.wellbore_type1=""
+        st.session_state.wellbore_type2=""
 
     display_navigator_tab()
 
@@ -293,7 +312,17 @@ with placeholder.container(border=True):
                 st.session_state.primary, st.session_state.secondary
             )
         elif submit_type == "shuyu":
-            display_glossary_query_list(st.session_state.search_term)
+            show_ccgz_select_boxes()
+            display_glossary_query_list(
+                search_term=st.session_state.search_term,
+                oil_gas_resource_type=getattr(st.session_state, 'oil_gas_resource_type', ''),
+                process1=getattr(st.session_state, 'process1', ''),
+                process2=getattr(st.session_state, 'process2', ''),
+                wellbore_type1=getattr(st.session_state, 'wellbore_type1', ''),
+                wellbore_type2=getattr(st.session_state, 'wellbore_type2', ''),
+                quality_control=getattr(st.session_state, 'quality_control', ''),
+                hse_requirements=getattr(st.session_state, 'hse_requirements', '')
+            )
         elif submit_type == "zhibiao":
             show_metric_select_boxes()
             display_metric_query_list(st.session_state.search_term)

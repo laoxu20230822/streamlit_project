@@ -68,9 +68,32 @@ def display_grid(data:list[dict]):
     return grid_response
 
 
-def display_glossary_query_list(search_term:str):
+def display_glossary_query_list(search_term:str,
+                               oil_gas_resource_type: str = "",
+                               process1: str = "",
+                               process2: str = "",
+                               wellbore_type1: str = "",
+                               wellbore_type2: str = "",
+                               quality_control: str = "",
+                               hse_requirements: str = ""):
     glossary=init_glossary_db()
-    data=glossary.list(search_term)
+
+    # 判断是否使用筛选查询
+    if any([oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements]):
+        # 使用带筛选的查询
+        data = glossary.list_with_filters(
+            search_term=search_term,
+            oil_gas_resource_type=oil_gas_resource_type,
+            process1=process1,
+            process2=process2,
+            wellbore_type1=wellbore_type1,
+            wellbore_type2=wellbore_type2,
+            quality_control=quality_control,
+            hse_requirements=hse_requirements
+        )
+    else:
+        # 使用原有查询方法
+        data=glossary.list(search_term)
     # for item in data:
     #     st.markdown(f"""**术语词条：** {item['term']}   **术语英文：** {item['english_term']}""")
     #     st.markdown(f"""**术语定义：** {item['definition']}""")

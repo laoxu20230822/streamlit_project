@@ -118,6 +118,58 @@ class Glossary:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
+    def list_with_filters(self, search_term: str = "",
+                         oil_gas_resource_type: str = "",
+                         process1: str = "",
+                         process2: str = "",
+                         wellbore_type1: str = "",
+                         wellbore_type2: str = "",
+                         quality_control: str = "",
+                         hse_requirements: str = ""):
+        """
+        带筛选条件的术语查询方法
+        通过 standard_code 关联 glossary 和 standard_system 表
+        """
+        c = self.conn.cursor()
+
+        # 构建术语搜索条件
+        where_conditions = ["1=1"]
+        if search_term:
+            term_cause = build_single_column_search(search_term, 'g.term')
+            english_term_cause = build_single_column_search(search_term, 'g.english_term')
+            where_conditions.append(f"({term_cause} or {english_term_cause})")
+
+        # 构建筛选条件
+        if oil_gas_resource_type:
+            where_conditions.append(f"s.oil_gas_resource_type like '%{oil_gas_resource_type}%'")
+        if process1:
+            where_conditions.append(f"s.process1 like '%{process1}%'")
+        if process2:
+            where_conditions.append(f"s.process2 like '%{process2}%'")
+        if wellbore_type1:
+            where_conditions.append(f"s.wellbore_type1 like '%{wellbore_type1}%'")
+        if wellbore_type2:
+            where_conditions.append(f"s.wellbore_type2 like '%{wellbore_type2}%'")
+        if quality_control:
+            where_conditions.append(f"s.quality_control like '%{quality_control}%'")
+        if hse_requirements:
+            where_conditions.append(f"s.hse_requirements like '%{hse_requirements}%'")
+
+        # 构建完整查询SQL
+        sql = f"""
+        SELECT DISTINCT g.*
+        FROM glossary g
+        LEFT JOIN standard_system s ON g.standard_code = s.standard_code
+        WHERE {' AND '.join(where_conditions)}
+        ORDER BY g.term
+        """
+
+        c.execute(sql)
+        columns = [col[0] for col in c.description]
+        data = [dict(zip(columns, row)) for row in c.fetchall()]
+        c.close()
+        return data
+
     def detail(self,standard_code:str):
         c = self.conn.cursor()
         c.execute(f"select * from glossary where standard_code='{standard_code}'")
