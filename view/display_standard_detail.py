@@ -27,7 +27,9 @@ def display_standard_detail(standard_code:str):
         {html_stype}""",unsafe_allow_html=True)
         
     with col2:
-        col2.markdown(f"""**标准状态：** {detail['status']}  
+        # 根据状态值决定显示颜色
+        status_color = "red" if detail['status'] != "现行" else "inherit"
+        col2.markdown(f"""**标准状态：** <span style="color: {status_color}">{detail['status']}</span>
         {html_stype}""",unsafe_allow_html=True)
         col2.markdown(f"""**标准性质：** {detail['standard_nature']}  
         {html_stype}""",unsafe_allow_html=True)
