@@ -332,7 +332,10 @@ class CcgzLevelDictDB:
         Returns:
             Excel文件的Path对象
         """
-        return Path(__file__).parent.parent / "static" / "ccgz_level_dict.xlsx"
+        path = Path(__file__).parent.parent / "static" / "ccgz_level_dict.xlsx"
+        if not path.exists():
+            print(f"警告: Excel文件不存在: {path}")
+        return path
 
     def load_from_excel(self, file_path: str = None):
         """
