@@ -50,8 +50,8 @@ a = Analysis(
         ('README.md', '.'),
     ],
     hiddenimports=[
-
         'rpds',
+        'rpds.rpds',
         'streamlit_extras',
         'streamlit_extras.stylable_container',
         'streamlit',
