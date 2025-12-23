@@ -790,52 +790,81 @@ and
         # conn.close()
 
     def query_stimulation_business_level1(self):
-        c = self.conn.cursor()
-        c.execute(f"SELECT distinct stimulation_business_level1 FROM standard_system")
-        # 查询结果展示一个list
-        # 如果获取的每一条记录里面有空字符串,这个数组元素的数据需要被剔除掉
-        business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
-        return business_levels
+        """
+        查询储层改造业务1级分类
+
+        Returns:
+            1级分类列表
+        """
+        from database.ccgz_level_dict import init_ccgz_level_dict_db
+        db = init_ccgz_level_dict_db()
+        return db.query_level1()
 
     def query_stimulation_business_level2(self, level1: str = ""):
-        c = self.conn.cursor()
-        c.execute(
-            f"SELECT distinct stimulation_business_level2 FROM standard_system where stimulation_business_level1 like '%{level1}%'"
-        )
-        # 查询结果展示一个list
-        business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
-        return business_levels
+        """
+        根据level1查询储层改造业务2级分类
+
+        Args:
+            level1: 1级分类
+
+        Returns:
+            2级分类列表
+        """
+        from database.ccgz_level_dict import init_ccgz_level_dict_db
+        db = init_ccgz_level_dict_db()
+        return db.query_level2(level1)
 
     def query_stimulation_business_level3(self, level1: str = "", level2: str = ""):
-        c = self.conn.cursor()
-        c.execute(
-            f"SELECT distinct stimulation_business_level3 FROM standard_system where stimulation_business_level1 like '%{level1}%' and stimulation_business_level2 like '%{level2}%'"
-        )
-        # 查询结果展示一个list
-        business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
-        return business_levels
+        """
+        根据level1和level2查询储层改造业务3级分类
+
+        Args:
+            level1: 1级分类
+            level2: 2级分类
+
+        Returns:
+            3级分类列表
+        """
+        from database.ccgz_level_dict import init_ccgz_level_dict_db
+        db = init_ccgz_level_dict_db()
+        return db.query_level3(level1, level2)
 
     def query_stimulation_business_level4(
         self, level1: str = "", level2: str = "", level3: str = ""
     ):
-        c = self.conn.cursor()
-        c.execute(
-            f"SELECT distinct stimulation_business_level4 FROM standard_system where stimulation_business_level1 like '%{level1}%' and stimulation_business_level2 like '%{level2}%' and stimulation_business_level3 like '%{level3}%'"
-        )
-        # 查询结果展示一个list
-        business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
-        return business_levels
+        """
+        根据level1/level2/level3查询储层改造业务4级分类
+
+        Args:
+            level1: 1级分类
+            level2: 2级分类
+            level3: 3级分类
+
+        Returns:
+            4级分类列表
+        """
+        from database.ccgz_level_dict import init_ccgz_level_dict_db
+        db = init_ccgz_level_dict_db()
+        return db.query_level4(level1, level2, level3)
 
     def query_stimulation_business_level5(
         self, level1: str = "", level2: str = "", level3: str = "", level4: str = ""
     ):
-        c = self.conn.cursor()
-        c.execute(
-            f"SELECT distinct stimulation_business_level5 FROM standard_system where stimulation_business_level1 like '%{level1}%' and stimulation_business_level2 like '%{level2}%' and stimulation_business_level3 like '%{level3}%' and stimulation_business_level4 like '%{level4}%'"
-        )
-        # 查询结果展示一个list
-        business_levels = [row[0] for row in c.fetchall() if row[0].strip() != ""]
-        return business_levels
+        """
+        根据level1/level2/level3/level4查询储层改造业务5级分类
+
+        Args:
+            level1: 1级分类
+            level2: 2级分类
+            level3: 3级分类
+            level4: 4级分类
+
+        Returns:
+            5级分类列表
+        """
+        from database.ccgz_level_dict import init_ccgz_level_dict_db
+        db = init_ccgz_level_dict_db()
+        return db.query_level5(level1, level2, level3, level4)
 
     def query_performance_indicator_level1(self, performance_indicator_level2: str = "", product_category1: str = "", product_category2: str = "", product_name: str = ""):
         """获取性能指标一级非空distinct值，支持筛选联动"""

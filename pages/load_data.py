@@ -8,6 +8,7 @@ from database.glossary import init_glossary_db
 from database.metric import init_metric_db
 from database.reference_standards import init_reference_standards_db
 from database.standard_category import init_standard_category_db
+from database.ccgz_level_dict import init_ccgz_level_dict_db
 st.set_page_config(
     layout='wide'
 )
@@ -76,6 +77,11 @@ def fragment_02():
                 db.create_table()
                 db.load_from_excel(file)
                 container_02.success('文件上传成功！')
+
+                # 初始化储层改造层级字典表
+                ccgz_dict_db = init_ccgz_level_dict_db()
+                ccgz_dict_db.init_from_standard_system()
+                container_02.info(f'储层改造层级字典表已更新，共{ccgz_dict_db.count()}条数据')
             except Exception as e:
                 container_02.error(f"文件解析失败: {str(e)}")
         
