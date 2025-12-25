@@ -981,65 +981,191 @@ and
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_oil_gas_resource_type(self):
-        """获取油气资源类别非空distinct值"""
+    def query_oil_gas_resource_type(self, process1: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
+        """获取油气资源类别非空distinct值，支持级联筛选"""
         c = self.conn.cursor()
+
+        # 构建WHERE条件
+        conditions = []
+        if process1:
+            conditions.append(f"process1 LIKE '%{process1}%'")
+        if process2:
+            conditions.append(f"process2 LIKE '%{process2}%'")
+        if wellbore_type1:
+            conditions.append(f"wellbore_type1 LIKE '%{wellbore_type1}%'")
+        if wellbore_type2:
+            conditions.append(f"wellbore_type2 LIKE '%{wellbore_type2}%'")
+        if quality_control:
+            conditions.append(f"quality_control LIKE '%{quality_control}%'")
+        if hse_requirements:
+            conditions.append(f"hse_requirements LIKE '%{hse_requirements}%'")
+
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+
         c.execute(
-            "SELECT DISTINCT oil_gas_resource_type FROM standard_system WHERE oil_gas_resource_type IS NOT NULL AND oil_gas_resource_type != ''"
+            f"SELECT DISTINCT oil_gas_resource_type FROM standard_system WHERE oil_gas_resource_type IS NOT NULL AND oil_gas_resource_type != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_process1(self):
-        """获取工艺1非空distinct值"""
+    def query_process1(self, oil_gas_resource_type: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
+        """获取工艺1非空distinct值，支持级联筛选"""
         c = self.conn.cursor()
+
+        # 构建WHERE条件
+        conditions = []
+        if oil_gas_resource_type:
+            conditions.append(f"oil_gas_resource_type LIKE '%{oil_gas_resource_type}%'")
+        if process2:
+            conditions.append(f"process2 LIKE '%{process2}%'")
+        if wellbore_type1:
+            conditions.append(f"wellbore_type1 LIKE '%{wellbore_type1}%'")
+        if wellbore_type2:
+            conditions.append(f"wellbore_type2 LIKE '%{wellbore_type2}%'")
+        if quality_control:
+            conditions.append(f"quality_control LIKE '%{quality_control}%'")
+        if hse_requirements:
+            conditions.append(f"hse_requirements LIKE '%{hse_requirements}%'")
+
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+
         c.execute(
-            "SELECT DISTINCT process1 FROM standard_system WHERE process1 IS NOT NULL AND process1 != ''"
+            f"SELECT DISTINCT process1 FROM standard_system WHERE process1 IS NOT NULL AND process1 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_process2(self):
-        """获取工艺2非空distinct值"""
+    def query_process2(self, oil_gas_resource_type: str = "", process1: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
+        """获取工艺2非空distinct值，支持级联筛选"""
         c = self.conn.cursor()
+
+        # 构建WHERE条件
+        conditions = []
+        if oil_gas_resource_type:
+            conditions.append(f"oil_gas_resource_type LIKE '%{oil_gas_resource_type}%'")
+        if process1:
+            conditions.append(f"process1 LIKE '%{process1}%'")
+        if wellbore_type1:
+            conditions.append(f"wellbore_type1 LIKE '%{wellbore_type1}%'")
+        if wellbore_type2:
+            conditions.append(f"wellbore_type2 LIKE '%{wellbore_type2}%'")
+        if quality_control:
+            conditions.append(f"quality_control LIKE '%{quality_control}%'")
+        if hse_requirements:
+            conditions.append(f"hse_requirements LIKE '%{hse_requirements}%'")
+
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+
         c.execute(
-            "SELECT DISTINCT process2 FROM standard_system WHERE process2 IS NOT NULL AND process2 != ''"
+            f"SELECT DISTINCT process2 FROM standard_system WHERE process2 IS NOT NULL AND process2 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_wellbore_type1(self):
-        """获取井筒类型分类1非空distinct值"""
+    def query_wellbore_type1(self, oil_gas_resource_type: str = "", process1: str = "", process2: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
+        """获取井筒类型分类1非空distinct值，支持级联筛选"""
         c = self.conn.cursor()
+
+        # 构建WHERE条件
+        conditions = []
+        if oil_gas_resource_type:
+            conditions.append(f"oil_gas_resource_type LIKE '%{oil_gas_resource_type}%'")
+        if process1:
+            conditions.append(f"process1 LIKE '%{process1}%'")
+        if process2:
+            conditions.append(f"process2 LIKE '%{process2}%'")
+        if wellbore_type2:
+            conditions.append(f"wellbore_type2 LIKE '%{wellbore_type2}%'")
+        if quality_control:
+            conditions.append(f"quality_control LIKE '%{quality_control}%'")
+        if hse_requirements:
+            conditions.append(f"hse_requirements LIKE '%{hse_requirements}%'")
+
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+
         c.execute(
-            "SELECT DISTINCT wellbore_type1 FROM standard_system WHERE wellbore_type1 IS NOT NULL AND wellbore_type1 != ''"
+            f"SELECT DISTINCT wellbore_type1 FROM standard_system WHERE wellbore_type1 IS NOT NULL AND wellbore_type1 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_wellbore_type2(self):
-        """获取井筒类型分类2非空distinct值"""
+    def query_wellbore_type2(self, oil_gas_resource_type: str = "", process1: str = "", process2: str = "", wellbore_type1: str = "", quality_control: str = "", hse_requirements: str = ""):
+        """获取井筒类型分类2非空distinct值，支持级联筛选"""
         c = self.conn.cursor()
+
+        # 构建WHERE条件
+        conditions = []
+        if oil_gas_resource_type:
+            conditions.append(f"oil_gas_resource_type LIKE '%{oil_gas_resource_type}%'")
+        if process1:
+            conditions.append(f"process1 LIKE '%{process1}%'")
+        if process2:
+            conditions.append(f"process2 LIKE '%{process2}%'")
+        if wellbore_type1:
+            conditions.append(f"wellbore_type1 LIKE '%{wellbore_type1}%'")
+        if quality_control:
+            conditions.append(f"quality_control LIKE '%{quality_control}%'")
+        if hse_requirements:
+            conditions.append(f"hse_requirements LIKE '%{hse_requirements}%'")
+
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+
         c.execute(
-            "SELECT DISTINCT wellbore_type2 FROM standard_system WHERE wellbore_type2 IS NOT NULL AND wellbore_type2 != ''"
+            f"SELECT DISTINCT wellbore_type2 FROM standard_system WHERE wellbore_type2 IS NOT NULL AND wellbore_type2 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_quality_control(self):
-        """获取质量控制(施工方)非空distinct值"""
+    def query_quality_control(self, oil_gas_resource_type: str = "", process1: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", hse_requirements: str = ""):
+        """获取质量控制(施工方)非空distinct值，支持级联筛选"""
         c = self.conn.cursor()
+
+        # 构建WHERE条件
+        conditions = []
+        if oil_gas_resource_type:
+            conditions.append(f"oil_gas_resource_type LIKE '%{oil_gas_resource_type}%'")
+        if process1:
+            conditions.append(f"process1 LIKE '%{process1}%'")
+        if process2:
+            conditions.append(f"process2 LIKE '%{process2}%'")
+        if wellbore_type1:
+            conditions.append(f"wellbore_type1 LIKE '%{wellbore_type1}%'")
+        if wellbore_type2:
+            conditions.append(f"wellbore_type2 LIKE '%{wellbore_type2}%'")
+        if hse_requirements:
+            conditions.append(f"hse_requirements LIKE '%{hse_requirements}%'")
+
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+
         c.execute(
-            "SELECT DISTINCT quality_control FROM standard_system WHERE quality_control IS NOT NULL AND quality_control != ''"
+            f"SELECT DISTINCT quality_control FROM standard_system WHERE quality_control IS NOT NULL AND quality_control != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_hse_requirements(self):
-        """获取健康、安全与环境控制要求非空distinct值"""
+    def query_hse_requirements(self, oil_gas_resource_type: str = "", process1: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = ""):
+        """获取健康、安全与环境控制要求非空distinct值，支持级联筛选"""
         c = self.conn.cursor()
+
+        # 构建WHERE条件
+        conditions = []
+        if oil_gas_resource_type:
+            conditions.append(f"oil_gas_resource_type LIKE '%{oil_gas_resource_type}%'")
+        if process1:
+            conditions.append(f"process1 LIKE '%{process1}%'")
+        if process2:
+            conditions.append(f"process2 LIKE '%{process2}%'")
+        if wellbore_type1:
+            conditions.append(f"wellbore_type1 LIKE '%{wellbore_type1}%'")
+        if wellbore_type2:
+            conditions.append(f"wellbore_type2 LIKE '%{wellbore_type2}%'")
+        if quality_control:
+            conditions.append(f"quality_control LIKE '%{quality_control}%'")
+
+        where_clause = " AND " + " AND ".join(conditions) if conditions else ""
+
         c.execute(
-            "SELECT DISTINCT hse_requirements FROM standard_system WHERE hse_requirements IS NOT NULL AND hse_requirements != ''"
+            f"SELECT DISTINCT hse_requirements FROM standard_system WHERE hse_requirements IS NOT NULL AND hse_requirements != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels

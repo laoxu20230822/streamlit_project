@@ -126,9 +126,55 @@ def display_ccgz_query_list(search_term):
     display_standard_tab_info()
 
 def show_ccgz_select_boxes():
-    def onchange_for_level():
-        # 保持当前的 submit_type，不要强制设置为 ccgz
-        # st.session_state.search_term = st.session_state.standard_term
+    def onchange_for_ccgz():
+        """级联筛选回调函数"""
+        # 获取触发变更的selectbox的key
+        select_box_key = st.session_state.get("trigger_select_box", "")
+
+        # 获取当前选择的值和选项列表
+        current_value = st.session_state.get(select_box_key, "全部")
+        option_list = st.session_state.get(f"{select_box_key}_options", [])
+
+        # 根据不同的key更新对应的session_state
+        prefix = st.session_state.get('submit_type', 'ccgz')
+
+        if select_box_key == f"{prefix}_oil_gas_resource_type_selectbox":
+            key = f"{prefix}_oil_gas_resource_type"
+            st.session_state[key] = current_value if current_value != "全部" else ""
+            if current_value != "全部":
+                st.session_state[f"{key}_option"] = option_list
+        elif select_box_key == f"{prefix}_process1_selectbox":
+            key = f"{prefix}_process1"
+            st.session_state[key] = current_value if current_value != "全部" else ""
+            if current_value != "全部":
+                st.session_state[f"{key}_option"] = option_list
+        elif select_box_key == f"{prefix}_process2_selectbox":
+            key = f"{prefix}_process2"
+            st.session_state[key] = current_value if current_value != "全部" else ""
+            if current_value != "全部":
+                st.session_state[f"{key}_option"] = option_list
+        elif select_box_key == f"{prefix}_wellbore_type1_selectbox":
+            key = f"{prefix}_wellbore_type1"
+            st.session_state[key] = current_value if current_value != "全部" else ""
+            if current_value != "全部":
+                st.session_state[f"{key}_option"] = option_list
+        elif select_box_key == f"{prefix}_wellbore_type2_selectbox":
+            key = f"{prefix}_wellbore_type2"
+            st.session_state[key] = current_value if current_value != "全部" else ""
+            if current_value != "全部":
+                st.session_state[f"{key}_option"] = option_list
+        elif select_box_key == f"{prefix}_quality_control_selectbox":
+            key = f"{prefix}_quality_control"
+            st.session_state[key] = current_value if current_value != "全部" else ""
+            if current_value != "全部":
+                st.session_state[f"{key}_option"] = option_list
+        elif select_box_key == f"{prefix}_hse_requirements_selectbox":
+            key = f"{prefix}_hse_requirements"
+            st.session_state[key] = current_value if current_value != "全部" else ""
+            if current_value != "全部":
+                st.session_state[f"{key}_option"] = option_list
+
+        # 清除选中行
         if "selected_rows" in st.session_state:
             del st.session_state["selected_rows"]
 
@@ -152,6 +198,24 @@ def show_ccgz_select_boxes():
         if key not in st.session_state:
             st.session_state[key] = ""
 
+    # 从session_state获取当前选择的值，如果不存在则默认为"全部"
+    oil_gas_resource = st.session_state.get(oil_gas_key, "全部") or "全部"
+    process1 = st.session_state.get(process1_key, "全部") or "全部"
+    process2 = st.session_state.get(process2_key, "全部") or "全部"
+    wellbore_type1 = st.session_state.get(wellbore_type1_key, "全部") or "全部"
+    wellbore_type2 = st.session_state.get(wellbore_type2_key, "全部") or "全部"
+    quality_control = st.session_state.get(quality_control_key, "全部") or "全部"
+    hse_requirements = st.session_state.get(hse_key, "全部") or "全部"
+
+    # 转换为查询参数（"全部"转换为空字符串）
+    oil_gas_resource_param = oil_gas_resource if oil_gas_resource != "全部" else ""
+    process1_param = process1 if process1 != "全部" else ""
+    process2_param = process2 if process2 != "全部" else ""
+    wellbore_type1_param = wellbore_type1 if wellbore_type1 != "全部" else ""
+    wellbore_type2_param = wellbore_type2 if wellbore_type2 != "全部" else ""
+    quality_control_param = quality_control if quality_control != "全部" else ""
+    hse_requirements_param = hse_requirements if hse_requirements != "全部" else ""
+
     # 根据prefix决定显示的筛选框数量
     if prefix == 'ccgz':
         # 储层改造5级：显示全部7个筛选框
@@ -162,95 +226,182 @@ def show_ccgz_select_boxes():
         col1, col2, col3, col4, col5 = st.columns(5)
         show_extra_filters = False
 
-    # 油气资源类别
-    oil_gas_resource_options = standard_db.query_oil_gas_resource_type()
-    oil_gas_resource_options.insert(0, "全部")
-    current_oil_gas = st.session_state[oil_gas_key] or "全部"
+    # 油气资源类别 - 使用级联查询
+    with col1:
+        oil_gas_resource_options = standard_db.query_oil_gas_resource_type(
+            process1_param, process2_param, wellbore_type1_param, wellbore_type2_param,
+            quality_control_param, hse_requirements_param
+        )
+        oil_gas_resource_options.insert(0, "全部")
 
-    oil_gas_resource = col1.selectbox(
-        "**油气资源类别**", oil_gas_resource_options,
-        index=oil_gas_resource_options.index(current_oil_gas) if current_oil_gas in oil_gas_resource_options else 0,
-        key=f"{oil_gas_key}_selectbox",
-        on_change=onchange_for_level
-    )
-    oil_gas_resource = oil_gas_resource if oil_gas_resource != "全部" else ""
+        # 确保当前选择在选项列表中
+        if oil_gas_resource not in oil_gas_resource_options:
+            oil_gas_resource = "全部"
 
-    # 工艺类型1
-    process1_options = standard_db.query_process1()
-    process1_options.insert(0, "全部")
-    current_process1 = st.session_state[process1_key] or "全部"
-    process1 = col2.selectbox(
-        "**工艺类型1**", process1_options,
-        index=process1_options.index(current_process1) if current_process1 in process1_options else 0,
-        key=f"{process1_key}_selectbox",
-        on_change=onchange_for_level
-    )
-    process1 = process1 if process1 != "全部" else ""
+        index = oil_gas_resource_options.index(oil_gas_resource)
+        st.session_state[f"{oil_gas_key}_selectbox_options"] = oil_gas_resource_options
+        st.session_state["trigger_select_box"] = f"{oil_gas_key}_selectbox"
+        oil_gas_resource = st.selectbox(
+            "**油气资源类别**",
+            oil_gas_resource_options,
+            index=index,
+            key=f"{oil_gas_key}_selectbox",
+            on_change=onchange_for_ccgz,
+        )
+        oil_gas_resource = oil_gas_resource if oil_gas_resource != "全部" else ""
+        oil_gas_resource_param = oil_gas_resource
 
-    # 工艺类型2
-    process2_options = standard_db.query_process2()
-    process2_options.insert(0, "全部")
-    current_process2 = st.session_state[process2_key] or "全部"
-    process2 = col3.selectbox(
-        "**工艺类型2**", process2_options,
-        index=process2_options.index(current_process2) if current_process2 in process2_options else 0,
-        key=f"{process2_key}_selectbox",
-        on_change=onchange_for_level
-    )
-    process2 = process2 if process2 != "全部" else ""
+    # 工艺类型1 - 使用级联查询
+    with col2:
+        process1_options = standard_db.query_process1(
+            oil_gas_resource_param, process2_param, wellbore_type1_param, wellbore_type2_param,
+            quality_control_param, hse_requirements_param
+        )
+        process1_options.insert(0, "全部")
 
-    # 井筒类型1
-    wellbore_type1_options = standard_db.query_wellbore_type1()
-    wellbore_type1_options.insert(0, "全部")
-    current_wellbore_type1 = st.session_state[wellbore_type1_key] or "全部"
-    wellbore_type1 = col4.selectbox(
-        "**井筒类型1**", wellbore_type1_options,
-        index=wellbore_type1_options.index(current_wellbore_type1) if current_wellbore_type1 in wellbore_type1_options else 0,
-        key=f"{wellbore_type1_key}_selectbox",
-        on_change=onchange_for_level
-    )
-    wellbore_type1 = wellbore_type1 if wellbore_type1 != "全部" else ""
+        # 确保当前选择在选项列表中
+        if process1 not in process1_options:
+            process1 = "全部"
 
-    # 井筒类型2
-    wellbore_type2_options = standard_db.query_wellbore_type2()
-    wellbore_type2_options.insert(0, "全部")
-    current_wellbore_type2 = st.session_state[wellbore_type2_key] or "全部"
-    wellbore_type2 = col5.selectbox(
-        "**井筒类型2**", wellbore_type2_options,
-        index=wellbore_type2_options.index(current_wellbore_type2) if current_wellbore_type2 in wellbore_type2_options else 0,
-        key=f"{wellbore_type2_key}_selectbox",
-        on_change=onchange_for_level
-    )
-    wellbore_type2 = wellbore_type2 if wellbore_type2 != "全部" else ""
+        index = process1_options.index(process1)
+        st.session_state[f"{process1_key}_selectbox_options"] = process1_options
+        st.session_state["trigger_select_box"] = f"{process1_key}_selectbox"
+        process1 = st.selectbox(
+            "**工艺类型1**",
+            process1_options,
+            index=index,
+            key=f"{process1_key}_selectbox",
+            on_change=onchange_for_ccgz,
+        )
+        process1 = process1 if process1 != "全部" else ""
+        process1_param = process1
+
+    # 工艺类型2 - 使用级联查询
+    with col3:
+        process2_options = standard_db.query_process2(
+            oil_gas_resource_param, process1_param, wellbore_type1_param, wellbore_type2_param,
+            quality_control_param, hse_requirements_param
+        )
+        process2_options.insert(0, "全部")
+
+        # 确保当前选择在选项列表中
+        if process2 not in process2_options:
+            process2 = "全部"
+
+        index = process2_options.index(process2)
+        st.session_state[f"{process2_key}_selectbox_options"] = process2_options
+        st.session_state["trigger_select_box"] = f"{process2_key}_selectbox"
+        process2 = st.selectbox(
+            "**工艺类型2**",
+            process2_options,
+            index=index,
+            key=f"{process2_key}_selectbox",
+            on_change=onchange_for_ccgz,
+        )
+        process2 = process2 if process2 != "全部" else ""
+        process2_param = process2
+
+    # 井筒类型1 - 使用级联查询
+    with col4:
+        wellbore_type1_options = standard_db.query_wellbore_type1(
+            oil_gas_resource_param, process1_param, process2_param, wellbore_type2_param,
+            quality_control_param, hse_requirements_param
+        )
+        wellbore_type1_options.insert(0, "全部")
+
+        # 确保当前选择在选项列表中
+        if wellbore_type1 not in wellbore_type1_options:
+            wellbore_type1 = "全部"
+
+        index = wellbore_type1_options.index(wellbore_type1)
+        st.session_state[f"{wellbore_type1_key}_selectbox_options"] = wellbore_type1_options
+        st.session_state["trigger_select_box"] = f"{wellbore_type1_key}_selectbox"
+        wellbore_type1 = st.selectbox(
+            "**井筒类型1**",
+            wellbore_type1_options,
+            index=index,
+            key=f"{wellbore_type1_key}_selectbox",
+            on_change=onchange_for_ccgz,
+        )
+        wellbore_type1 = wellbore_type1 if wellbore_type1 != "全部" else ""
+        wellbore_type1_param = wellbore_type1
+
+    # 井筒类型2 - 使用级联查询
+    with col5:
+        wellbore_type2_options = standard_db.query_wellbore_type2(
+            oil_gas_resource_param, process1_param, process2_param, wellbore_type1_param,
+            quality_control_param, hse_requirements_param
+        )
+        wellbore_type2_options.insert(0, "全部")
+
+        # 确保当前选择在选项列表中
+        if wellbore_type2 not in wellbore_type2_options:
+            wellbore_type2 = "全部"
+
+        index = wellbore_type2_options.index(wellbore_type2)
+        st.session_state[f"{wellbore_type2_key}_selectbox_options"] = wellbore_type2_options
+        st.session_state["trigger_select_box"] = f"{wellbore_type2_key}_selectbox"
+        wellbore_type2 = st.selectbox(
+            "**井筒类型2**",
+            wellbore_type2_options,
+            index=index,
+            key=f"{wellbore_type2_key}_selectbox",
+            on_change=onchange_for_ccgz,
+        )
+        wellbore_type2 = wellbore_type2 if wellbore_type2 != "全部" else ""
+        wellbore_type2_param = wellbore_type2
 
     # 管理控制点和知识属性：只在储层改造5级中显示
     quality_control = ""
     hse_requirements = ""
 
     if show_extra_filters:
-        # 管理控制点
-        quality_control_options = standard_db.query_quality_control()
-        quality_control_options.insert(0, "全部")
-        current_quality_control = st.session_state[quality_control_key] or "全部"
-        quality_control = col6.selectbox(
-            "**管理控制点**", quality_control_options,
-            index=quality_control_options.index(current_quality_control) if current_quality_control in quality_control_options else 0,
-            key=f"{quality_control_key}_selectbox",
-            on_change=onchange_for_level
-        )
-        quality_control = quality_control if quality_control != "全部" else ""
+        # 管理控制点 - 使用级联查询
+        with col6:
+            quality_control_options = standard_db.query_quality_control(
+                oil_gas_resource_param, process1_param, process2_param, wellbore_type1_param, wellbore_type2_param, hse_requirements_param
+            )
+            quality_control_options.insert(0, "全部")
 
-        # 知识属性
-        hse_requirements_options = standard_db.query_hse_requirements()
-        hse_requirements_options.insert(0, "全部")
-        current_hse = st.session_state[hse_key] or "全部"
-        hse_requirements = col7.selectbox(
-            "**知识属性**", hse_requirements_options,
-            index=hse_requirements_options.index(current_hse) if current_hse in hse_requirements_options else 0,
-            key=f"{hse_key}_selectbox",
-            on_change=onchange_for_level
-        )
-        hse_requirements = hse_requirements if hse_requirements != "全部" else ""
+            # 确保当前选择在选项列表中
+            if quality_control not in quality_control_options:
+                quality_control = "全部"
+
+            index = quality_control_options.index(quality_control)
+            st.session_state[f"{quality_control_key}_selectbox_options"] = quality_control_options
+            st.session_state["trigger_select_box"] = f"{quality_control_key}_selectbox"
+            quality_control = st.selectbox(
+                "**管理控制点**",
+                quality_control_options,
+                index=index,
+                key=f"{quality_control_key}_selectbox",
+                on_change=onchange_for_ccgz,
+            )
+            quality_control = quality_control if quality_control != "全部" else ""
+            quality_control_param = quality_control
+
+        # 知识属性 - 使用级联查询
+        with col7:
+            hse_requirements_options = standard_db.query_hse_requirements(
+                oil_gas_resource_param, process1_param, process2_param, wellbore_type1_param, wellbore_type2_param, quality_control_param
+            )
+            hse_requirements_options.insert(0, "全部")
+
+            # 确保当前选择在选项列表中
+            if hse_requirements not in hse_requirements_options:
+                hse_requirements = "全部"
+
+            index = hse_requirements_options.index(hse_requirements)
+            st.session_state[f"{hse_key}_selectbox_options"] = hse_requirements_options
+            st.session_state["trigger_select_box"] = f"{hse_key}_selectbox"
+            hse_requirements = st.selectbox(
+                "**知识属性**",
+                hse_requirements_options,
+                index=index,
+                key=f"{hse_key}_selectbox",
+                on_change=onchange_for_ccgz,
+            )
+            hse_requirements = hse_requirements if hse_requirements != "全部" else ""
 
     # 更新对应的前缀的 session_state
     st.session_state[oil_gas_key] = oil_gas_resource
