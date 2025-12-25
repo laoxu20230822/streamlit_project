@@ -110,6 +110,9 @@ def display_metric_query_list(search_term: str):
         if st.session_state.indicator_item != "全部"
         else ""
     )
+    purpose = (
+        st.session_state.purpose if st.session_state.purpose != "全部" else ""
+    )
 
     metric = init_metric_db()
     data = metric.list_by_search_term(
@@ -118,6 +121,7 @@ def display_metric_query_list(search_term: str):
         product_name,
         experimental_condition,
         indicator_item,
+        purpose,
     )
     
     
@@ -382,6 +386,10 @@ def onchange_for_metric(select_box_key: str, option_list: list = []):
         st.session_state.indicator_item = current_value
         if current_value != "全部":
             st.session_state.indicator_item_option = option_list
+    elif select_box_key == "purpose_key":
+        st.session_state.purpose = current_value
+        if current_value != "全部":
+            st.session_state.purpose_option = option_list
 
     st.session_state.submit_type = "zhibiao"
     if "selected_rows" in st.session_state:
@@ -397,17 +405,40 @@ def show_metric_select_boxes():
     product_name = st.session_state.get("product_name", "全部")
     experimental_condition = st.session_state.get("experimental_condition", "全部")
     indicator_item = st.session_state.get("indicator_item", "全部")
+    purpose = st.session_state.get("purpose", "全部")
 
     # 转换为查询参数（"全部"转换为空字符串）
     product_category_param = product_category if product_category != "全部" else ""
     product_name_param = product_name if product_name != "全部" else ""
     experimental_condition_param = experimental_condition if experimental_condition != "全部" else ""
     indicator_item_param = indicator_item if indicator_item != "全部" else ""
+    purpose_param = purpose if purpose != "全部" else ""
 
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
-        # 根据其他三个条件查询产品类别
+        # 用途筛选（从standard_system表获取）
+        purpose_options = metric_db.query_purpose(
+            product_category_param, product_name_param, experimental_condition_param, indicator_item_param
+        )
+        purpose_options.insert(0, "全部")
+
+        # 确保当前选择在选项列表中
+        if purpose not in purpose_options:
+            purpose = "全部"
+
+        index = purpose_options.index(purpose)
+        purpose = st.selectbox(
+            "**用途**",
+            purpose_options,
+            index=index,
+            key="purpose_key",
+            args=("purpose_key", purpose_options),
+            on_change=onchange_for_metric,
+        )
+
+    with c2:
+        # 根据其他三个条件查询产品类别（不包含用途，因为metrics表没有此字段）
         product_category_options = metric_db.query_product_category(
             product_name_param, experimental_condition_param, indicator_item_param
         )
@@ -427,8 +458,8 @@ def show_metric_select_boxes():
             on_change=onchange_for_metric,
         )
 
-    with c2:
-        # 根据其他三个条件查询产品名称
+    with c3:
+        # 根据其他三个条件查询产品名称（不包含用途，因为metrics表没有此字段）
         product_name_options = metric_db.query_product_name(
             product_category_param, experimental_condition_param, indicator_item_param
         )
@@ -448,8 +479,8 @@ def show_metric_select_boxes():
             on_change=onchange_for_metric,
         )
 
-    with c3:
-        # 根据其他三个条件查询实验条件
+    with c4:
+        # 根据其他三个条件查询实验条件（不包含用途，因为metrics表没有此字段）
         experimental_condition_options = metric_db.query_experimental_condition(
             product_category_param, product_name_param, indicator_item_param
         )
@@ -469,8 +500,8 @@ def show_metric_select_boxes():
             on_change=onchange_for_metric,
         )
 
-    with c4:
-        # 根据其他三个条件查询检测项目
+    with c5:
+        # 根据其他三个条件查询检测项目（不包含用途，因为metrics表没有此字段）
         indicator_item_options = metric_db.query_indicator_item(
             product_category_param, product_name_param, experimental_condition_param
         )
@@ -495,4 +526,5 @@ def show_metric_select_boxes():
     st.session_state.product_name = product_name
     st.session_state.experimental_condition = experimental_condition
     st.session_state.indicator_item = indicator_item
+    st.session_state.purpose = purpose
 

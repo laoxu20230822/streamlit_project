@@ -69,7 +69,7 @@ INSERT INTO metrics (
     application_process,  
     first_classification,  
     second_classification,  
-    third_classification,  
+    third_classification,
     fourth_classification
 ) VALUES (
     ?,?,?,?,?,?,?,?,?,
@@ -145,6 +145,37 @@ class Metric:
         c.execute(SELECT_SQL, (f"%{product_category}%", f"%{product_name}%", f"%{indicator_item}%"))
         return [row[0] for row in c.fetchall() if row[0] and row[0].strip() != ""]
 
+    def query_purpose(self, product_category="", product_name="", experimental_condition="", indicator_item=""):
+        """获取用途非空distinct值，支持级联筛选（从standard_system表获取）"""
+        c = self.conn.cursor()
+        # 构建WHERE条件
+        conditions = ["s.purpose IS NOT NULL", "s.purpose != ''"]
+        params = []
+
+        if product_category:
+            conditions.append("m.product_category LIKE ?")
+            params.append(f"%{product_category}%")
+        if product_name:
+            conditions.append("m.product_name LIKE ?")
+            params.append(f"%{product_name}%")
+        if experimental_condition:
+            conditions.append("m.experimental_condition LIKE ?")
+            params.append(f"%{experimental_condition}%")
+        if indicator_item:
+            conditions.append("m.indicator_item LIKE ?")
+            params.append(f"%{indicator_item}%")
+
+        WHERE_clause = " AND ".join(conditions)
+
+        SELECT_SQL = f"""
+        SELECT DISTINCT s.purpose
+        FROM standard_system s
+        INNER JOIN metrics m ON s.standard_code = m.standard_code
+        WHERE {WHERE_clause}
+        """
+        c.execute(SELECT_SQL, params)
+        return [row[0] for row in c.fetchall() if row[0] and row[0].strip() != ""]
+
     def load_from_excel(self, file_path: str):
         df = pd.read_excel(file_path, engine="openpyxl", header=0).fillna("")
         self.batch_insert(df)
@@ -182,7 +213,7 @@ class Metric:
     #     data = [dict(zip(columns, row)) for row in c.fetchall()]
     #     return data
 
-    def list_by_search_term(self, search_term: str,product_category: str,product_name: str,experimental_condition: str,indicator_item: str):
+    def list_by_search_term(self, search_term: str, product_category: str, product_name: str, experimental_condition: str, indicator_item: str, purpose: str = ""):
         """
         where
         indicator_item like '%{search_term}%' or
@@ -209,20 +240,22 @@ class Metric:
         )
         c = self.conn.cursor()
         SELECT_SQL = f"""
-        SELECT m.*, i.standard_name 
-        FROM metrics m 
+        SELECT m.*, i.standard_name
+        FROM metrics m
         LEFT JOIN standard_index i ON m.standard_code = i.standard_code
+        LEFT JOIN standard_system s ON m.standard_code = s.standard_code
         where
         ( {indicator_item_cause} or
         {product_category_cause} or
         {product_name_cause} or
         {table_header_product_name_cause} or
         {primary_project_cause} or
-        {secondary_project_cause} ) and 
+        {secondary_project_cause} ) and
         m.product_category like '%{product_category}%' and
-        m.product_name like '%{product_name}%' and  
+        m.product_name like '%{product_name}%' and
         m.experimental_condition like '%{experimental_condition}%' and
-        m.indicator_item like '%{indicator_item}%'
+        m.indicator_item like '%{indicator_item}%' and
+        s.purpose like '%{purpose}%'
         """
         c.execute(SELECT_SQL)
 

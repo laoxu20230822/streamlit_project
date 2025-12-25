@@ -49,6 +49,7 @@ CREATE TABLE standard_system (
     product_category2 TEXT,  -- 产品类别2
     product_name TEXT,  -- 产品名称
     oil_gas_resource_type TEXT,  -- 油气资源类别
+    purpose TEXT,  -- 用途
     product TEXT,  -- 产品
     process1 TEXT,  -- 工艺
     process2 TEXT,  -- 工艺
@@ -142,6 +143,7 @@ INSERT INTO standard_system (
     product_category2,
     product_name,
     oil_gas_resource_type,
+    purpose,
     product,
     process1,
     process2,
@@ -209,7 +211,7 @@ VALUES (
     ?,?,?,?,?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?,?,?,
-    ?,?,?,?,?,?,?,?,?
+    ?,?,?,?,?,?,?,?,?,?
 )"""
 
 
@@ -781,6 +783,11 @@ and
 
     def load_from_excel(self, file_path: str):
         df = pd.read_excel(file_path, engine="openpyxl", header=0).fillna("")
+        # 列名映射：将中文列名映射到数据库字段名
+        column_mapping = {
+            "用途": "purpose",
+        }
+        df = df.rename(columns=column_mapping)
         self.batch_insert(df)
 
     def drop(self):
