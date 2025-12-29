@@ -155,9 +155,16 @@ class Glossary:
         if hse_requirements:
             where_conditions.append(f"s.hse_requirements like '%{hse_requirements}%'")
 
-        # 构建完整查询SQL
+        # 构建完整查询SQL，返回glossary表所有字段加上standard_system表的筛选字段
         sql = f"""
-        SELECT DISTINCT g.*
+        SELECT DISTINCT g.*,
+               s.oil_gas_resource_type,
+               s.process1,
+               s.process2,
+               s.wellbore_type1,
+               s.wellbore_type2,
+               s.quality_control,
+               s.hse_requirements
         FROM glossary g
         LEFT JOIN standard_system s ON g.standard_code = s.standard_code
         WHERE {' AND '.join(where_conditions)}

@@ -78,22 +78,26 @@ def display_glossary_query_list(search_term:str,
                                hse_requirements: str = ""):
     glossary=init_glossary_db()
 
-    # 判断是否使用筛选查询
-    if any([oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements]):
-        # 使用带筛选的查询
-        data = glossary.list_with_filters(
-            search_term=search_term,
-            oil_gas_resource_type=oil_gas_resource_type,
-            process1=process1,
-            process2=process2,
-            wellbore_type1=wellbore_type1,
-            wellbore_type2=wellbore_type2,
-            quality_control=quality_control,
-            hse_requirements=hse_requirements
-        )
-    else:
-        # 使用原有查询方法
-        data=glossary.list(search_term)
+    # 检查搜索词是否变化，如果变化则重置筛选条件
+    last_search_term = st.session_state.get("glossary_last_search_term", "")
+    if search_term != last_search_term:
+        # 重置所有筛选条件
+        prefix = "shuyu"
+        for key_suffix in ["oil_gas_resource_type", "process1", "process2", "wellbore_type1", "wellbore_type2", "quality_control", "hse_requirements"]:
+            st.session_state[f"{prefix}_{key_suffix}"] = ""
+        st.session_state["glossary_last_search_term"] = search_term
+
+    # 只使用搜索词查询，不应用筛选条件（筛选条件在pandas层处理）
+    data = glossary.list_with_filters(
+        search_term=search_term,
+        oil_gas_resource_type="",
+        process1="",
+        process2="",
+        wellbore_type1="",
+        wellbore_type2="",
+        quality_control="",
+        hse_requirements=""
+    )
     # for item in data:
     #     st.markdown(f"""**术语词条：** {item['term']}   **术语英文：** {item['english_term']}""")
     #     st.markdown(f"""**术语定义：** {item['definition']}""")
@@ -105,14 +109,42 @@ def display_glossary_query_list(search_term:str,
     #         st.markdown(label)
     #         data=standard_db.standard_detail(row['standard_code'])
     #         grid_response=display_grid(data)
-    df=pd.DataFrame(data if data else [],columns={
-        'term': '术语词条',
-        'english_term': '术语英文',
-        'definition': '术语定义',
-        'standard_code': '标准号',
-        'standard_name': '标准名称',
-        'entry_code': '术语条目编号',
-    })
+
+    # 构建DataFrame，包含展示字段和筛选字段
+    df=pd.DataFrame(data if data else [])
+
+    # 确保所有需要的列都存在（如果数据中没有，创建空列）
+    required_columns = [
+        'term', 'english_term', 'definition', 'standard_code',
+        'standard_name', 'entry_code', 'oil_gas_resource_type',
+        'process1', 'process2', 'wellbore_type1', 'wellbore_type2',
+        'quality_control', 'hse_requirements'
+    ]
+    for col in required_columns:
+        if col not in df.columns:
+            df[col] = None
+
+    # 只保留需要的列，并按指定顺序排列
+    df = df[required_columns]
+
+    # 存储完整的基础DataFrame到session_state（不应用筛选）
+    st.session_state.glossary_base_df = df
+
+    # 在pandas层应用筛选条件
+    if oil_gas_resource_type:
+        df = df[df['oil_gas_resource_type'].astype(str).str.contains(oil_gas_resource_type, na=False)]
+    if process1:
+        df = df[df['process1'].astype(str).str.contains(process1, na=False)]
+    if process2:
+        df = df[df['process2'].astype(str).str.contains(process2, na=False)]
+    if wellbore_type1:
+        df = df[df['wellbore_type1'].astype(str).str.contains(wellbore_type1, na=False)]
+    if wellbore_type2:
+        df = df[df['wellbore_type2'].astype(str).str.contains(wellbore_type2, na=False)]
+    if quality_control:
+        df = df[df['quality_control'].astype(str).str.contains(quality_control, na=False)]
+    if hse_requirements:
+        df = df[df['hse_requirements'].astype(str).str.contains(hse_requirements, na=False)]
 
     grid_options = {
         "defaultColDef": {
@@ -133,6 +165,14 @@ def display_glossary_query_list(search_term:str,
         { 'field': "standard_code", 'headerName': "标准号",'width': 150},
         { 'field': "standard_name", 'headerName': "标准名称",'width': 150},
         { 'field': "entry_code", 'headerName': "术语条目编号",'width': 100},
+        # 筛选字段列（隐藏但保留在数据中，供selectbox使用）
+        { 'field': "oil_gas_resource_type", 'hide': True },
+        { 'field': "process1", 'hide': True },
+        { 'field': "process2", 'hide': True },
+        { 'field': "wellbore_type1", 'hide': True },
+        { 'field': "wellbore_type2", 'hide': True },
+        { 'field': "quality_control", 'hide': True },
+        { 'field': "hse_requirements", 'hide': True },
     ],
     'rowSelection': {
             'mode': 'singleRow',
