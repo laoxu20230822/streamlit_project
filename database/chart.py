@@ -70,6 +70,59 @@ class StandardChart:
             cursor = c.execute("PRAGMA table_info(standard_chart)")
             db_columns = [row[1] for row in cursor.fetchall()]  # 获取所有数据库列名
 
+        # 创建索引以提升查询性能
+        self._create_indexes()
+
+    def _create_indexes(self):
+        """创建性能优化索引"""
+        c = self.conn.cursor()
+
+        # 检查并创建 image_type 索引（用于按图片类型筛选）
+        c.execute("""
+            SELECT name FROM sqlite_master
+            WHERE type='index' AND name='idx_standard_chart_image_type'
+        """)
+        if not c.fetchone():
+            c.execute("""
+                CREATE INDEX idx_standard_chart_image_type ON standard_chart(image_type)
+            """)
+            print("Created index: idx_standard_chart_image_type")
+
+        # 检查并创建 standard_code 索引（用于 JOIN 操作）
+        c.execute("""
+            SELECT name FROM sqlite_master
+            WHERE type='index' AND name='idx_standard_chart_standard_code'
+        """)
+        if not c.fetchone():
+            c.execute("""
+                CREATE INDEX idx_standard_chart_standard_code ON standard_chart(standard_code)
+            """)
+            print("Created index: idx_standard_chart_standard_code")
+
+        # 检查并创建 in_text_name 索引（用于搜索）
+        c.execute("""
+            SELECT name FROM sqlite_master
+            WHERE type='index' AND name='idx_standard_chart_in_text_name'
+        """)
+        if not c.fetchone():
+            c.execute("""
+                CREATE INDEX idx_standard_chart_in_text_name ON standard_chart(in_text_name)
+            """)
+            print("Created index: idx_standard_chart_in_text_name")
+
+        # 检查并创建 image_file_name 索引（用于搜索）
+        c.execute("""
+            SELECT name FROM sqlite_master
+            WHERE type='index' AND name='idx_standard_chart_image_file_name'
+        """)
+        if not c.fetchone():
+            c.execute("""
+                CREATE INDEX idx_standard_chart_image_file_name ON standard_chart(image_file_name)
+            """)
+            print("Created index: idx_standard_chart_image_file_name")
+
+        self.conn.commit()
+
     def list_all(self,image_type:str,search_term:str=''):
         in_text_name_cause=build_single_column_search(search_term,'c.in_text_name')
         image_file_name_cause=build_single_column_search(search_term,'c.image_file_name')
@@ -90,7 +143,7 @@ class StandardChart:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-    def list_all_with_filters(self, image_type: str,
+    def list_all_with_filters(self, image_type: str = "",
                              search_term: str = "",
                              oil_gas_resource_type: str = "",
                              process1: str = "",
@@ -102,11 +155,17 @@ class StandardChart:
         """
         带筛选条件的图表公式查询方法
         通过 standard_code 关联 standard_chart 和 standard_system 表
+
+        Args:
+            image_type: 图片类型（可选，为空则查询所有类型）
+            ...其他参数
         """
         c = self.conn.cursor()
 
         # 构建搜索条件
-        where_conditions = [f"c.image_type like '%{image_type}%'"]
+        where_conditions = []
+        if image_type:
+            where_conditions.append(f"c.image_type like '%{image_type}%'")
 
         if search_term:
             in_text_name_cause = build_single_column_search(search_term, 'c.in_text_name')
@@ -130,13 +189,30 @@ class StandardChart:
             where_conditions.append(f"s.hse_requirements like '%{hse_requirements}%'")
 
         # 构建完整查询SQL
+        where_clause = f"WHERE {' AND '.join(where_conditions)}" if where_conditions else ""
         sql = f"""
-        SELECT c.*, i.standard_name,s.oil_gas_resource_type,
-        s.process1,s.process2,s.wellbore_type1,s.wellbore_type2,s.quality_control,s.hse_requirements 
+        SELECT c.*, i.standard_name, s.oil_gas_resource_type,
+        s.process1, s.process2, s.wellbore_type1, s.wellbore_type2,
+        s.quality_control, s.hse_requirements
         FROM standard_chart c
-        LEFT JOIN standard_index i ON c.standard_code = i.standard_code
-        LEFT JOIN standard_system s ON c.standard_code = s.standard_code
-        WHERE {' AND '.join(where_conditions)}
+        LEFT JOIN (
+            SELECT standard_code, standard_name
+            FROM standard_index
+            GROUP BY standard_code
+        ) i ON c.standard_code = i.standard_code
+        LEFT JOIN (
+            SELECT standard_code,
+                   MAX(oil_gas_resource_type) as oil_gas_resource_type,
+                   MAX(process1) as process1,
+                   MAX(process2) as process2,
+                   MAX(wellbore_type1) as wellbore_type1,
+                   MAX(wellbore_type2) as wellbore_type2,
+                   MAX(quality_control) as quality_control,
+                   MAX(hse_requirements) as hse_requirements
+            FROM standard_system
+            GROUP BY standard_code
+        ) s ON c.standard_code = s.standard_code
+        {where_clause}
         ORDER BY c.standard_code, c.in_text_number
         """
 
@@ -158,7 +234,7 @@ class StandardChart:
                            hse_requirements: str = ""):
         """
         查询图表公式数据（原始数据）
-        
+
         Args:
             image_type: 图片类型（图片/表格/公式）
             search_term: 搜索词
@@ -169,7 +245,7 @@ class StandardChart:
             wellbore_type2: 井筒类型2
             quality_control: 管理控制点
             hse_requirements: 知识属性
-        
+
         Returns:
             list: 图表公式数据列表
         """
@@ -185,6 +261,70 @@ class StandardChart:
             quality_control=quality_control,
             hse_requirements=hse_requirements
         )
+
+    def query_chart_data_all(self,
+                             search_term: str = "",
+                             oil_gas_resource_type: str = "",
+                             process1: str = "",
+                             process2: str = "",
+                             wellbore_type1: str = "",
+                             wellbore_type2: str = "",
+                             quality_control: str = "",
+                             hse_requirements: str = ""):
+        """
+        一次性查询所有类型的图表公式数据（性能优化版本）
+
+        与分别调用三次 query_chart_data 相比，此方法只执行一次数据库查询，
+        然后在应用层按 image_type 分组，减少 66% 的数据库访问次数。
+
+        Args:
+            search_term: 搜索词
+            oil_gas_resource_type: 油气资源类别
+            process1: 工艺类型1
+            process2: 工艺类型2
+            wellbore_type1: 井筒类型1
+            wellbore_type2: 井筒类型2
+            quality_control: 管理控制点
+            hse_requirements: 知识属性
+
+        Returns:
+            dict: 包含三种类型数据的字典
+                {
+                    'image': [...],   # 图片类型数据
+                    'table': [...],  # 表格类型数据
+                    'formula': [...]  # 公式类型数据
+                }
+        """
+        # 一次性查询所有类型
+        all_data = self.list_all_with_filters(
+            image_type="",  # 不限制类型
+            search_term=search_term,
+            oil_gas_resource_type=oil_gas_resource_type,
+            process1=process1,
+            process2=process2,
+            wellbore_type1=wellbore_type1,
+            wellbore_type2=wellbore_type2,
+            quality_control=quality_control,
+            hse_requirements=hse_requirements
+        )
+
+        # 在应用层按 image_type 分组
+        result = {
+            'image': [],
+            'table': [],
+            'formula': []
+        }
+
+        for item in all_data:
+            image_type = item.get('image_type', '')
+            if '图片' in image_type:
+                result['image'].append(item)
+            elif '表格' in image_type:
+                result['table'].append(item)
+            elif '公式' in image_type:
+                result['formula'].append(item)
+
+        return result
 
 
     def count(self):

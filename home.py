@@ -143,37 +143,6 @@ with st.form("standard_search_form", height="stretch", border=False):
         st.session_state.wellbore_type1 = ""
         st.session_state.wellbore_type2 = ""
 
-        # 重置术语查询的筛选状态
-        if submit_type == "shuyu":
-            print(st.session_state)
-            # TODO 继续
-            # st.session_state.shuyu_oil_gas_resource_type = ""
-            # st.session_state.shuyu_process1 = ""
-            # st.session_state.shuyu_process2 = ""
-            # st.session_state.shuyu_wellbore_type1 = ""
-            # st.session_state.shuyu_wellbore_type2 = ""
-            # st.session_state.shuyu_quality_control = ""
-            # st.session_state.shuyu_hse_requirements = ""
-        # 重置图表公式的筛选状态
-        elif submit_type == "chart":
-            print('CHART')
-        #     st.session_state.chart_oil_gas_resource_type = ""
-        #     st.session_state.chart_process1 = ""
-        #     st.session_state.chart_process2 = ""
-        #     st.session_state.chart_wellbore_type1 = ""
-        #     st.session_state.chart_wellbore_type2 = ""
-        #     st.session_state.chart_quality_control = ""
-        #     st.session_state.chart_hse_requirements = ""
-        # # 重置条款查询的筛选状态
-        elif submit_type == "tiaokuan":
-            print('')
-            # st.session_state.tiaokuan_oil_gas_resource_type = ""
-            # st.session_state.tiaokuan_process1 = ""
-            # st.session_state.tiaokuan_process2 = ""
-            # st.session_state.tiaokuan_wellbore_type1 = ""
-            # st.session_state.tiaokuan_wellbore_type2 = ""
-            # st.session_state.tiaokuan_quality_control = ""
-            # st.session_state.tiaokuan_hse_requirements = ""
 
     display_navigator_tab()
 
@@ -463,10 +432,9 @@ with placeholder.container(border=True):
                 else ""
             )
 
-            # TODO 继续
+            # 一次性查询所有类型（性能优化：3次查询 → 1次查询）
             standard_chart = init_standard_chart_db()
-            image_data = standard_chart.query_chart_data(
-                image_type="图片",
+            all_chart_data = standard_chart.query_chart_data_all(
                 search_term=search_term,
                 oil_gas_resource_type=oil_gas_resource_type,
                 process1=process1,
@@ -476,34 +444,12 @@ with placeholder.container(border=True):
                 quality_control=quality_control,
                 hse_requirements=hse_requirements,
             )
-            table_data = standard_chart.query_chart_data(
-                image_type="表格",
-                search_term=search_term,
-                oil_gas_resource_type=oil_gas_resource_type,
-                process1=process1,
-                process2=process2,
-                wellbore_type1=wellbore_type1,
-                wellbore_type2=wellbore_type2,
-                quality_control=quality_control,
-                hse_requirements=hse_requirements,
-            )
-            formula_data = standard_chart.query_chart_data(
-                image_type="公式",
-                search_term=search_term,
-                oil_gas_resource_type=oil_gas_resource_type,
-                process1=process1,
-                process2=process2,
-                wellbore_type1=wellbore_type1,
-                wellbore_type2=wellbore_type2,
-                quality_control=quality_control,
-                hse_requirements=hse_requirements,
-            )
-            # show_ccgz_select_boxes(prefix="chart", data=data)
+
             display_chart_query_list(
                 search_term=st.session_state.search_term,
-                imageData=image_data,
-                tableData=table_data,
-                formulaData=formula_data,
+                imageData=all_chart_data['image'],
+                tableData=all_chart_data['table'],
+                formulaData=all_chart_data['formula'],
             )
         elif submit_type == "ccgz":  # 储层改造业务5级
             # selectbox 如果选择了全部，则转换为'' 视图层逻辑

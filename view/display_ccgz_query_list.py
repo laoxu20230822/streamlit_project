@@ -141,7 +141,6 @@ def group_ccgz_list(
 
 def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
 
-    print(prefix)
     """显示级联筛选下拉框
 
     Args:
@@ -185,7 +184,6 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
             )
         )
         oil_gas_resource_options.insert(0, "全部")
-        print(oil_gas_resource_options)
         st.selectbox(
             "**油气资源类别**",
             oil_gas_resource_options,
@@ -218,8 +216,7 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
             dict.fromkeys(filter(None, (item.get("process2") for item in data)))
         )
         process2_options.insert(0, "全部")
-        st.session_state[f"{process2_key}_selectbox_options"] = process2_options
-        st.session_state["trigger_select_box"] = f"{process2_key}_selectbox"
+        print(process2_options)
         process2 = st.selectbox(
             "**工艺类型2**",
             process2_options,
@@ -228,6 +225,7 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
             args=(prefix, f"{process2_key}"),
             on_change=onchange_for_ccgz,
         )
+        #print(get_selectbox_index(process2_options, process2_key))
 
     # 井筒类型1 - 使用级联查询
     with col4:

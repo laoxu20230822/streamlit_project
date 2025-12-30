@@ -606,9 +606,9 @@ class StandardDB:
         if oil_gas_resource_type:
             conditions.append(f"oil_gas_resource_type like '%{oil_gas_resource_type}%'")
         if process1:
-            conditions.append(f"process_tech1 like '%{process1}%'")
+            conditions.append(f"process1 like '%{process1}%'")
         if process2:
-            conditions.append(f"process_tech2 like '%{process2}%'")
+            conditions.append(f"process2 like '%{process2}%'")
         if wellbore_type1:
             conditions.append(f"wellbore_type1 like '%{wellbore_type1}%'")
         if wellbore_type2:

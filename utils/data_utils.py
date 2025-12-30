@@ -284,6 +284,7 @@ def get_selectbox_index(options: List[Any], key: str) -> int:
     import streamlit as st
 
     value = st.session_state.get(key)
+    print(key,value)
     if value is not None and value in options:
         return options.index(value)
     return 0
