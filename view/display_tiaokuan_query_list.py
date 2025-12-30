@@ -63,26 +63,7 @@ def display_grid(data:list[dict],key:str):
 
 
 def display_tiaokuan_query_list(search_term: str,
-                                oil_gas_resource_type: str = "",
-                                process1: str = "",
-                                process2: str = "",
-                                wellbore_type1: str = "",
-                                wellbore_type2: str = "",
-                                quality_control: str = "",
-                                hse_requirements: str = ""):
-    standard_db = init_standard_db()
-
-    data = standard_db.query_tiaokuan_data(
-        search_term=search_term,
-        oil_gas_resource_type=oil_gas_resource_type,
-        process1=process1,
-        process2=process2,
-        wellbore_type1=wellbore_type1,
-        wellbore_type2=wellbore_type2,
-        quality_control=quality_control,
-        hse_requirements=hse_requirements
-    )
-
+                                data:list):
     from collections import defaultdict
     grouped_data = defaultdict(list)
     for item in data:

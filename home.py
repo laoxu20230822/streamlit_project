@@ -300,22 +300,63 @@ with placeholder.container(border=True):
         if submit_type == "standard":
             display_standard_query_list()
         elif submit_type == "tiaokuan":
-            show_ccgz_select_boxes(prefix="tiaokuan")
+            oil_gas_resource_type = (
+                st.session_state.tiaokuan_oil_gas_resource_type
+                if "tiaokuan_oil_gas_resource_type" in st.session_state
+                and st.session_state.tiaokuan_oil_gas_resource_type != "全部"
+                else ""
+            )
+            process1 = (
+                st.session_state.tiaokuan_process1
+                if "tiaokuan_process1" in st.session_state
+                and st.session_state.tiaokuan_process1 != "全部"
+                else ""
+            )
+            process2 = (
+                st.session_state.tiaokuan_process2
+                if "tiaokuan_process2" in st.session_state
+                and st.session_state.tiaokuan_process2 != "全部"
+                else ""
+            )
+            wellbore_type1 = (
+                st.session_state.tiaokuan_wellbore_type1
+                if "tiaokuan_wellbore_type1" in st.session_state
+                and st.session_state.tiaokuan_wellbore_type1 != "全部"
+                else ""
+            )
+            wellbore_type2 = (
+                st.session_state.tiaokuan_wellbore_type2
+                if "tiaokuan_wellbore_type2" in st.session_state
+                and st.session_state.tiaokuan_wellbore_type2 != "全部"
+                else ""
+            )
+            quality_control = (
+                st.session_state.tiaokuan_quality_control
+                if "tiaokuan_quality_control" in st.session_state
+                and st.session_state.tiaokuan_quality_control != "全部"
+                else ""
+            )
+            hse_requirements = (
+                st.session_state.tiaokuan_hse_requirements
+                if "tiaokuan_hse_requirements" in st.session_state
+                and st.session_state.tiaokuan_hse_requirements != "全部"
+                else ""
+            )
+            standard_db=init_standard_db()
+            data = standard_db.query_tiaokuan_data(
+                search_term=st.session_state.search_term,
+                oil_gas_resource_type=oil_gas_resource_type,
+                process1=process1,
+                process2=process2,
+                wellbore_type1=wellbore_type1,
+                wellbore_type2=wellbore_type2,
+                quality_control=quality_control,
+                hse_requirements=hse_requirements
+            )
+            show_ccgz_select_boxes(prefix="tiaokuan",data=data)
             display_tiaokuan_query_list(
                 search_term=st.session_state.search_term,
-                oil_gas_resource_type=getattr(
-                    st.session_state, "tiaokuan_oil_gas_resource_type", ""
-                ),
-                process1=getattr(st.session_state, "tiaokuan_process1", ""),
-                process2=getattr(st.session_state, "tiaokuan_process2", ""),
-                wellbore_type1=getattr(st.session_state, "tiaokuan_wellbore_type1", ""),
-                wellbore_type2=getattr(st.session_state, "tiaokuan_wellbore_type2", ""),
-                quality_control=getattr(
-                    st.session_state, "tiaokuan_quality_control", ""
-                ),
-                hse_requirements=getattr(
-                    st.session_state, "tiaokuan_hse_requirements", ""
-                ),
+                data=data
             )
         elif submit_type == "tixi":
             # st.session_state.primary = primary

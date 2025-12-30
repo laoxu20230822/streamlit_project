@@ -460,15 +460,17 @@ class StandardDB:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         return data
 
-    def list_for_tiaokuan_with_filters(self,
-                                      search_term: str = "",
-                                      oil_gas_resource_type: str = "",
-                                      process1: str = "",
-                                      process2: str = "",
-                                      wellbore_type1: str = "",
-                                      wellbore_type2: str = "",
-                                      quality_control: str = "",
-                                      hse_requirements: str = ""):
+    def list_for_tiaokuan_with_filters(
+        self,
+        search_term: str = "",
+        oil_gas_resource_type: str = "",
+        process1: str = "",
+        process2: str = "",
+        wellbore_type1: str = "",
+        wellbore_type2: str = "",
+        quality_control: str = "",
+        hse_requirements: str = "",
+    ):
         """
         带筛选条件的条款查询方法
         """
@@ -486,7 +488,9 @@ class StandardDB:
 
         # 添加筛选条件
         if oil_gas_resource_type:
-            where_conditions.append(f"oil_gas_resource_type like '%{oil_gas_resource_type}%'")
+            where_conditions.append(
+                f"oil_gas_resource_type like '%{oil_gas_resource_type}%'"
+            )
         if process1:
             where_conditions.append(f"process1 like '%{process1}%'")
         if process2:
@@ -501,7 +505,7 @@ class StandardDB:
             where_conditions.append(f"hse_requirements like '%{hse_requirements}%'")
 
         # 构建SQL
-        base_sql = "SELECT serial_number, standard_code, standard_name, standard_content, min_chapter_clause_code FROM standard_system"
+        base_sql = f"""SELECT serial_number, standard_code, standard_name, standard_content, min_chapter_clause_code, oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements FROM standard_system"""
 
         if where_conditions:
             # 有条件时添加WHERE子句
@@ -512,43 +516,41 @@ class StandardDB:
             final_sql = base_sql
 
         final_sql += " ORDER BY serial_number ASC"
-
+        print(final_sql)
         c.execute(final_sql)
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         c.close()
         return data
 
-    def query_tiaokuan_data(self,
-                              search_term: str = "",
-                              oil_gas_resource_type: str = "",
-                              process1: str = "",
-                              process2: str = "",
-                              wellbore_type1: str = "",
-                              wellbore_type2: str = "",
-                              quality_control: str = "",
-                              hse_requirements: str = ""):
+    def query_tiaokuan_data(
+        self,
+        search_term: str = "",
+        oil_gas_resource_type: str = "",
+        process1: str = "",
+        process2: str = "",
+        wellbore_type1: str = "",
+        wellbore_type2: str = "",
+        quality_control: str = "",
+        hse_requirements: str = "",
+    ):
         """
         查询条款数据（原始数据，不分组）
-        
+
         Returns:
             list: 条款数据列表
         """
-        use_filters = any([oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements])
 
-        if use_filters:
-            return self.list_for_tiaokuan_with_filters(
-                search_term=search_term,
-                oil_gas_resource_type=oil_gas_resource_type,
-                process1=process1,
-                process2=process2,
-                wellbore_type1=wellbore_type1,
-                wellbore_type2=wellbore_type2,
-                quality_control=quality_control,
-                hse_requirements=hse_requirements
-            )
-        else:
-            return self.list_for_tiaokuan(filter=WhereCause(search_term))
+        return self.list_for_tiaokuan_with_filters(
+            search_term=search_term,
+            oil_gas_resource_type=oil_gas_resource_type,
+            process1=process1,
+            process2=process2,
+            wellbore_type1=wellbore_type1,
+            wellbore_type2=wellbore_type2,
+            quality_control=quality_control,
+            hse_requirements=hse_requirements,
+        )
 
     def build_where_clause(
         self,
@@ -634,7 +636,8 @@ class StandardDB:
         c.close()
         return data
 
-    def get_by_ccgz(self,
+    def get_by_ccgz(
+        self,
         level1: str = "",
         level2: str = "",
         level3: str = "",
@@ -646,7 +649,8 @@ class StandardDB:
         wellbore_type1: str = "",
         wellbore_type2: str = "",
         quality_control: str = "",
-        hse_requirements: str = "",):
+        hse_requirements: str = "",
+    ):
         where_clause = self.build_where_clause(
             level1,
             level2,
@@ -676,12 +680,10 @@ class StandardDB:
         )
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
-        
+
         c.close()
         return data
 
-    
-    
     def list(
         self, filter: WhereCause = WhereCause(), pageable: Pageable = Pageable(1, 10)
     ) -> PageResult:
@@ -807,6 +809,7 @@ and
             1级分类列表
         """
         from database.ccgz_level_dict import init_ccgz_level_dict_db
+
         db = init_ccgz_level_dict_db()
         return db.query_level1()
 
@@ -821,6 +824,7 @@ and
             2级分类列表
         """
         from database.ccgz_level_dict import init_ccgz_level_dict_db
+
         db = init_ccgz_level_dict_db()
         return db.query_level2(level1)
 
@@ -836,6 +840,7 @@ and
             3级分类列表
         """
         from database.ccgz_level_dict import init_ccgz_level_dict_db
+
         db = init_ccgz_level_dict_db()
         return db.query_level3(level1, level2)
 
@@ -854,6 +859,7 @@ and
             4级分类列表
         """
         from database.ccgz_level_dict import init_ccgz_level_dict_db
+
         db = init_ccgz_level_dict_db()
         return db.query_level4(level1, level2, level3)
 
@@ -873,125 +879,181 @@ and
             5级分类列表
         """
         from database.ccgz_level_dict import init_ccgz_level_dict_db
+
         db = init_ccgz_level_dict_db()
         return db.query_level5(level1, level2, level3, level4)
 
-    def query_performance_indicator_level1(self, performance_indicator_level2: str = "", product_category1: str = "", product_category2: str = "", product_name: str = ""):
+    def query_performance_indicator_level1(
+        self,
+        performance_indicator_level2: str = "",
+        product_category1: str = "",
+        product_category2: str = "",
+        product_name: str = "",
+    ):
         """获取性能指标一级非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
-        
+
         # 构建WHERE条件
         conditions = []
         if performance_indicator_level2:
-            conditions.append(f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'")
+            conditions.append(
+                f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'"
+            )
         if product_category1:
             conditions.append(f"product_category1 LIKE '%{product_category1}%'")
         if product_category2:
             conditions.append(f"product_category2 LIKE '%{product_category2}%'")
         if product_name:
             conditions.append(f"product_name LIKE '%{product_name}%'")
-        
+
         where_clause = " AND " + " AND ".join(conditions) if conditions else ""
-        
+
         c.execute(
             f"SELECT DISTINCT performance_indicator_level1 FROM standard_system WHERE performance_indicator_level1 IS NOT NULL AND performance_indicator_level1 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_performance_indicator_level2(self, performance_indicator_level1: str = "", product_category1: str = "", product_category2: str = "", product_name: str = ""):
+    def query_performance_indicator_level2(
+        self,
+        performance_indicator_level1: str = "",
+        product_category1: str = "",
+        product_category2: str = "",
+        product_name: str = "",
+    ):
         """获取性能指标二级非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
-        
+
         # 构建WHERE条件
         conditions = []
         if performance_indicator_level1:
-            conditions.append(f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'")
+            conditions.append(
+                f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'"
+            )
         if product_category1:
             conditions.append(f"product_category1 LIKE '%{product_category1}%'")
         if product_category2:
             conditions.append(f"product_category2 LIKE '%{product_category2}%'")
         if product_name:
             conditions.append(f"product_name LIKE '%{product_name}%'")
-        
+
         where_clause = " AND " + " AND ".join(conditions) if conditions else ""
-        
+
         c.execute(
             f"SELECT DISTINCT performance_indicator_level2 FROM standard_system WHERE performance_indicator_level2 IS NOT NULL AND performance_indicator_level2 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_product_category1(self, performance_indicator_level1: str = "", performance_indicator_level2: str = "", product_category2: str = "", product_name: str = ""):
+    def query_product_category1(
+        self,
+        performance_indicator_level1: str = "",
+        performance_indicator_level2: str = "",
+        product_category2: str = "",
+        product_name: str = "",
+    ):
         """获取产品类别1非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
-        
+
         # 构建WHERE条件
         conditions = []
         if performance_indicator_level1:
-            conditions.append(f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'")
+            conditions.append(
+                f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'"
+            )
         if performance_indicator_level2:
-            conditions.append(f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'")
+            conditions.append(
+                f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'"
+            )
         if product_category2:
             conditions.append(f"product_category2 LIKE '%{product_category2}%'")
         if product_name:
             conditions.append(f"product_name LIKE '%{product_name}%'")
-        
+
         where_clause = " AND " + " AND ".join(conditions) if conditions else ""
-        
+
         c.execute(
             f"SELECT DISTINCT product_category1 FROM standard_system WHERE product_category1 IS NOT NULL AND product_category1 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_product_category2(self, performance_indicator_level1: str = "", performance_indicator_level2: str = "", product_category1: str = "", product_name: str = ""):
+    def query_product_category2(
+        self,
+        performance_indicator_level1: str = "",
+        performance_indicator_level2: str = "",
+        product_category1: str = "",
+        product_name: str = "",
+    ):
         """获取产品类别2非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
-        
+
         # 构建WHERE条件
         conditions = []
         if performance_indicator_level1:
-            conditions.append(f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'")
+            conditions.append(
+                f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'"
+            )
         if performance_indicator_level2:
-            conditions.append(f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'")
+            conditions.append(
+                f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'"
+            )
         if product_category1:
             conditions.append(f"product_category1 LIKE '%{product_category1}%'")
         if product_name:
             conditions.append(f"product_name LIKE '%{product_name}%'")
-        
+
         where_clause = " AND " + " AND ".join(conditions) if conditions else ""
-        
+
         c.execute(
             f"SELECT DISTINCT product_category2 FROM standard_system WHERE product_category2 IS NOT NULL AND product_category2 != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_product_name(self, performance_indicator_level1: str = "", performance_indicator_level2: str = "", product_category1: str = "", product_category2: str = ""):
+    def query_product_name(
+        self,
+        performance_indicator_level1: str = "",
+        performance_indicator_level2: str = "",
+        product_category1: str = "",
+        product_category2: str = "",
+    ):
         """获取产品名称非空distinct值，支持筛选联动"""
         c = self.conn.cursor()
-        
+
         # 构建WHERE条件
         conditions = []
         if performance_indicator_level1:
-            conditions.append(f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'")
+            conditions.append(
+                f"performance_indicator_level1 LIKE '%{performance_indicator_level1}%'"
+            )
         if performance_indicator_level2:
-            conditions.append(f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'")
+            conditions.append(
+                f"performance_indicator_level2 LIKE '%{performance_indicator_level2}%'"
+            )
         if product_category1:
             conditions.append(f"product_category1 LIKE '%{product_category1}%'")
         if product_category2:
             conditions.append(f"product_category2 LIKE '%{product_category2}%'")
-        
+
         where_clause = " AND " + " AND ".join(conditions) if conditions else ""
-        
+
         c.execute(
             f"SELECT DISTINCT product_name FROM standard_system WHERE product_name IS NOT NULL AND product_name != ''{where_clause}"
         )
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_oil_gas_resource_type(self, data,process1: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
+    def query_oil_gas_resource_type(
+        self,
+        data,
+        process1: str = "",
+        process2: str = "",
+        wellbore_type1: str = "",
+        wellbore_type2: str = "",
+        quality_control: str = "",
+        hse_requirements: str = "",
+    ):
         """获取油气资源类别非空distinct值，支持级联筛选"""
         # 从session_state获取DataFrame
         df = st.session_state.get("glossary_base_df", pd.DataFrame())
@@ -1020,7 +1082,15 @@ and
         options.sort()
         return options
 
-    def query_process1(self, oil_gas_resource_type: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
+    def query_process1(
+        self,
+        oil_gas_resource_type: str = "",
+        process2: str = "",
+        wellbore_type1: str = "",
+        wellbore_type2: str = "",
+        quality_control: str = "",
+        hse_requirements: str = "",
+    ):
         """获取工艺1非空distinct值，支持级联筛选"""
         # 从session_state获取DataFrame
         df = st.session_state.get("glossary_base_df", pd.DataFrame())
@@ -1049,7 +1119,15 @@ and
         options.sort()
         return options
 
-    def query_process2(self, oil_gas_resource_type: str = "", process1: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
+    def query_process2(
+        self,
+        oil_gas_resource_type: str = "",
+        process1: str = "",
+        wellbore_type1: str = "",
+        wellbore_type2: str = "",
+        quality_control: str = "",
+        hse_requirements: str = "",
+    ):
         """获取工艺2非空distinct值，支持级联筛选"""
         # 从session_state获取DataFrame
         df = st.session_state.get("glossary_base_df", pd.DataFrame())
@@ -1078,7 +1156,15 @@ and
         options.sort()
         return options
 
-    def query_wellbore_type1(self, oil_gas_resource_type: str = "", process1: str = "", process2: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
+    def query_wellbore_type1(
+        self,
+        oil_gas_resource_type: str = "",
+        process1: str = "",
+        process2: str = "",
+        wellbore_type2: str = "",
+        quality_control: str = "",
+        hse_requirements: str = "",
+    ):
         """获取井筒类型分类1非空distinct值，支持级联筛选"""
         # 从session_state获取DataFrame
         df = st.session_state.get("glossary_base_df", pd.DataFrame())
@@ -1107,7 +1193,15 @@ and
         options.sort()
         return options
 
-    def query_wellbore_type2(self, oil_gas_resource_type: str = "", process1: str = "", process2: str = "", wellbore_type1: str = "", quality_control: str = "", hse_requirements: str = ""):
+    def query_wellbore_type2(
+        self,
+        oil_gas_resource_type: str = "",
+        process1: str = "",
+        process2: str = "",
+        wellbore_type1: str = "",
+        quality_control: str = "",
+        hse_requirements: str = "",
+    ):
         """获取井筒类型分类2非空distinct值，支持级联筛选"""
         # 从session_state获取DataFrame
         df = st.session_state.get("glossary_base_df", pd.DataFrame())
@@ -1136,7 +1230,15 @@ and
         options.sort()
         return options
 
-    def query_quality_control(self, oil_gas_resource_type: str = "", process1: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", hse_requirements: str = ""):
+    def query_quality_control(
+        self,
+        oil_gas_resource_type: str = "",
+        process1: str = "",
+        process2: str = "",
+        wellbore_type1: str = "",
+        wellbore_type2: str = "",
+        hse_requirements: str = "",
+    ):
         """获取质量控制(施工方)非空distinct值，支持级联筛选"""
         # 从session_state获取DataFrame
         df = st.session_state.get("glossary_base_df", pd.DataFrame())
@@ -1165,7 +1267,15 @@ and
         options.sort()
         return options
 
-    def query_hse_requirements(self, oil_gas_resource_type: str = "", process1: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = ""):
+    def query_hse_requirements(
+        self,
+        oil_gas_resource_type: str = "",
+        process1: str = "",
+        process2: str = "",
+        wellbore_type1: str = "",
+        wellbore_type2: str = "",
+        quality_control: str = "",
+    ):
         """获取健康、安全与环境控制要求非空distinct值，支持级联筛选"""
         # 从session_state获取DataFrame
         df = st.session_state.get("glossary_base_df", pd.DataFrame())
