@@ -22,6 +22,7 @@ from view.display_craft_standard import display_craft_standard
 from view.display_standard_structure import display_standard_structure
 from view.display_tiaokuan_query_list import display_tiaokuan_query_list
 from view.display_glossary_query_list import display_glossary_query_list
+from database.glossary import init_glossary_db
 from view.display_metric_query_list import display_metric_query_list
 from view.display_tixi_query_list import display_tixi_query_list
 from view.display_tixi_query_list import display_tixi_query_list2
@@ -34,7 +35,8 @@ from view.display_navigator_tab import display_navigator_tab
 from view.display_metric_query_list import show_metric_select_boxes
 from view.display_method_query_list import show_method_select_boxes
 from view.display_ccgz_query_list import show_ccgz_select_boxes
-
+from view.display_ccgz_query_list import group_ccgz_list
+from view.display_chart_query_list import init_standard_chart_db
 
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -125,49 +127,53 @@ with st.form("standard_search_form", height="stretch", border=False):
         st.session_state.search_term = st.session_state.standard_term
         if "selected_rows" in st.session_state:
             del st.session_state["selected_rows"]
-        #初始化session_state中的所有参数
-        st.session_state.performance_indicator_level1="全部"
-        st.session_state.performance_indicator_level2="全部"
-        st.session_state.product_category1="全部"
-        st.session_state.product_category2="全部"
-        st.session_state.product_name="全部"
-        st.session_state.quality_control=""
-        st.session_state.hse_requirements=""
+        # 初始化session_state中的所有参数
+        st.session_state.performance_indicator_level1 = "全部"
+        st.session_state.performance_indicator_level2 = "全部"
+        st.session_state.product_category1 = "全部"
+        st.session_state.product_category2 = "全部"
+        st.session_state.product_name = "全部"
+        st.session_state.quality_control = ""
+        st.session_state.hse_requirements = ""
 
         # 初始化术语查询相关的筛选参数
-        st.session_state.oil_gas_resource_type=""
-        st.session_state.process1=""
-        st.session_state.process2=""
-        st.session_state.wellbore_type1=""
-        st.session_state.wellbore_type2=""
+        # st.session_state.oil_gas_resource_type=""
+        st.session_state.process1 = ""
+        st.session_state.process2 = ""
+        st.session_state.wellbore_type1 = ""
+        st.session_state.wellbore_type2 = ""
 
         # 重置术语查询的筛选状态
         if submit_type == "shuyu":
-            st.session_state.shuyu_oil_gas_resource_type = ""
-            st.session_state.shuyu_process1 = ""
-            st.session_state.shuyu_process2 = ""
-            st.session_state.shuyu_wellbore_type1 = ""
-            st.session_state.shuyu_wellbore_type2 = ""
-            st.session_state.shuyu_quality_control = ""
-            st.session_state.shuyu_hse_requirements = ""
+            print(st.session_state)
+            # TODO 继续
+            # st.session_state.shuyu_oil_gas_resource_type = ""
+            # st.session_state.shuyu_process1 = ""
+            # st.session_state.shuyu_process2 = ""
+            # st.session_state.shuyu_wellbore_type1 = ""
+            # st.session_state.shuyu_wellbore_type2 = ""
+            # st.session_state.shuyu_quality_control = ""
+            # st.session_state.shuyu_hse_requirements = ""
         # 重置图表公式的筛选状态
         elif submit_type == "chart":
-            st.session_state.chart_oil_gas_resource_type = ""
-            st.session_state.chart_process1 = ""
-            st.session_state.chart_process2 = ""
-            st.session_state.chart_wellbore_type1 = ""
-            st.session_state.chart_wellbore_type2 = ""
-            st.session_state.chart_quality_control = ""
-            st.session_state.chart_hse_requirements = ""
-        # 重置条款查询的筛选状态
+            print('CHART')
+        #     st.session_state.chart_oil_gas_resource_type = ""
+        #     st.session_state.chart_process1 = ""
+        #     st.session_state.chart_process2 = ""
+        #     st.session_state.chart_wellbore_type1 = ""
+        #     st.session_state.chart_wellbore_type2 = ""
+        #     st.session_state.chart_quality_control = ""
+        #     st.session_state.chart_hse_requirements = ""
+        # # 重置条款查询的筛选状态
         elif submit_type == "tiaokuan":
-            st.session_state.tiaokuan_oil_gas_resource_type = ""
-            st.session_state.tiaokuan_process1 = ""
-            st.session_state.tiaokuan_process2 = ""
-            st.session_state.tiaokuan_wellbore_type1 = ""
-            st.session_state.tiaokuan_wellbore_type2 = ""
-            st.session_state.tiaokuan_quality_control = ""
-            st.session_state.tiaokuan_hse_requirements = ""
+            print('')
+            # st.session_state.tiaokuan_oil_gas_resource_type = ""
+            # st.session_state.tiaokuan_process1 = ""
+            # st.session_state.tiaokuan_process2 = ""
+            # st.session_state.tiaokuan_wellbore_type1 = ""
+            # st.session_state.tiaokuan_wellbore_type2 = ""
+            # st.session_state.tiaokuan_quality_control = ""
+            # st.session_state.tiaokuan_hse_requirements = ""
 
     display_navigator_tab()
 
@@ -313,12 +319,6 @@ def display_standard_cotent(standard_code: str):
         if "chapter" in st.session_state and "chapter_content" in st.session_state:
             contents = get_chapter_content(standard_detail, st.session_state.chapter)
             st.markdown("\n\n".join(contents))
-            # if st.session_state.chapter in st.session_state.chapter_content:
-            #     content_arr=st.session_state.chapter_content[st.session_state.chapter]
-            #     head=content_arr[0]
-            #     st.markdown(head)
-            #     for content in content_arr[1:]:
-            #         st.markdown(content)
 
 
 # 列表展示
@@ -331,16 +331,22 @@ with placeholder.container(border=True):
         if submit_type == "standard":
             display_standard_query_list()
         elif submit_type == "tiaokuan":
-            show_ccgz_select_boxes()
+            show_ccgz_select_boxes(prefix="tiaokuan")
             display_tiaokuan_query_list(
                 search_term=st.session_state.search_term,
-                oil_gas_resource_type=getattr(st.session_state, 'tiaokuan_oil_gas_resource_type', ''),
-                process1=getattr(st.session_state, 'tiaokuan_process1', ''),
-                process2=getattr(st.session_state, 'tiaokuan_process2', ''),
-                wellbore_type1=getattr(st.session_state, 'tiaokuan_wellbore_type1', ''),
-                wellbore_type2=getattr(st.session_state, 'tiaokuan_wellbore_type2', ''),
-                quality_control=getattr(st.session_state, 'tiaokuan_quality_control', ''),
-                hse_requirements=getattr(st.session_state, 'tiaokuan_hse_requirements', '')
+                oil_gas_resource_type=getattr(
+                    st.session_state, "tiaokuan_oil_gas_resource_type", ""
+                ),
+                process1=getattr(st.session_state, "tiaokuan_process1", ""),
+                process2=getattr(st.session_state, "tiaokuan_process2", ""),
+                wellbore_type1=getattr(st.session_state, "tiaokuan_wellbore_type1", ""),
+                wellbore_type2=getattr(st.session_state, "tiaokuan_wellbore_type2", ""),
+                quality_control=getattr(
+                    st.session_state, "tiaokuan_quality_control", ""
+                ),
+                hse_requirements=getattr(
+                    st.session_state, "tiaokuan_hse_requirements", ""
+                ),
             )
         elif submit_type == "tixi":
             # st.session_state.primary = primary
@@ -350,17 +356,62 @@ with placeholder.container(border=True):
                 st.session_state.primary, st.session_state.secondary
             )
         elif submit_type == "shuyu":
-            show_ccgz_select_boxes()
-            display_glossary_query_list(
-                search_term=st.session_state.search_term,
-                oil_gas_resource_type=getattr(st.session_state, 'shuyu_oil_gas_resource_type', ''),
-                process1=getattr(st.session_state, 'shuyu_process1', ''),
-                process2=getattr(st.session_state, 'shuyu_process2', ''),
-                wellbore_type1=getattr(st.session_state, 'shuyu_wellbore_type1', ''),
-                wellbore_type2=getattr(st.session_state, 'shuyu_wellbore_type2', ''),
-                quality_control=getattr(st.session_state, 'shuyu_quality_control', ''),
-                hse_requirements=getattr(st.session_state, 'shuyu_hse_requirements', '')
+            # selectbox 如果选择了全部，则转换为'' 视图层逻辑
+            oil_gas_resource_type = (
+                st.session_state.shuyu_oil_gas_resource_type
+                if "shuyu_oil_gas_resource_type" in st.session_state
+                and st.session_state.shuyu_oil_gas_resource_type != "全部"
+                else ""
             )
+            process1 = (
+                st.session_state.shuyu_process1
+                if "shuyu_process1" in st.session_state
+                and st.session_state.shuyu_process1 != "全部"
+                else ""
+            )
+            process2 = (
+                st.session_state.shuyu_process2
+                if "shuyu_process2" in st.session_state
+                and st.session_state.shuyu_process2 != "全部"
+                else ""
+            )
+            wellbore_type1 = (
+                st.session_state.shuyu_wellbore_type1
+                if "shuyu_wellbore_type1" in st.session_state
+                and st.session_state.shuyu_wellbore_type1 != "全部"
+                else ""
+            )
+            wellbore_type2 = (
+                st.session_state.shuyu_wellbore_type2
+                if "shuyu_wellbore_type2" in st.session_state
+                and st.session_state.shuyu_wellbore_type2 != "全部"
+                else ""
+            )
+            quality_control = (
+                st.session_state.shuyu_quality_control
+                if "shuyu_quality_control" in st.session_state
+                and st.session_state.shuyu_quality_control != "全部"
+                else ""
+            )
+            hse_requirements = (
+                st.session_state.shuyu_hse_requirements
+                if "shuyu_hse_requirements" in st.session_state
+                and st.session_state.shuyu_hse_requirements != "全部"
+                else ""
+            )
+            glossary = init_glossary_db()
+            data = glossary.list_with_filters(
+                search_term=st.session_state.search_term,
+                oil_gas_resource_type=oil_gas_resource_type,
+                process1=process1,
+                process2=process2,
+                wellbore_type1=wellbore_type1,
+                wellbore_type2=wellbore_type2,
+                quality_control=quality_control,
+                hse_requirements=hse_requirements,
+            )
+            show_ccgz_select_boxes(prefix="shuyu", data=data)
+            display_glossary_query_list(data)
         elif submit_type == "zhibiao":
             show_metric_select_boxes()
             display_metric_query_list(st.session_state.search_term)
@@ -369,19 +420,153 @@ with placeholder.container(border=True):
             show_method_select_boxes()
             display_method_query_list_new(st.session_state.search_term)
         elif submit_type == "chart":
-            show_ccgz_select_boxes()
+            oil_gas_resource_type = (
+                st.session_state.chart_oil_gas_resource_type
+                if "chart_oil_gas_resource_type" in st.session_state
+                and st.session_state.chart_oil_gas_resource_type != "全部"
+                else ""
+            )
+            process1 = (
+                st.session_state.chart_process1
+                if "chart_process1" in st.session_state
+                and st.session_state.chart_process1 != "全部"
+                else ""
+            )
+            process2 = (
+                st.session_state.chart_process2
+                if "chart_process2" in st.session_state
+                and st.session_state.chart_process2 != "全部"
+                else ""
+            )
+            wellbore_type1 = (
+                st.session_state.chart_wellbore_type1
+                if "chart_wellbore_type1" in st.session_state
+                and st.session_state.chart_wellbore_type1 != "全部"
+                else ""
+            )
+            wellbore_type2 = (
+                st.session_state.chart_wellbore_type2
+                if "chart_wellbore_type2" in st.session_state
+                and st.session_state.chart_wellbore_type2 != "全部"
+                else ""
+            )
+            quality_control = (
+                st.session_state.chart_quality_control
+                if "chart_quality_control" in st.session_state
+                and st.session_state.chart_quality_control != "全部"
+                else ""
+            )
+            hse_requirements = (
+                st.session_state.chart_hse_requirements
+                if "chart_hse_requirements" in st.session_state
+                and st.session_state.chart_hse_requirements != "全部"
+                else ""
+            )
+
+            # TODO 继续
+            standard_chart = init_standard_chart_db()
+            image_data = standard_chart.query_chart_data(
+                image_type="图片",
+                search_term=search_term,
+                oil_gas_resource_type=oil_gas_resource_type,
+                process1=process1,
+                process2=process2,
+                wellbore_type1=wellbore_type1,
+                wellbore_type2=wellbore_type2,
+                quality_control=quality_control,
+                hse_requirements=hse_requirements,
+            )
+            table_data = standard_chart.query_chart_data(
+                image_type="表格",
+                search_term=search_term,
+                oil_gas_resource_type=oil_gas_resource_type,
+                process1=process1,
+                process2=process2,
+                wellbore_type1=wellbore_type1,
+                wellbore_type2=wellbore_type2,
+                quality_control=quality_control,
+                hse_requirements=hse_requirements,
+            )
+            formula_data = standard_chart.query_chart_data(
+                image_type="公式",
+                search_term=search_term,
+                oil_gas_resource_type=oil_gas_resource_type,
+                process1=process1,
+                process2=process2,
+                wellbore_type1=wellbore_type1,
+                wellbore_type2=wellbore_type2,
+                quality_control=quality_control,
+                hse_requirements=hse_requirements,
+            )
+            # show_ccgz_select_boxes(prefix="chart", data=data)
             display_chart_query_list(
                 search_term=st.session_state.search_term,
-                oil_gas_resource_type=getattr(st.session_state, 'chart_oil_gas_resource_type', ''),
-                process1=getattr(st.session_state, 'chart_process1', ''),
-                process2=getattr(st.session_state, 'chart_process2', ''),
-                wellbore_type1=getattr(st.session_state, 'chart_wellbore_type1', ''),
-                wellbore_type2=getattr(st.session_state, 'chart_wellbore_type2', ''),
-                quality_control=getattr(st.session_state, 'chart_quality_control', ''),
-                hse_requirements=getattr(st.session_state, 'chart_hse_requirements', '')
+                imageData=image_data,
+                tableData=table_data,
+                formulaData=formula_data,
             )
         elif submit_type == "ccgz":  # 储层改造业务5级
-            show_ccgz_select_boxes()
-            display_ccgz_query_list(st.session_state.search_term)
+            # selectbox 如果选择了全部，则转换为'' 视图层逻辑
+            oil_gas_resource_type = (
+                st.session_state.ccgz_oil_gas_resource_type
+                if "ccgz_oil_gas_resource_type" in st.session_state
+                and st.session_state.ccgz_oil_gas_resource_type != "全部"
+                else ""
+            )
+            process1 = (
+                st.session_state.ccgz_process1
+                if "ccgz_process1" in st.session_state
+                and st.session_state.ccgz_process1 != "全部"
+                else ""
+            )
+            process2 = (
+                st.session_state.ccgz_process2
+                if "ccgz_process2" in st.session_state
+                and st.session_state.ccgz_process2 != "全部"
+                else ""
+            )
+            wellbore_type1 = (
+                st.session_state.ccgz_wellbore_type1
+                if "ccgz_wellbore_type1" in st.session_state
+                and st.session_state.ccgz_wellbore_type1 != "全部"
+                else ""
+            )
+            wellbore_type2 = (
+                st.session_state.ccgz_wellbore_type2
+                if "ccgz_wellbore_type2" in st.session_state
+                and st.session_state.ccgz_wellbore_type2 != "全部"
+                else ""
+            )
+            quality_control = (
+                st.session_state.ccgz_quality_control
+                if "ccgz_quality_control" in st.session_state
+                and st.session_state.ccgz_quality_control != "全部"
+                else ""
+            )
+            hse_requirements = (
+                st.session_state.ccgz_hse_requirements
+                if "ccgz_hse_requirements" in st.session_state
+                and st.session_state.ccgz_hse_requirements != "全部"
+                else ""
+            )
+
+            standard_db = init_standard_db()
+            data = standard_db.get_by_ccgz(
+                st.session_state.level1,
+                st.session_state.level2,
+                st.session_state.level3,
+                st.session_state.level4,
+                st.session_state.level5,
+                oil_gas_resource_type,
+                process1,
+                process2,
+                wellbore_type1,
+                wellbore_type2,
+                quality_control,
+                hse_requirements,
+            )
+            new_data = group_ccgz_list(data)
+            show_ccgz_select_boxes(prefix="ccgz", data=data)
+            display_ccgz_query_list(st.session_state.search_term, data=new_data)
         else:
             print("")

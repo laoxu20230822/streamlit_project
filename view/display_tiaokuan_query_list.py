@@ -72,43 +72,31 @@ def display_tiaokuan_query_list(search_term: str,
                                 hse_requirements: str = ""):
     standard_db = init_standard_db()
 
-    # 判断是否使用筛选查询
-    use_filters = any([oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements])
+    data = standard_db.query_tiaokuan_data(
+        search_term=search_term,
+        oil_gas_resource_type=oil_gas_resource_type,
+        process1=process1,
+        process2=process2,
+        wellbore_type1=wellbore_type1,
+        wellbore_type2=wellbore_type2,
+        quality_control=quality_control,
+        hse_requirements=hse_requirements
+    )
 
-    if use_filters:
-        # 使用带筛选的查询
-        data = standard_db.list_for_tiaokuan_with_filters(
-            search_term=search_term,
-            oil_gas_resource_type=oil_gas_resource_type,
-            process1=process1,
-            process2=process2,
-            wellbore_type1=wellbore_type1,
-            wellbore_type2=wellbore_type2,
-            quality_control=quality_control,
-            hse_requirements=hse_requirements
-        )
-    else:
-        # 使用原有查询方法
-        data = standard_db.list_for_tiaokuan(filter=WhereCause(search_term))
-
-    # 对查询结果按标准号分组
     from collections import defaultdict
     grouped_data = defaultdict(list)
     for item in data:
         grouped_data[item['standard_code']].append(item)
 
-    # 在页面顶部显示总体统计信息
     unique_standard_count = len(grouped_data)
     st.markdown(f"**查询标准总数: {unique_standard_count}**")
 
-    # 显示分组后的结果
     for standard_code, items in grouped_data.items():
-        if items:  # 确保列表不为空
+        if items:
             first_item = items[0]
             label = f"**{first_item['standard_name']}({first_item['standard_code']})**"
             with st.container(border=True):
                 st.markdown(label)
-                # 使用当前标准的数据显示grid
                 grid_response = display_grid(items, key=f"grid_{standard_code}")
             
 

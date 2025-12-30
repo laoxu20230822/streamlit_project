@@ -519,6 +519,37 @@ class StandardDB:
         c.close()
         return data
 
+    def query_tiaokuan_data(self,
+                              search_term: str = "",
+                              oil_gas_resource_type: str = "",
+                              process1: str = "",
+                              process2: str = "",
+                              wellbore_type1: str = "",
+                              wellbore_type2: str = "",
+                              quality_control: str = "",
+                              hse_requirements: str = ""):
+        """
+        查询条款数据（原始数据，不分组）
+        
+        Returns:
+            list: 条款数据列表
+        """
+        use_filters = any([oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements])
+
+        if use_filters:
+            return self.list_for_tiaokuan_with_filters(
+                search_term=search_term,
+                oil_gas_resource_type=oil_gas_resource_type,
+                process1=process1,
+                process2=process2,
+                wellbore_type1=wellbore_type1,
+                wellbore_type2=wellbore_type2,
+                quality_control=quality_control,
+                hse_requirements=hse_requirements
+            )
+        else:
+            return self.list_for_tiaokuan(filter=WhereCause(search_term))
+
     def build_where_clause(
         self,
         level1: str = "",
@@ -603,8 +634,7 @@ class StandardDB:
         c.close()
         return data
 
-    def fetch_by_ccgz(
-        self,
+    def get_by_ccgz(self,
         level1: str = "",
         level2: str = "",
         level3: str = "",
@@ -616,8 +646,7 @@ class StandardDB:
         wellbore_type1: str = "",
         wellbore_type2: str = "",
         quality_control: str = "",
-        hse_requirements: str = "",
-    ):
+        hse_requirements: str = "",):
         where_clause = self.build_where_clause(
             level1,
             level2,
@@ -632,53 +661,27 @@ class StandardDB:
             quality_control,
             hse_requirements,
         )
-
         c = self.conn.cursor()
-
-        data_all = c.execute(
-            f"""SELECT standard_code, standard_name,standard_content,min_chapter_clause_code FROM standard_system"""
-        )
-        columns = [col[0] for col in c.description]
-        data_all = [dict(zip(columns, row)) for row in data_all]
-        c.close()
-        c = self.conn.cursor()
-
         c.execute(
-            f"""SELECT standard_code, standard_name,standard_content,min_chapter_clause_code FROM standard_system 
+            f"""SELECT standard_code, standard_name,standard_content,min_chapter_clause_code,
+            oil_gas_resource_type,
+            process1,
+            process2,
+            wellbore_type1,
+            wellbore_type2,
+            quality_control,
+            hse_requirements
+             FROM standard_system 
             where   {where_clause} """
         )
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
+        
         c.close()
-        # 按照standard_code分组
-        from collections import defaultdict
+        return data
 
-        grouped_data = defaultdict(
-            lambda: {
-                "standard_code": "",
-                "standard_name": "",
-                "standard_content": [],
-                "min_chapter_clause_code": "",
-            }
-        )
-
-        for item in data:
-            code = item["standard_code"]
-            grouped_data[code]["standard_code"] = code
-            grouped_data[code]["standard_name"] = "#" + item["standard_name"] + "#"
-            grouped_data[code]["standard_content"].append(item["standard_content"])
-            grouped_data[code]["min_chapter_clause_code"] = item[
-                "min_chapter_clause_code"
-            ]
-
-        # 拼接内容并转换为新的列表
-        new_data = []
-        for v in grouped_data.values():
-            # 用回车符（\n）拼接内容
-            v["standard_content"] = "\n".join(v["standard_content"])
-            new_data.append(v)
-        return new_data
-
+    
+    
     def list(
         self, filter: WhereCause = WhereCause(), pageable: Pageable = Pageable(1, 10)
     ) -> PageResult:
@@ -988,7 +991,7 @@ and
         levels = [row[0] for row in c.fetchall()]
         return levels
 
-    def query_oil_gas_resource_type(self, process1: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
+    def query_oil_gas_resource_type(self, data,process1: str = "", process2: str = "", wellbore_type1: str = "", wellbore_type2: str = "", quality_control: str = "", hse_requirements: str = ""):
         """获取油气资源类别非空distinct值，支持级联筛选"""
         # 从session_state获取DataFrame
         df = st.session_state.get("glossary_base_df", pd.DataFrame())

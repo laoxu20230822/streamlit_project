@@ -19,6 +19,7 @@ from view.display_standard_tab_info import display_standard_tab_info
 import urllib.parse
 from pathlib import Path
 from utils.data_utils import count_unique_standard_codes
+from view.display_ccgz_query_list import show_ccgz_select_boxes
 
 imageRenderer = JsCode(
     """
@@ -235,14 +236,9 @@ def show_grid(data, key: str):
     )
 
 
+#TODO 将查询放在一个数据层，返回元组
 def display_chart_query_list(search_term: str,
-                             oil_gas_resource_type: str = "",
-                             process1: str = "",
-                             process2: str = "",
-                             wellbore_type1: str = "",
-                             wellbore_type2: str = "",
-                             quality_control: str = "",
-                             hse_requirements: str = ""):
+                             imageData,tableData,formulaData):
     t1, t2, t3 = st.tabs(
         [
             "**图片**",
@@ -250,26 +246,9 @@ def display_chart_query_list(search_term: str,
             "**公式**",
         ]
     )
-    standard_chart = init_standard_chart_db()
-
-    # 判断是否使用筛选查询
-    use_filters = any([oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements])
-
     with t1:
-        if use_filters:
-            data = standard_chart.list_all_with_filters(
-                "图片", search_term,
-                oil_gas_resource_type=oil_gas_resource_type,
-                process1=process1,
-                process2=process2,
-                wellbore_type1=wellbore_type1,
-                wellbore_type2=wellbore_type2,
-                quality_control=quality_control,
-                hse_requirements=hse_requirements
-            )
-        else:
-            data = standard_chart.list_all("图片", search_term)
-        grid_response = show_grid(data, "image")
+        show_ccgz_select_boxes(prefix="chart", data=imageData)
+        grid_response = show_grid(imageData, "image")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
             st.session_state.selected_rows = [
@@ -280,27 +259,14 @@ def display_chart_query_list(search_term: str,
                 }
                 for _, row in selected_rows.iterrows()
             ]
-            # show_chart()
         if "selected_rows" in st.session_state:
             display_standard_tab_info()
+
     with t2:
-        if use_filters:
-            data = standard_chart.list_all_with_filters(
-                "表格", search_term,
-                oil_gas_resource_type=oil_gas_resource_type,
-                process1=process1,
-                process2=process2,
-                wellbore_type1=wellbore_type1,
-                wellbore_type2=wellbore_type2,
-                quality_control=quality_control,
-                hse_requirements=hse_requirements
-            )
-        else:
-            data = standard_chart.list_all("表格", search_term)
-        grid_response = show_grid(data, "table")
+        show_ccgz_select_boxes(prefix="chart", data=tableData)
+        grid_response = show_grid(tableData, "table")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
-
             st.session_state.selected_rows = [
                 {
                     "standard_code": row["standard_code"],
@@ -309,27 +275,14 @@ def display_chart_query_list(search_term: str,
                 }
                 for _, row in selected_rows.iterrows()
             ]
-            # show_chart()
         if "selected_rows" in st.session_state:
             display_standard_tab_info()
+
     with t3:
-        if use_filters:
-            data = standard_chart.list_all_with_filters(
-                "公式", search_term,
-                oil_gas_resource_type=oil_gas_resource_type,
-                process1=process1,
-                process2=process2,
-                wellbore_type1=wellbore_type1,
-                wellbore_type2=wellbore_type2,
-                quality_control=quality_control,
-                hse_requirements=hse_requirements
-            )
-        else:
-            data = standard_chart.list_all("公式", search_term)
-        grid_response = show_grid(data, "formula")
+        show_ccgz_select_boxes(prefix="chart", data=formulaData)
+        grid_response = show_grid(formulaData, "formula")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
-
             st.session_state.selected_rows = [
                 {
                     "standard_code": row["standard_code"],
@@ -338,64 +291,9 @@ def display_chart_query_list(search_term: str,
                 }
                 for _, row in selected_rows.iterrows()
             ]
-            # show_chart()
         if "selected_rows" in st.session_state:
             display_standard_tab_info()
 
-    # df=pd.DataFrame(data if data else [],columns={
-    #         'standard_code': '标准号',
-    #         'standard_name': '标准名称',
-    #         'in_text_number': '文中编号',
-    #         'in_text_name': '文中名称',
-    #         'image_file_name': '图文件名称',
-    #     })
-    # df.insert(0, 'seq', range(1, len(df) + 1))
-    # df["standard_info"] = df["standard_code"] + " " + df["standard_name"] + ""
-
-    # grid_options = {
-    #     "suppressNoRowsOverlay": True,
-    #     'columnDefs': [
-    #     { 'field': "seq", 'headerName': "序号"},
-    #     { 'field': "standard_code", 'headerName': "标准号",'hide':True},
-    #     { 'field': "standard_name", 'headerName': "标准名称",'hide':True},
-    #     { 'field': "in_text_number", 'headerName': "文中编号"},
-    #     { 'field': "in_text_name", 'headerName': "文中名称"},
-    #     { 'field': "image_file_name", 'headerName': "图文件名称"},
-    #     { 'field': "standard_info", 'headerName': "标准信息"},
-    # ],
-    # 'rowSelection': {
-    #         'mode': 'singleRow',
-    #         'checkboxes': False,
-    #         'enableClickSelection': True
-    #     },
-    #     "autoSizeStrategy": {
-    #         "type": "fitCellContents"
-    #     },
-    #     "pagination": True,
-    #     ##"paginationAutoPageSize": True,
-    #     "paginationPageSize": 50
-    # }
-    # grid_response = AgGrid(
-    #     df,
-    #     gridOptions=grid_options,
-    #     height=300
-    #     #key='asdjflasdjkfl'
-    #     )
-    # selected_rows=grid_response['selected_rows']
-    # if selected_rows is not None:
-    #     st.session_state.selected_rows=[{'standard_code':row['standard_code'],'standard_name':row['standard_name']} for _, row in selected_rows.iterrows()]
-
-
-# def show_chart():
-#     if "selected_rows" in st.session_state:
-#         image_info_path = st.session_state["selected_rows"][0]["image_info_path"]
-#         # show_image_detail(image_info_path)
-
-
-# @st.dialog("图片详情", width="large")
-# def show_image_detail(image_info_path: str):
-#     encoded_path = urllib.parse.quote(image_info_path)
-#     st.markdown(f"![Selected Image]({encoded_path})", unsafe_allow_html=True)
 
 
 def get_image_path_safe(image_file_name, base_path="static"):

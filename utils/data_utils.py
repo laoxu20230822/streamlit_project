@@ -1,6 +1,6 @@
 """
 数据工具模块
-提供处理 DataFrame 的通用函数
+提供处理 DataFrame 和字典列表的通用函数
 """
 import pandas as pd
 from typing import Union, Optional, List, Dict, Any
@@ -268,6 +268,25 @@ def display_aggrid_metrics_enhanced(df: pd.DataFrame, metrics_config: dict = Non
     # 添加分隔线
     if metrics_config.get('show_divider', True):
         st.markdown("---")
+
+
+def get_selectbox_index(options: List[Any], key: str) -> int:
+    """
+    根据 session_state 中的值获取其在 options 列表中的索引
+
+    Args:
+        options: 选项列表
+        key: session_state 中的键名
+
+    Returns:
+        int: 值在 options 中的索引，如果值不存在或为 None 则返回 0
+    """
+    import streamlit as st
+
+    value = st.session_state.get(key)
+    if value is not None and value in options:
+        return options.index(value)
+    return 0
 
 
 # 示例用法和测试

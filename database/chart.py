@@ -131,7 +131,8 @@ class StandardChart:
 
         # 构建完整查询SQL
         sql = f"""
-        SELECT c.*, i.standard_name
+        SELECT c.*, i.standard_name,s.oil_gas_resource_type,
+        s.process1,s.process2,s.wellbore_type1,s.wellbore_type2,s.quality_control,s.hse_requirements 
         FROM standard_chart c
         LEFT JOIN standard_index i ON c.standard_code = i.standard_code
         LEFT JOIN standard_system s ON c.standard_code = s.standard_code
@@ -144,6 +145,47 @@ class StandardChart:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         c.close()
         return data
+
+    
+    def query_chart_data(self, image_type: str,
+                           search_term: str = "",
+                           oil_gas_resource_type: str = "",
+                           process1: str = "",
+                           process2: str = "",
+                           wellbore_type1: str = "",
+                           wellbore_type2: str = "",
+                           quality_control: str = "",
+                           hse_requirements: str = ""):
+        """
+        查询图表公式数据（原始数据）
+        
+        Args:
+            image_type: 图片类型（图片/表格/公式）
+            search_term: 搜索词
+            oil_gas_resource_type: 油气资源类别
+            process1: 工艺类型1
+            process2: 工艺类型2
+            wellbore_type1: 井筒类型1
+            wellbore_type2: 井筒类型2
+            quality_control: 管理控制点
+            hse_requirements: 知识属性
+        
+        Returns:
+            list: 图表公式数据列表
+        """
+
+        return self.list_all_with_filters(
+            image_type=image_type,
+            search_term=search_term,
+            oil_gas_resource_type=oil_gas_resource_type,
+            process1=process1,
+            process2=process2,
+            wellbore_type1=wellbore_type1,
+            wellbore_type2=wellbore_type2,
+            quality_control=quality_control,
+            hse_requirements=hse_requirements
+        )
+
 
     def count(self):
         c = self.conn.cursor()
