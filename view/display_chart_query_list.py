@@ -239,6 +239,10 @@ def show_grid(data, key: str):
 #TODO 将查询放在一个数据层，返回元组
 def display_chart_query_list(search_term: str,
                              imageData,tableData,formulaData):
+    # 合并所有数据用于筛选框的选项
+    all_data = imageData + tableData + formulaData
+    show_ccgz_select_boxes(prefix="chart", data=all_data)
+
     t1, t2, t3 = st.tabs(
         [
             "**图片**",
@@ -247,7 +251,6 @@ def display_chart_query_list(search_term: str,
         ]
     )
     with t1:
-        show_ccgz_select_boxes(prefix="chart", data=imageData)
         grid_response = show_grid(imageData, "image")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
@@ -263,7 +266,6 @@ def display_chart_query_list(search_term: str,
             display_standard_tab_info()
 
     with t2:
-        show_ccgz_select_boxes(prefix="chart", data=tableData)
         grid_response = show_grid(tableData, "table")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
@@ -279,7 +281,6 @@ def display_chart_query_list(search_term: str,
             display_standard_tab_info()
 
     with t3:
-        show_ccgz_select_boxes(prefix="chart", data=formulaData)
         grid_response = show_grid(formulaData, "formula")
         selected_rows = grid_response["selected_rows"]
         if selected_rows is not None:
