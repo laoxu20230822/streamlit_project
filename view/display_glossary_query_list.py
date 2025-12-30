@@ -1,3 +1,4 @@
+from typing import Optional
 from re import search
 import streamlit as st
 import pandas as pd
@@ -68,36 +69,39 @@ def display_grid(data:list[dict]):
     return grid_response
 
 
-def display_glossary_query_list(search_term:str,
+def display_glossary_query_list(search_term: str = "",
                                oil_gas_resource_type: str = "",
                                process1: str = "",
                                process2: str = "",
                                wellbore_type1: str = "",
                                wellbore_type2: str = "",
                                quality_control: str = "",
-                               hse_requirements: str = ""):
-    glossary=init_glossary_db()
+                               hse_requirements: str = "",
+                               data: Optional[list[dict]] = None):
+    # 如果传入了data参数，直接使用，否则执行查询
+    if data is None:
+        glossary = init_glossary_db()
 
-    # 检查搜索词是否变化，如果变化则重置筛选条件
-    last_search_term = st.session_state.get("glossary_last_search_term", "")
-    if search_term != last_search_term:
-        # 重置所有筛选条件
-        prefix = "shuyu"
-        for key_suffix in ["oil_gas_resource_type", "process1", "process2", "wellbore_type1", "wellbore_type2", "quality_control", "hse_requirements"]:
-            st.session_state[f"{prefix}_{key_suffix}"] = ""
-        st.session_state["glossary_last_search_term"] = search_term
+        # 检查搜索词是否变化，如果变化则重置筛选条件
+        last_search_term = st.session_state.get("glossary_last_search_term", "")
+        if search_term != last_search_term:
+            # 重置所有筛选条件
+            prefix = "shuyu"
+            for key_suffix in ["oil_gas_resource_type", "process1", "process2", "wellbore_type1", "wellbore_type2", "quality_control", "hse_requirements"]:
+                st.session_state[f"{prefix}_{key_suffix}"] = ""
+            st.session_state["glossary_last_search_term"] = search_term
 
-    # 只使用搜索词查询，不应用筛选条件（筛选条件在pandas层处理）
-    data = glossary.list_with_filters(
-        search_term=search_term,
-        oil_gas_resource_type="",
-        process1="",
-        process2="",
-        wellbore_type1="",
-        wellbore_type2="",
-        quality_control="",
-        hse_requirements=""
-    )
+        # 只使用搜索词查询，不应用筛选条件（筛选条件在pandas层处理）
+        data = glossary.list_with_filters(
+            search_term=search_term,
+            oil_gas_resource_type="",
+            process1="",
+            process2="",
+            wellbore_type1="",
+            wellbore_type2="",
+            quality_control="",
+            hse_requirements=""
+        )
     # for item in data:
     #     st.markdown(f"""**术语词条：** {item['term']}   **术语英文：** {item['english_term']}""")
     #     st.markdown(f"""**术语定义：** {item['definition']}""")

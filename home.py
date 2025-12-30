@@ -421,7 +421,7 @@ with placeholder.container(border=True):
                 hse_requirements=hse_requirements,
             )
             show_ccgz_select_boxes(prefix="shuyu", data=data)
-            display_glossary_query_list(data)
+            display_glossary_query_list(data=data)
         elif submit_type == "zhibiao":
             show_metric_select_boxes()
             display_metric_query_list(st.session_state.search_term)
