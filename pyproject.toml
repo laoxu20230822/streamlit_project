@@ -14,3 +14,12 @@ dependencies = [
     "streamlit-tree-select>=0.0.5",
     "reportlab>=4.4.5",
 ]
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.17.0",
+]
+
+[tool.streamlit]
+staticPath = "static"
+
