@@ -22,8 +22,7 @@ a = Analysis(
         ("./.venv/Lib/site-packages/setuptools/_vendor", "setuptools/_vendor"),
 
         # --- 第三方库前端文件和元数据 ---
-        ('./.venv/Lib/site-packages/st_aggrid/frontend', 'st_aggrid/frontend'),
-        ('./.venv/Lib/site-packages/st_aggrid/frontend/build', 'st_aggrid/frontend/build'),
+        # st_aggrid 由 hooks/hook-st_aggrid.py 自动收集
         ('./.venv/Lib/site-packages/st_pages', 'st_pages'),
         *collect_data_files('streamlit_extras', include_py_files=True),
         *copy_metadata('streamlit-extras'),
@@ -31,13 +30,6 @@ a = Analysis(
 
         # --- 添加streamlit_tree_select ---
         *collect_data_files('streamlit_tree_select', include_py_files=True),
-        #*collect_data_files('rpds', include_py_files=True),
-
-        # --- 添加streamlit_pdf ---
-        ('./.venv/Lib/site-packages/streamlit_pdf/frontend', 'streamlit_pdf/frontend'),
-        ('./.venv/Lib/site-packages/streamlit_pdf/frontend/build', 'streamlit_pdf/frontend/build'),
-        *collect_data_files('streamlit_pdf', include_py_files=True),
-        *copy_metadata('streamlit-pdf'),
 
 
         # --- 你的应用文件夹 ---
@@ -96,7 +88,6 @@ a = Analysis(
         #'streamlit_extras',
         #'streamlit_extras.stylable_container',
         'streamlit_tree_select',
-        'streamlit_pdf',
         'streamlit.web.cli',
         'setuptools._vendor.jaraco'
     ],

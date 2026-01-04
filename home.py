@@ -83,6 +83,22 @@ if "wellbore_type1" not in st.session_state:
 if "wellbore_type2" not in st.session_state:
     st.session_state.wellbore_type2 = ""
 
+# 初始化图表查询筛选参数
+if "chart_oil_gas_resource_type" not in st.session_state:
+    st.session_state.chart_oil_gas_resource_type = ""
+if "chart_process1" not in st.session_state:
+    st.session_state.chart_process1 = ""
+if "chart_process2" not in st.session_state:
+    st.session_state.chart_process2 = ""
+if "chart_wellbore_type1" not in st.session_state:
+    st.session_state.chart_wellbore_type1 = ""
+if "chart_wellbore_type2" not in st.session_state:
+    st.session_state.chart_wellbore_type2 = ""
+if "chart_quality_control" not in st.session_state:
+    st.session_state.chart_quality_control = ""
+if "chart_hse_requirements" not in st.session_state:
+    st.session_state.chart_hse_requirements = ""
+
 
 # 标题
 with st.container():
@@ -142,6 +158,15 @@ with st.form("standard_search_form", height="stretch", border=False):
         st.session_state.process2 = ""
         st.session_state.wellbore_type1 = ""
         st.session_state.wellbore_type2 = ""
+
+        # 初始化图表查询相关的筛选参数
+        st.session_state.chart_oil_gas_resource_type = ""
+        st.session_state.chart_process1 = ""
+        st.session_state.chart_process2 = ""
+        st.session_state.chart_wellbore_type1 = ""
+        st.session_state.chart_wellbore_type2 = ""
+        st.session_state.chart_quality_control = ""
+        st.session_state.chart_hse_requirements = ""
 
 
     display_navigator_tab()
