@@ -31,6 +31,10 @@ a = Analysis(
         # --- 添加streamlit_tree_select ---
         *collect_data_files('streamlit_tree_select', include_py_files=True),
 
+        # --- 添加 streamlit-pdf ---
+        *collect_data_files('streamlit_pdf', include_py_files=True),
+        *copy_metadata('streamlit-pdf'),
+
 
         # --- 你的应用文件夹 ---
         ('.streamlit', '.streamlit'),
@@ -88,6 +92,7 @@ a = Analysis(
         #'streamlit_extras',
         #'streamlit_extras.stylable_container',
         'streamlit_tree_select',
+        'streamlit_pdf',
         'streamlit.web.cli',
         'setuptools._vendor.jaraco'
     ],

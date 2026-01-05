@@ -23,3 +23,7 @@ dev = [
 [tool.streamlit]
 staticPath = "static"
 
+[[tool.streamlit.component.components]]
+name = "pdf_viewer"
+asset_dir = "frontend/build"
+
