@@ -240,7 +240,7 @@ class Metric:
         )
         c = self.conn.cursor()
         SELECT_SQL = f"""
-        SELECT m.*, i.standard_name
+        SELECT DISTINCT m.*, i.standard_name
         FROM metrics m
         LEFT JOIN standard_index i ON m.standard_code = i.standard_code
         LEFT JOIN standard_system s ON m.standard_code = s.standard_code
