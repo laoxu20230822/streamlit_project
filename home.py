@@ -288,18 +288,26 @@ def display_standard_info(standard_code, standard_name):
     # """)
 
 
-def get_chapter_content(data_list, selected_chapter):
-    # 初始化结果列表
-    result = []
-    # 遍历数据列表
-    for item in data_list:
-        chapter = item["min_chapter_code"]
-        # 检查当前章节是否是选定章节或其子章节
-        # 条件1：完全匹配（当前章节）
-        # 条件2：以选定章节+点开头（子章节）
-        if chapter == selected_chapter or chapter.startswith(f"{selected_chapter}."):
-            result.append(item["standard_content"])
+import re
 
+
+def normalize_chapter_code(code: str):
+    s = str(code).strip()
+    m = re.search(r"附录\s*([A-Za-z])", s)
+    if m:
+        return m.group(1).upper()
+    parts = re.findall(r"[A-Za-z0-9.]+", s)
+    return parts[0] if parts else s
+
+
+def get_chapter_content(data_list, selected_chapter):
+    result = []
+    selected_norm = normalize_chapter_code(selected_chapter)
+    variants = [selected_norm, str(selected_chapter).strip()]
+    for item in data_list:
+        chapter = str(item.get("min_chapter_code", "")).strip()
+        if any(chapter == v or chapter.startswith(f"{v}.") for v in variants):
+            result.append(item["standard_content"])
     return result
 
 

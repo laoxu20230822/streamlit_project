@@ -1,3 +1,4 @@
+import io
 import streamlit as st
 from database.standard_db import init_standard_db
 from database.standard_index import init_standard_index_db
@@ -91,9 +92,34 @@ def display_standard_query_list():
         },
     )
 
-    # 在表格上方显示统计信息
+    # 在表格上方显示统计信息和下载按钮
     unique_count = count_unique_standard_codes(df)
-    st.markdown(f"**查询标准总数: {unique_count}**")
+    col1, col2 = st.columns([1, 0.08])
+    with col1:
+        st.markdown(f"**查询标准总数: {unique_count}**")
+    with col2:
+        # 下载按钮
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine="openpyxl") as writer:
+            df.rename(
+                columns={
+                    "standard_code": "标准号",
+                    "standard_name": "标准名称",
+                    "status": "状态",
+                    "specialty": "专业",
+                    "release_date": "发布日期",
+                    "implementation_date": "实施日期",
+                }
+            ).to_excel(writer, index=False, sheet_name="标准列表")
+        output.seek(0)
+
+        st.download_button(
+            label="导出",
+            data=output,
+            file_name=f"标准列表_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+            mime="application/vnd.openxlsxformats-officedocument.spreadsheetml.sheet",
+            use_container_width=True,
+        )
 
     grid_options = {
         "defaultColDef": {

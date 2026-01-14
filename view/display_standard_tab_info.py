@@ -22,10 +22,11 @@ def get_chapter_content(data_list, selected_chapter):
         # 条件1：完全匹配（当前章节）
         # 条件2：以选定章节+点开头（子章节）
         if chapter == selected_chapter or chapter.startswith(f"{selected_chapter}.") or selected_chapter.startswith(f"{chapter}"):
-            print(chapter, selected_chapter)
-            result.append(item["standard_content"])
-        else:
-            print(chapter, selected_chapter)
+            content = item["standard_content"]
+            serial = str(item.get("flow_number", "")).upper()
+            if  "TP" in serial or "BG" in serial or "GS" in serial:
+                content = f"<span style='color:red'>{content}</span>"
+            result.append(content)
             
     return result
 
@@ -49,7 +50,7 @@ def display_standard_cotent(standard_code: str):
     with t22.container(border=True, height=600):
         if "chapter" in st.session_state and "chapter_content" in st.session_state:
             contents = get_chapter_content(standard_detail, st.session_state.chapter)
-            st.markdown("\n\n".join(contents))
+            st.markdown("\n\n".join(contents), unsafe_allow_html=True)
             # if st.session_state.chapter in st.session_state.chapter_content:
             #     content_arr=st.session_state.chapter_content[st.session_state.chapter]
             #     head=content_arr[0]
