@@ -21,9 +21,12 @@ def get_chapter_content(data_list, selected_chapter):
         # 检查当前章节是否是选定章节或其子章节
         # 条件1：完全匹配（当前章节）
         # 条件2：以选定章节+点开头（子章节）
-        if chapter == selected_chapter or chapter.startswith(f"{selected_chapter}."):
+        if chapter == selected_chapter or chapter.startswith(f"{selected_chapter}.") or selected_chapter.startswith(f"{chapter}"):
+            print(chapter, selected_chapter)
             result.append(item["standard_content"])
-
+        else:
+            print(chapter, selected_chapter)
+            
     return result
 
 
