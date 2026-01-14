@@ -2,6 +2,7 @@ import uuid
 import streamlit as st
 from database.standard_db import init_standard_db
 from database.standard_index import init_standard_index_db
+from database.chart import init_standard_chart_db
 from view.display_standard_detail import display_standard_detail
 from view.display_standard_glossary import display_standard_glossary
 from view.display_standard_references import display_standard_references
@@ -12,7 +13,7 @@ import uuid
 from streamlit_extras.stylable_container import stylable_container
 
 
-def get_chapter_content(data_list, selected_chapter):
+def get_chapter_content(data_list, selected_chapter, chart_map=None):
     # 初始化结果列表
     result = []
     # 遍历数据列表
@@ -24,10 +25,15 @@ def get_chapter_content(data_list, selected_chapter):
         if chapter == selected_chapter or chapter.startswith(f"{selected_chapter}.") or selected_chapter.startswith(f"{chapter}"):
             content = item["standard_content"]
             serial = str(item.get("flow_number", "")).upper()
-            if  "TP" in serial or "BG" in serial or "GS" in serial:
-                content = f"<span style='color:red'>{content}</span>"
+            if "TP" in serial or "BG" in serial or "GS" in serial:
+                # 插入图片
+                if chart_map and item.get("flow_number") in chart_map:
+                    image_file = chart_map[item["flow_number"]].replace("/", "_")
+                    result.append(f'<img src="/app/static/{image_file}" alt="图片未找到" style="max-width:100%;">')
+                # 内容居中+红色，放在图片下方
+                content = f'<div style="color:red; text-align:center;">{content}</div>'
             result.append(content)
-            
+
     return result
 
 
@@ -44,12 +50,23 @@ def display_standard_info(standard_code, standard_name):
 def display_standard_cotent(standard_code: str):
     standard_db = init_standard_db()
     standard_detail = standard_db.standard_detail(standard_code)
+
+    # 查询图表数据
+    chart_db = init_standard_chart_db()
+    chart_data = chart_db.list_all_with_filters(image_type="", search_term="")
+    # 按 serial_number 建立索引（对应 flow_number）
+    chart_map = {
+        item["serial_number"]: item["image_file_name"]
+        for item in chart_data
+        if item.get("serial_number")
+    }
+
     t21, t22 = st.columns([4, 6])
     with t21.container(border=True, height=600):
         display_standard_structure(standard_code)
     with t22.container(border=True, height=600):
         if "chapter" in st.session_state and "chapter_content" in st.session_state:
-            contents = get_chapter_content(standard_detail, st.session_state.chapter)
+            contents = get_chapter_content(standard_detail, st.session_state.chapter, chart_map)
             st.markdown("\n\n".join(contents), unsafe_allow_html=True)
             # if st.session_state.chapter in st.session_state.chapter_content:
             #     content_arr=st.session_state.chapter_content[st.session_state.chapter]
