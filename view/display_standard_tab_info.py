@@ -143,7 +143,7 @@ def display_standard_tab_info():
 
         with col2:
             # 处理PDF文件名：将standard_code中的"/"替换为下划线
-            pdf_filename = standard_code.replace("/", "_") + ".pdf"
+            pdf_filename = standard_code.replace("/", "").replace(" ", "") + ".pdf"
             pdf_path = f"static/{pdf_filename}"
             # 检查PDF文件是否存在，如果存在则将标准号显示为可点击的链接
             import os
@@ -157,5 +157,5 @@ def display_standard_tab_info():
                 if st.button(f"PDF"):
                     show_pdf_dialog()
             else:
-                st.markdown(f"**文件不存在**", unsafe_allow_html=True)
-                    
+                st.markdown(f"**PDF文件不存在**", unsafe_allow_html=True)
+
