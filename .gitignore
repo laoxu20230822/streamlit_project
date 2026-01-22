@@ -14,4 +14,5 @@ wheels/
 CLAUDE.md
 GEMINI.md
 .claude/
+.vscode/
 

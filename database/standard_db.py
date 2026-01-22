@@ -62,7 +62,7 @@ CREATE TABLE standard_system (
     quality_control TEXT,  -- 质量控制(施工方)
     hse_requirements TEXT,  -- 健康、安全与环境控制要求
     quality_supervision TEXT,  -- 工程质量技术监督(第三方或甲方)
-    designer TEXT,  -- 设计人员
+    special_condition TEXT,  -- 特殊工况
     format_template TEXT,  -- 格式-模板
     parameter_nature TEXT,  -- 参数性质
     parameter_category TEXT,  -- 参数类别
@@ -156,7 +156,7 @@ INSERT INTO standard_system (
     quality_control,
     hse_requirements,
     quality_supervision,
-    designer,
+    special_condition,
     format_template,
     parameter_nature,
     parameter_category,
@@ -247,7 +247,7 @@ class WhereCause:
              or {build_single_column_search(self.search_term, "quality_control")}
              or {build_single_column_search(self.search_term, "hse_requirements")}
              or {build_single_column_search(self.search_term, "quality_supervision")}
-             or {build_single_column_search(self.search_term, "designer")}
+             or {build_single_column_search(self.search_term, "special_condition")}
              or {build_single_column_search(self.search_term, "format_template")}
              or {build_single_column_search(self.search_term, "parameter_nature")}
              or {build_single_column_search(self.search_term, "parameter_category")}
@@ -408,7 +408,7 @@ class StandardDB:
         quality_control,
         hse_requirements,
         quality_supervision,
-        designer,
+        special_condition,
         format_template,
         parameter_nature,
         parameter_category,
@@ -426,7 +426,7 @@ class StandardDB:
         quality_control,
         hse_requirements,
         quality_supervision,
-        designer,
+        special_condition,
         format_template,
         parameter_nature,
         parameter_category,
@@ -800,6 +800,7 @@ and
         # 列名映射：将中文列名映射到数据库字段名
         column_mapping = {
             "用途": "purpose",
+            "特殊工况": "special_condition",
         }
         df = df.rename(columns=column_mapping)
         self.batch_insert(df)

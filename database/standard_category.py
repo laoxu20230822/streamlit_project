@@ -120,7 +120,7 @@ class WhereCause:
             OR quality_control LIKE '%{self.search_term}%'
             OR hse_requirements LIKE '%{self.search_term}%'
             OR quality_supervision LIKE '%{self.search_term}%'
-            OR designer LIKE '%{self.search_term}%'
+            OR special_condition LIKE '%{self.search_term}%'
             OR format_template LIKE '%{self.search_term}%'
             OR parameter_nature LIKE '%{self.search_term}%'
             OR parameter_category LIKE '%{self.search_term}%'

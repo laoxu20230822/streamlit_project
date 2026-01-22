@@ -13,7 +13,7 @@ def display_craft_standard(standard_code):
             "quality_control": "质量控制(施工方)",
             "hse_requirements": "健康、安全与环境控制要求",
             "quality_supervision": "工程质量技术监督(第三方或甲方)",
-            "designer": "设计人员",
+            "special_condition": "特殊工况",
             "format_template": "格式-模板",
             "parameter_nature": "参数性质",
             "parameter_category": "参数类别",
@@ -40,12 +40,12 @@ def display_craft_standard(standard_code):
                 "健康、安全与环境控制要求", help="健康、安全与环境控制要求"
             ),
             "quality_supervision": st.column_config.TextColumn(
-                "工程质量技术监督(第三方或甲方)", help="工程质量技术监督(第三方或甲方)"
-            ),
-            "designer": st.column_config.TextColumn("设计人员", help="设计人员"),
-            "format_template": st.column_config.TextColumn(
-                "格式-模板", help="格式-模板"
-            ),
+            "工程质量技术监督(第三方或甲方)", help="工程质量技术监督(第三方或甲方)"
+        ),
+        "special_condition": st.column_config.TextColumn("特殊工况", help="特殊工况"),
+        "format_template": st.column_config.TextColumn(
+            "格式-模板", help="格式-模板"
+        ),
             "parameter_nature": st.column_config.TextColumn(
                 "参数性质", help="参数性质"
             ),
