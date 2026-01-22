@@ -103,7 +103,7 @@ if "chart_hse_requirements" not in st.session_state:
 # 标题
 with st.container():
     st.markdown(
-        f"""<div><h3 style='text-align: center; color: blue; margin-top: 0rem; margin-bottom: 1rem; padding-top: 0.5rem;'>储层改造标准知识服务系统</h3></div>""",
+        f"""<div><h3 style='text-align: center; color: blue; margin-top: 0rem; margin-bottom: 1rem; padding-top: 0.5rem;'>标准知识服务系统</h3></div>""",
         unsafe_allow_html=True,
     )
 
@@ -121,13 +121,13 @@ with st.form("standard_search_form", height="stretch", border=False):
             color: white !important;
             border-radius: 10px;
             border-color: #007BFF !important;
-            
-           
+
+
         }
         </style>
         <style>
         div.stFormSubmitButton > button {
-            min-height: 0px; 
+            min-height: 0px;
             height: 40px;         /* 改按钮高度 */
             width: 100px;         /* 改按钮宽度 */
             font-size: 20px !important;    /* 改字体大小 */
@@ -278,7 +278,7 @@ def display_standard_info(standard_code, standard_name):
     html_stype = "<hr style='margin: 0.5rem 0; border-color: grey;'></hr>"
     st.write(f"""标准号：{standard_code}""", unsafe_allow_html=True)
     st.write(
-        f"""标准名称：{standard_name}   
+        f"""标准名称：{standard_name}
     {html_stype}""",
         unsafe_allow_html=True,
     )
@@ -442,6 +442,12 @@ with placeholder.container(border=True):
                 and st.session_state.shuyu_hse_requirements != "全部"
                 else ""
             )
+            special_condition = (
+                st.session_state.shuyu_special_condition
+                if "shuyu_special_condition" in st.session_state
+                and st.session_state.shuyu_special_condition != "全部"
+                else ""
+            )
             glossary = init_glossary_db()
             data = glossary.list_with_filters(
                 search_term=st.session_state.search_term,
@@ -452,6 +458,7 @@ with placeholder.container(border=True):
                 wellbore_type2=wellbore_type2,
                 quality_control=quality_control,
                 hse_requirements=hse_requirements,
+                special_condition=special_condition,
             )
             show_ccgz_select_boxes(prefix="shuyu", data=data)
             display_glossary_query_list(data=data)

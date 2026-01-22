@@ -338,6 +338,16 @@ class StandardDB:
             c.execute(CREATE_SQL)
             self.conn.commit()
 
+    def get_distinct_values(self, field_name: str):
+        """
+        获取指定字段的所有去重值
+        """
+        c = self.conn.cursor()
+        # 排除 null 和空字符串
+        sql = f"SELECT DISTINCT {field_name} FROM standard_system WHERE {field_name} IS NOT NULL AND {field_name} != '' ORDER BY {field_name}"
+        c.execute(sql)
+        return [row[0] for row in c.fetchall()]
+
     def count(self):
         c = self.conn.cursor()
         c.execute("select count(1) from standard_system")

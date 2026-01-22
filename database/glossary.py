@@ -73,7 +73,7 @@ INSERT INTO glossary (
 
 class WhereCause:
     standard_code: str
-    
+
     def __init__(self,standard_code:str=""):
         self.standard_code= standard_code
 
@@ -82,7 +82,7 @@ class WhereCause:
         if self.standard_code:
             sql += f" AND standard_code like '%{self.standard_code}%' "
         return sql
-    
+
 
 class Glossary:
     conn: sqlite3.Connection
@@ -103,12 +103,12 @@ class Glossary:
         c = self.conn.cursor()
         c.execute("select count(1) from glossary")
         return c.fetchone()[0]
-    
+
     def update_by_standard_code(self,standard_code_old:str,standard_code_new:str):
         c = self.conn.cursor()
         c.execute(f"update glossary set standard_code='{standard_code_new}' where standard_code='{standard_code_old}'")
         self.conn.commit()
-    
+
     def list(self,search_term:str):
         c = self.conn.cursor()
         term_cause=build_single_column_search(search_term,'term')
@@ -125,7 +125,8 @@ class Glossary:
                          wellbore_type1: str = "",
                          wellbore_type2: str = "",
                          quality_control: str = "",
-                         hse_requirements: str = ""):
+                         hse_requirements: str = "",
+                         special_condition: str = ""):
         """
         带筛选条件的术语查询方法
         通过 standard_code 关联 glossary 和 standard_system 表
@@ -154,6 +155,8 @@ class Glossary:
             where_conditions.append(f"s.quality_control like '%{quality_control}%'")
         if hse_requirements:
             where_conditions.append(f"s.hse_requirements like '%{hse_requirements}%'")
+        if special_condition:
+            where_conditions.append(f"s.special_condition like '%{special_condition}%'")
 
         # 构建完整查询SQL，返回glossary表所有字段加上standard_system表的筛选字段
         sql = f"""
@@ -164,7 +167,8 @@ class Glossary:
                s.wellbore_type1,
                s.wellbore_type2,
                s.quality_control,
-               s.hse_requirements
+               s.hse_requirements,
+               s.special_condition
         FROM glossary g
         LEFT JOIN standard_system s ON g.standard_code = s.standard_code
         WHERE {' AND '.join(where_conditions)}
@@ -217,7 +221,7 @@ class Glossary:
         if total%pageable.size>0:
             total_page+=1
         return PageResult(data,total_page,pageable)
-    
+
     def batch_insert(self,df:DataFrame):
         # 转换为元组列表（适配 executemany 的参数格式）
         data = [tuple(row) for row in df.itertuples(index=False)]
