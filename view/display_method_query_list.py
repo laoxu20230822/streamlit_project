@@ -19,7 +19,7 @@ def display_method_query_list_new(search_term: str):
     # 从session_state获取筛选条件，处理"全部"转换为空字符串
     performance_indicator_level1 = st.session_state.performance_indicator_level1 if st.session_state.performance_indicator_level1 != "全部" else ""
     performance_indicator_level2 = st.session_state.performance_indicator_level2 if st.session_state.performance_indicator_level2 != "全部" else ""
-    
+
     product_category1 = st.session_state.product_category1 if st.session_state.product_category1 != "全部" else ""
     product_category2 = st.session_state.product_category2 if st.session_state.product_category2 != "全部" else ""
     product_name = st.session_state.product_name if st.session_state.product_name != "全部" else ""
@@ -41,6 +41,7 @@ def display_method_query_list_new(search_term: str):
             "stimulation_business_level2": "刺激业务等级2",
         },
     )
+    # print("df:",df)
     df_pivot = (
         df.groupby(["standard_code", "standard_name", "stimulation_business_level2"])
         .agg({"standard_content": lambda x: "\n".join(x)})  # 把同一类内容拼接
@@ -52,6 +53,41 @@ def display_method_query_list_new(search_term: str):
         )
         .reset_index()
     )
+    # 清除 columns 的 name，避免 AgGrid 显示问题
+    df_pivot.columns.name = None
+
+    # 重命名列：将句号替换为下划线，避免 AgGrid 不支持句号的字段名
+    column_mapping = {}
+    for col in df_pivot.columns:
+        if col not in ["standard_code", "standard_name"]:
+            # 将句号替换为下划线（如 "204.2方法提要" -> "204_2方法提要"）
+            new_col_name = col.replace(".", "_")
+            column_mapping[col] = new_col_name
+
+    df_pivot = df_pivot.rename(columns=column_mapping)
+    # print("df_pivot (重命名后):",df_pivot)
+    # print("重命名映射:", column_mapping)
+
+    # 动态生成列定义
+    columnDefs = [
+        {"field": "standard_code", "headerName": "标准号", "width": 120},
+        {"field": "standard_name", "headerName": "标准名称", "width": 200},
+    ]
+
+    # 为 pivot 后的动态列添加配置
+    for col in df_pivot.columns:
+        if col not in ["standard_code", "standard_name"]:
+            columnDefs.append({
+                "field": col,
+                "headerName": col,
+                "autoHeight": True,
+                "wrapText": True,
+                "width": 400,
+                "cellStyle": {
+                    "whiteSpace": "pre-wrap",
+                    "wordBreak": "normal",
+                },
+            })
 
     grid_options = {
         "defaultColDef": {
@@ -62,50 +98,7 @@ def display_method_query_list_new(search_term: str):
         },
         "enableCellTextSelection": True,
         "suppressNoRowsOverlay": True,
-        "columnDefs": [
-            {"field": "standard_code", "headerName": "标准号", "width": 120},
-            {"field": "standard_name", "headerName": "标准名称", "width": 200},
-            {
-                "field": "方法提要",
-                "headerName": "方法提要",
-                "autoHeight": True,
-                "wrapText": False,
-                "cellStyle": {
-                    "whiteSpace": "pre-wrap",  # 保留原始换行符和空格
-                    "wordBreak": "normal",  # 正常的单词换行规则
-                },
-            },
-            {
-                "field": "仪器设备、试剂或材料",
-                "headerName": "仪器设备、试剂或材料",
-                "autoHeight": True,
-                "wrapText": False,
-                "cellStyle": {
-                    "whiteSpace": "pre-wrap",  # 保留原始换行符和空格
-                    "wordBreak": "normal",  # 正常的单词换行规则
-                },
-            },
-            {
-                "field": "试验步骤",
-                "headerName": "试验步骤",
-                "autoHeight": True,
-                "wrapText": False,
-                "cellStyle": {
-                    "whiteSpace": "pre-wrap",  # 保留原始换行符和空格
-                    "wordBreak": "normal",  # 正常的单词换行规则
-                },
-            },
-            {
-                "field": "试验数据处理",
-                "headerName": "试验数据处理",
-                "autoHeight": True,
-                "wrapText": False,
-                "cellStyle": {
-                    "whiteSpace": "pre-wrap",  # 保留原始换行符和空格
-                    "wordBreak": "normal",  # 正常的单词换行规则
-                },
-            },  # 启用文本换行},
-        ],
+        "columnDefs": columnDefs,
         "rowSelection": {
             "mode": "singleRow",
             "checkboxes": False,
@@ -123,7 +116,13 @@ def display_method_query_list_new(search_term: str):
 
     # 显示统计信息
     unique_count = count_unique_standard_codes(df_pivot)
+    # print("unique_count:",unique_count)
     st.markdown(f"**查询标准总数: {unique_count}**")
+
+    # print("=== 传递给 AgGrid 的列定义 ===")
+    # print(grid_options["columnDefs"])
+    # print("=== df_pivot 的列名 ===")
+    # print(df_pivot.columns.tolist())
 
     grid_response = AgGrid(
         df_pivot,
@@ -131,8 +130,13 @@ def display_method_query_list_new(search_term: str):
         height=500,
         # key='asdjflasdjkfl'
     )
+    # print("grid_response:",grid_response)
+    # print("=== grid_response.data 列名 ===")
+    # print(grid_response["data"].columns.tolist())
+    # print("=== grid_response.data 开头3行 ===")
+    # print(grid_response["data"].head(3))
     selected_rows = grid_response["selected_rows"]
-
+    # print("selected_rows:",selected_rows)
     if selected_rows is not None:
         st.session_state.selected_rows = [
             {
@@ -153,7 +157,7 @@ def onchange_for_method(select_box_key:str,option_list:list = []):
             st.session_state.performance_indicator_level1_option = option_list
     elif select_box_key == "performance_indicator_level2_key":
         current_level2 = st.session_state.get(select_box_key, "")
-        st.session_state.performance_indicator_level2 = current_level2 
+        st.session_state.performance_indicator_level2 = current_level2
         if current_level2 != "全部":
             st.session_state.performance_indicator_level2_option = option_list
 
@@ -164,15 +168,15 @@ def onchange_for_method(select_box_key:str,option_list:list = []):
             st.session_state.product_category1_option = option_list
     elif select_box_key == "product_category2_key":
         current_category2 = st.session_state.get(select_box_key, "")
-        st.session_state.product_category2 = current_category2 
+        st.session_state.product_category2 = current_category2
         if current_category2 != "全部":
             st.session_state.product_category2_option = option_list
     elif select_box_key == "product_name_key":
         current_name = st.session_state.get(select_box_key, "")
-        st.session_state.product_name = current_name 
+        st.session_state.product_name = current_name
         if current_name != "全部":
             st.session_state.product_name_option = option_list
-    
+
     st.session_state.submit_type = "canshu"
     if "selected_rows" in st.session_state:
         del st.session_state["selected_rows"]
@@ -191,9 +195,9 @@ def show_method_select_boxes():
 
     c1, c2, c4, c5, c6 = st.columns(5)
 
-    
-    
-    
+
+
+
     with c1:
         performance_indicator_level1_options = (
             standard_db.query_performance_indicator_level1(
@@ -213,7 +217,7 @@ def show_method_select_boxes():
             args=("performance_indicator_level1_key",performance_indicator_level1_options),
             on_change=onchange_for_method,
         )
-        
+
 
     with c2:
         performance_indicator_level2_options = (
@@ -244,8 +248,8 @@ def show_method_select_boxes():
         )
         product_category1_options.insert(0, "全部")
         st.selectbox(
-            "**产品类别1**", 
-            product_category1_options, 
+            "**产品类别1**",
+            product_category1_options,
             key="product_category1_key",
             args=("product_category1_key",),
             on_change=onchange_for_method,
@@ -261,8 +265,8 @@ def show_method_select_boxes():
         )
         product_category2_options.insert(0, "全部")
         st.selectbox(
-            "**产品类别2**", 
-            product_category2_options, 
+            "**产品类别2**",
+            product_category2_options,
             key="product_category2_key",
             args=("product_category2_key",),
             on_change=onchange_for_method,
@@ -278,12 +282,11 @@ def show_method_select_boxes():
         )
         product_name_options.insert(0, "全部")
         st.selectbox(
-            "**产品名称**", 
-            product_name_options, 
+            "**产品名称**",
+            product_name_options,
             key="product_name_key",
             args=("product_name_key",),
             on_change=onchange_for_method,
             index=product_name_options.index(st.session_state.product_name),
         )
 
-    

@@ -117,7 +117,7 @@ INSERT INTO standard_system (
     standard_code,
     standard_name,
     standard_content,
-    body_start_page, 
+    body_start_page,
     page_number,
     page_count,
     start_line_number,
@@ -201,7 +201,7 @@ INSERT INTO standard_system (
     term_entry_code,
     hanging_paragraph1,
     hanging_paragraph2
-) 
+)
 VALUES (
     ?,?,?,?,?,?,?,?,?,?,
     ?,?,?,?,?,?,?,?,?,?,
@@ -375,7 +375,7 @@ class StandardDB:
 
     def product_list(self, standard_code: str):
         SELECT_STATEMENT = f"""
-        select 
+        select
         standard_code,
         performance_indicator_level1,
         performance_indicator_level2,
@@ -384,7 +384,7 @@ class StandardDB:
         equipment_materials,
         product_category1,
         product_category2,
-        product_name from standard_system where standard_code='{standard_code}' group by 
+        product_name from standard_system where standard_code='{standard_code}' group by
         standard_code,
         performance_indicator_level1,
         performance_indicator_level2,
@@ -403,7 +403,7 @@ class StandardDB:
     def craft_list(self, standard_code: str):
         c = self.conn.cursor()
         craft_statement = f"""
-        select 
+        select
         standard_code,
         quality_control,
         hse_requirements,
@@ -419,9 +419,9 @@ class StandardDB:
         wellbore_type2,
         process_tech1,
         process_tech2,
-        process_tech3 from standard_system 
-        where standard_code='{standard_code}' 
-        group by 
+        process_tech3 from standard_system
+        where standard_code='{standard_code}'
+        group by
         standard_code,
         quality_control,
         hse_requirements,
@@ -675,7 +675,7 @@ class StandardDB:
             wellbore_type2,
             quality_control,
             hse_requirements
-             FROM standard_system 
+             FROM standard_system
             where   {where_clause} """
         )
         columns = [col[0] for col in c.description]
@@ -731,19 +731,28 @@ class StandardDB:
             search_term, "product_category2"
         )
         product_name_cause = build_single_column_search(search_term, "product_name")
+        # FROM standard_system where stimulation_business_level2 in ('方法提要','试验步骤','试验数据处理','仪器设备、试剂或材料')
+        # FROM standard_system where stimulation_business_level2 in ('204.2方法提要','204.7试验步骤','204.8试验数据处理','204.4仪器设备、试剂或材料')
+
         sql = f"""
 SELECT standard_code, standard_name, standard_content, stimulation_business_level2
-FROM standard_system where stimulation_business_level2 in ('方法提要','试验步骤','试验数据处理','仪器设备、试剂或材料') 
-and 
+FROM standard_system where
 (
-{performance_indicator_level1_cause} or 
-{performance_indicator_level2_cause} or 
+    stimulation_business_level2 LIKE '%方法提要%' OR
+    stimulation_business_level2 LIKE '%试验步骤%' OR
+    stimulation_business_level2 LIKE '%试验数据处理%' OR
+    stimulation_business_level2 LIKE '%仪器设备、试剂或材料%'
+)
+and
+(
+{performance_indicator_level1_cause} or
+{performance_indicator_level2_cause} or
 {method_name_cause} or
 {product_category1_cause} or
 {product_category2_cause} or
 {product_name_cause}
 )
-and 
+and
 (
     performance_indicator_level1 like '%{performance_indicator_level1}%' and
     performance_indicator_level2 like '%{performance_indicator_level2}%' and
@@ -765,12 +774,12 @@ and
         # performance_indicator_level2 TEXT,  -- 性能指标二级
         c.execute(
             f"""SELECT  standard_code,standard_name, standard_content
-         FROM standard_system 
-         where 
-         standard_code='{standard_code}' 
-         and 
-         (performance_indicator_level1 like '%{metric}%' 
-         or 
+         FROM standard_system
+         where
+         standard_code='{standard_code}'
+         and
+         (performance_indicator_level1 like '%{metric}%'
+         or
          performance_indicator_level2 like '%{metric}%')
          """
         )
