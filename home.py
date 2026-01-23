@@ -99,6 +99,13 @@ if "chart_quality_control" not in st.session_state:
 if "chart_hse_requirements" not in st.session_state:
     st.session_state.chart_hse_requirements = ""
 
+if "ccgz_quality_control" not in st.session_state:
+    st.session_state.ccgz_quality_control = ""
+if "ccgz_hse_requirements" not in st.session_state:
+    st.session_state.ccgz_hse_requirements = ""
+if "ccgz_special_condition" not in st.session_state:
+    st.session_state.ccgz_special_condition = ""
+
 
 # 标题
 with st.container():
@@ -576,6 +583,12 @@ with placeholder.container(border=True):
                 and st.session_state.ccgz_hse_requirements != "全部"
                 else ""
             )
+            special_condition = (
+                st.session_state.ccgz_special_condition
+                if "ccgz_special_condition" in st.session_state
+                and st.session_state.ccgz_special_condition != "全部"
+                else ""
+            )
 
             standard_db = init_standard_db()
             data = standard_db.get_by_ccgz(
@@ -591,6 +604,7 @@ with placeholder.container(border=True):
                 wellbore_type2,
                 quality_control,
                 hse_requirements,
+                special_condition,
             )
             new_data = group_ccgz_list(data)
             show_ccgz_select_boxes(prefix="ccgz", data=data)

@@ -576,6 +576,7 @@ class StandardDB:
         wellbore_type2: str = "",
         quality_control: str = "",
         hse_requirements: str = "",
+        special_condition: str = "",
     ) -> str:
         """
         根据level1～level5参数动态生成WHERE语句，空字符串的参数会被忽略
@@ -629,6 +630,8 @@ class StandardDB:
             conditions.append(f"quality_control like '%{quality_control}%'")
         if hse_requirements:
             conditions.append(f"hse_requirements like '%{hse_requirements}%'")
+        if special_condition:
+            conditions.append(f"special_condition like '%{special_condition}%'")
 
         # 组合WHERE语句
         if conditions:
@@ -660,6 +663,7 @@ class StandardDB:
         wellbore_type2: str = "",
         quality_control: str = "",
         hse_requirements: str = "",
+        special_condition: str = "",
     ):
         where_clause = self.build_where_clause(
             level1,
@@ -674,6 +678,7 @@ class StandardDB:
             wellbore_type2,
             quality_control,
             hse_requirements,
+            special_condition,
         )
         c = self.conn.cursor()
         c.execute(
@@ -684,7 +689,8 @@ class StandardDB:
             wellbore_type1,
             wellbore_type2,
             quality_control,
-            hse_requirements
+            hse_requirements,
+            special_condition
              FROM standard_system
             where   {where_clause} """
         )

@@ -187,7 +187,7 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
                 filter(None, (item.get("oil_gas_resource_type") for item in data))
             )
         )
-        if not oil_gas_resource_options and prefix == "shuyu":
+        if not oil_gas_resource_options and (prefix == "shuyu" or prefix == "ccgz"):
             oil_gas_resource_options = standard_db.get_distinct_values(
                 "oil_gas_resource_type"
             )
@@ -207,7 +207,7 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
         process1_options = list(
             dict.fromkeys(filter(None, (item.get("process1") for item in data)))
         )
-        if not process1_options and prefix == "shuyu":
+        if not process1_options and (prefix == "shuyu" or prefix == "ccgz"):
             process1_options = standard_db.get_distinct_values("process1")
         process1_options.insert(0, "全部")
         process1 = st.selectbox(
@@ -225,7 +225,7 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
         process2_options = list(
             dict.fromkeys(filter(None, (item.get("process2") for item in data)))
         )
-        if not process2_options and prefix == "shuyu":
+        if not process2_options and (prefix == "shuyu" or prefix == "ccgz"):
             process2_options = standard_db.get_distinct_values("process2")
         process2_options.insert(0, "全部")
         print(process2_options)
@@ -239,9 +239,42 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
         )
         #print(get_selectbox_index(process2_options, process2_key))
 
-    # 第4列：术语显示“特殊工况”，其他显示“井筒类型1”
+    # 第4列：术语和储层改造显示“井筒类型”，其他显示“井筒类型1”
     with col4:
-        if prefix == "shuyu":
+        if prefix == "shuyu" or prefix == "ccgz":
+            # 从data中获取列表
+            wellbore_type1_options = list(
+                dict.fromkeys(filter(None, (item.get("wellbore_type1") for item in data)))
+            )
+            if not wellbore_type1_options:
+                wellbore_type1_options = standard_db.get_distinct_values("wellbore_type1")
+            wellbore_type1_options.insert(0, "全部")
+            wellbore_type1 = st.selectbox(
+                "**井筒类型**",
+                wellbore_type1_options,
+                index=get_selectbox_index(wellbore_type1_options, wellbore_type1_key),
+                key=f"{wellbore_type1_key}",
+                args=(prefix, f"{wellbore_type1_key}"),
+                on_change=onchange_for_ccgz,
+            )
+        else:
+            # 从data中获取列表
+            wellbore_type1_options = list(
+                dict.fromkeys(filter(None, (item.get("wellbore_type1") for item in data)))
+            )
+            wellbore_type1_options.insert(0, "全部")
+            wellbore_type1 = st.selectbox(
+                "**井筒类型**",
+                wellbore_type1_options,
+                index=get_selectbox_index(wellbore_type1_options, wellbore_type1_key),
+                key=f"{wellbore_type1_key}",
+                args=(prefix, f"{wellbore_type1_key}"),
+                on_change=onchange_for_ccgz,
+            )
+
+    # 第5列：术语和储层改造显示“特殊工况”，其他显示“井筒类型2”
+    with col5:
+        if prefix == "shuyu" or prefix == "ccgz":
             special_condition_key = f"{prefix}_special_condition"
             special_condition_options = list(
                 dict.fromkeys(filter(None, (item.get("special_condition") for item in data)))
@@ -257,39 +290,6 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
                 index=get_selectbox_index(special_condition_options, special_condition_key),
                 key=f"{special_condition_key}",
                 args=(prefix, f"{special_condition_key}"),
-                on_change=onchange_for_ccgz,
-            )
-        else:
-            # 从data中获取列表
-            wellbore_type1_options = list(
-                dict.fromkeys(filter(None, (item.get("wellbore_type1") for item in data)))
-            )
-            wellbore_type1_options.insert(0, "全部")
-            wellbore_type1 = st.selectbox(
-                "**井筒类型1**",
-                wellbore_type1_options,
-                index=get_selectbox_index(wellbore_type1_options, wellbore_type1_key),
-                key=f"{wellbore_type1_key}",
-                args=(prefix, f"{wellbore_type1_key}"),
-                on_change=onchange_for_ccgz,
-            )
-
-    # 第5列：术语显示“井筒类型1”，其他显示“井筒类型2”
-    with col5:
-        if prefix == "shuyu":
-             # 从data中获取列表
-            wellbore_type1_options = list(
-                dict.fromkeys(filter(None, (item.get("wellbore_type1") for item in data)))
-            )
-            if not wellbore_type1_options:
-                wellbore_type1_options = standard_db.get_distinct_values("wellbore_type1")
-            wellbore_type1_options.insert(0, "全部")
-            wellbore_type1 = st.selectbox(
-                "**井筒类型**",
-                wellbore_type1_options,
-                index=get_selectbox_index(wellbore_type1_options, wellbore_type1_key),
-                key=f"{wellbore_type1_key}",
-                args=(prefix, f"{wellbore_type1_key}"),
                 on_change=onchange_for_ccgz,
             )
         else:
@@ -316,7 +316,7 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
             quality_control_options = list(
                 dict.fromkeys(filter(None, (item.get("quality_control") for item in data)))
             )
-            if not quality_control_options and prefix == "shuyu":
+            if not quality_control_options and (prefix == "shuyu" or prefix == "ccgz"):
                 quality_control_options = standard_db.get_distinct_values("quality_control")
             quality_control_options.insert(0, "全部")
 
@@ -334,7 +334,7 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
             hse_requirements_options = list(
                 dict.fromkeys(filter(None, (item.get("hse_requirements") for item in data)))
             )
-            if not hse_requirements_options and prefix == "shuyu":
+            if not hse_requirements_options and (prefix == "shuyu" or prefix == "ccgz"):
                 hse_requirements_options = standard_db.get_distinct_values(
                     "hse_requirements"
                 )
