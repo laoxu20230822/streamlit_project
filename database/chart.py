@@ -151,7 +151,8 @@ class StandardChart:
                              wellbore_type1: str = "",
                              wellbore_type2: str = "",
                              quality_control: str = "",
-                             hse_requirements: str = ""):
+                             hse_requirements: str = "",
+                             special_condition: str = ""):
         """
         带筛选条件的图表公式查询方法
         通过 standard_code 关联 standard_chart 和 standard_system 表
@@ -187,13 +188,15 @@ class StandardChart:
             where_conditions.append(f"s.quality_control like '%{quality_control}%'")
         if hse_requirements:
             where_conditions.append(f"s.hse_requirements like '%{hse_requirements}%'")
+        if special_condition:
+            where_conditions.append(f"s.special_condition like '%{special_condition}%'")
 
         # 构建完整查询SQL
         where_clause = f"WHERE {' AND '.join(where_conditions)}" if where_conditions else ""
         sql = f"""
         SELECT c.*, i.standard_name, s.oil_gas_resource_type,
         s.process1, s.process2, s.wellbore_type1, s.wellbore_type2,
-        s.quality_control, s.hse_requirements
+        s.quality_control, s.hse_requirements, s.special_condition
         FROM standard_chart c
         LEFT JOIN (
             SELECT standard_code, standard_name
@@ -208,7 +211,8 @@ class StandardChart:
                    MAX(wellbore_type1) as wellbore_type1,
                    MAX(wellbore_type2) as wellbore_type2,
                    MAX(quality_control) as quality_control,
-                   MAX(hse_requirements) as hse_requirements
+                   MAX(hse_requirements) as hse_requirements,
+                   MAX(special_condition) as special_condition
             FROM standard_system
             GROUP BY standard_code
         ) s ON c.standard_code = s.standard_code
@@ -221,7 +225,6 @@ class StandardChart:
         data = [dict(zip(columns, row)) for row in c.fetchall()]
         c.close()
         return data
-
     
     def query_chart_data(self, image_type: str,
                            search_term: str = "",
@@ -231,7 +234,8 @@ class StandardChart:
                            wellbore_type1: str = "",
                            wellbore_type2: str = "",
                            quality_control: str = "",
-                           hse_requirements: str = ""):
+                           hse_requirements: str = "",
+                           special_condition: str = ""):
         """
         查询图表公式数据（原始数据）
 
@@ -245,6 +249,7 @@ class StandardChart:
             wellbore_type2: 井筒类型2
             quality_control: 管理控制点
             hse_requirements: 知识属性
+            special_condition: 特殊工况
 
         Returns:
             list: 图表公式数据列表
@@ -259,7 +264,8 @@ class StandardChart:
             wellbore_type1=wellbore_type1,
             wellbore_type2=wellbore_type2,
             quality_control=quality_control,
-            hse_requirements=hse_requirements
+            hse_requirements=hse_requirements,
+            special_condition=special_condition
         )
 
     def query_chart_data_all(self,
@@ -270,7 +276,8 @@ class StandardChart:
                              wellbore_type1: str = "",
                              wellbore_type2: str = "",
                              quality_control: str = "",
-                             hse_requirements: str = ""):
+                             hse_requirements: str = "",
+                             special_condition: str = ""):
         """
         一次性查询所有类型的图表公式数据（性能优化版本）
 
@@ -286,6 +293,7 @@ class StandardChart:
             wellbore_type2: 井筒类型2
             quality_control: 管理控制点
             hse_requirements: 知识属性
+            special_condition: 特殊工况
 
         Returns:
             dict: 包含三种类型数据的字典
@@ -305,7 +313,8 @@ class StandardChart:
             wellbore_type1=wellbore_type1,
             wellbore_type2=wellbore_type2,
             quality_control=quality_control,
-            hse_requirements=hse_requirements
+            hse_requirements=hse_requirements,
+            special_condition=special_condition
         )
 
         # 在应用层按 image_type 分组

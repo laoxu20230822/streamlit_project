@@ -480,6 +480,7 @@ class StandardDB:
         wellbore_type2: str = "",
         quality_control: str = "",
         hse_requirements: str = "",
+        special_condition: str = "",
     ):
         """
         带筛选条件的条款查询方法
@@ -513,9 +514,11 @@ class StandardDB:
             where_conditions.append(f"quality_control like '%{quality_control}%'")
         if hse_requirements:
             where_conditions.append(f"hse_requirements like '%{hse_requirements}%'")
+        if special_condition:
+            where_conditions.append(f"special_condition like '%{special_condition}%'")
 
         # 构建SQL
-        base_sql = f"""SELECT serial_number, standard_code, standard_name, standard_content, min_chapter_clause_code, oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements FROM standard_system"""
+        base_sql = f"""SELECT serial_number, standard_code, standard_name, standard_content, min_chapter_clause_code, oil_gas_resource_type, process1, process2, wellbore_type1, wellbore_type2, quality_control, hse_requirements, special_condition FROM standard_system"""
 
         if where_conditions:
             # 有条件时添加WHERE子句
@@ -543,6 +546,7 @@ class StandardDB:
         wellbore_type2: str = "",
         quality_control: str = "",
         hse_requirements: str = "",
+        special_condition: str = "",
     ):
         """
         查询条款数据（原始数据，不分组）
@@ -560,6 +564,7 @@ class StandardDB:
             wellbore_type2=wellbore_type2,
             quality_control=quality_control,
             hse_requirements=hse_requirements,
+            special_condition=special_condition,
         )
 
     def build_where_clause(

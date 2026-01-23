@@ -174,6 +174,7 @@ with st.form("standard_search_form", height="stretch", border=False):
         st.session_state.chart_wellbore_type2 = ""
         st.session_state.chart_quality_control = ""
         st.session_state.chart_hse_requirements = ""
+        st.session_state.chart_special_condition = ""
 
 
     display_navigator_tab()
@@ -382,6 +383,12 @@ with placeholder.container(border=True):
                 and st.session_state.tiaokuan_hse_requirements != "全部"
                 else ""
             )
+            special_condition = (
+                st.session_state.tiaokuan_special_condition
+                if "tiaokuan_special_condition" in st.session_state
+                and st.session_state.tiaokuan_special_condition != "全部"
+                else ""
+            )
             standard_db=init_standard_db()
             data = standard_db.query_tiaokuan_data(
                 search_term=st.session_state.search_term,
@@ -391,7 +398,8 @@ with placeholder.container(border=True):
                 wellbore_type1=wellbore_type1,
                 wellbore_type2=wellbore_type2,
                 quality_control=quality_control,
-                hse_requirements=hse_requirements
+                hse_requirements=hse_requirements,
+                special_condition=special_condition,
             )
             show_ccgz_select_boxes(prefix="tiaokuan",data=data)
             display_tiaokuan_query_list(
@@ -519,6 +527,12 @@ with placeholder.container(border=True):
                 and st.session_state.chart_hse_requirements != "全部"
                 else ""
             )
+            special_condition = (
+                st.session_state.chart_special_condition
+                if "chart_special_condition" in st.session_state
+                and st.session_state.chart_special_condition != "全部"
+                else ""
+            )
 
             # 一次性查询所有类型（性能优化：3次查询 → 1次查询）
             standard_chart = init_standard_chart_db()
@@ -531,6 +545,7 @@ with placeholder.container(border=True):
                 wellbore_type2=wellbore_type2,
                 quality_control=quality_control,
                 hse_requirements=hse_requirements,
+                special_condition=special_condition,
             )
 
             display_chart_query_list(
