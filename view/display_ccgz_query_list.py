@@ -166,7 +166,18 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
 
 
     # 根据prefix决定显示的筛选框数量
-    if prefix in ["ccgz", "shuyu", "tiaokuan", "chart"]:
+    if prefix == "shuyu":
+        # 术语：隐藏“特殊工况”(col4)、“管理控制点”(col6)、“知识属性”(col7)
+        col1, col2, col3, col5 = st.columns(4)
+        col4 = None
+        show_extra_filters = False
+
+        # 默认值设为全部
+        st.session_state[f"{prefix}_special_condition"] = "全部"
+        st.session_state[f"{prefix}_quality_control"] = "全部"
+        st.session_state[f"{prefix}_hse_requirements"] = "全部"
+
+    elif prefix in ["ccgz", "tiaokuan", "chart"]:
         # 显示全部7个筛选框
         col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
         show_extra_filters = True
@@ -236,24 +247,25 @@ def show_ccgz_select_boxes(data, prefix: str = "ccgz"):
         #print(get_selectbox_index(process2_options, process2_key))
 
     # 第4列：所有类型都显示“特殊工况”
-    with col4:
-        special_condition_key = f"{prefix}_special_condition"
-        special_condition_options = list(
-            dict.fromkeys(filter(None, (item.get("special_condition") for item in data)))
-        )
-        if not special_condition_options:
-            special_condition_options = standard_db.get_distinct_values(
-                "special_condition"
+    if col4:
+        with col4:
+            special_condition_key = f"{prefix}_special_condition"
+            special_condition_options = list(
+                dict.fromkeys(filter(None, (item.get("special_condition") for item in data)))
             )
-        special_condition_options.insert(0, "全部")
-        st.selectbox(
-            "**特殊工况**",
-            special_condition_options,
-            index=get_selectbox_index(special_condition_options, special_condition_key),
-            key=f"{special_condition_key}",
-            args=(prefix, f"{special_condition_key}"),
-            on_change=onchange_for_ccgz,
-        )
+            if not special_condition_options:
+                special_condition_options = standard_db.get_distinct_values(
+                    "special_condition"
+                )
+            special_condition_options.insert(0, "全部")
+            st.selectbox(
+                "**特殊工况**",
+                special_condition_options,
+                index=get_selectbox_index(special_condition_options, special_condition_key),
+                key=f"{special_condition_key}",
+                args=(prefix, f"{special_condition_key}"),
+                on_change=onchange_for_ccgz,
+            )
 
     # 第5列：所有类型都显示“井筒类型”
     with col5:
