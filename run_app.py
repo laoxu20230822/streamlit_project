@@ -11,6 +11,10 @@ if hasattr(sys, '_MEIPASS'):
 import streamlit.web.cli as stcli
 import os, sys
 
+# 设置 Streamlit 环境变量
+os.environ["STREAMLIT_BROWSER_GATHER_USAGE_STATS"] = "false"
+os.environ["STREAMLIT_SERVER_HEADLESS"] = "false"
+
 if __name__ == "__main__":
     if getattr(sys, 'frozen', False):
         current_dir = sys._MEIPASS

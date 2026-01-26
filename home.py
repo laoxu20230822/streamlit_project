@@ -1,7 +1,10 @@
+import os
+os.environ["STREAMLIT_BROWSER_GATHER_USAGE_STATS"] = "false"
+os.environ["STREAMLIT_SERVER_HEADLESS"] = "false"
+
 from altair import Data
 import streamlit as st
 import pandas as pd
-import os
 import sys
 
 from streamlit.elements.lib.layout_utils import Height
