@@ -224,26 +224,26 @@ class Metric:
         secondary_project like '%{search_term}%'
         """
 
-        indicator_item_cause = build_single_column_search(search_term, "indicator_item")
+        indicator_item_cause = build_single_column_search(search_term, "m.indicator_item")
         product_category_cause = build_single_column_search(
-            search_term, "product_category"
+            search_term, "m.product_category"
         )
-        product_name_cause = build_single_column_search(search_term, "product_name")
+        product_name_cause = build_single_column_search(search_term, "m.product_name")
         table_header_product_name_cause = build_single_column_search(
-            search_term, "table_header_product_name"
+            search_term, "m.table_header_product_name"
         )
         primary_project_cause = build_single_column_search(
-            search_term, "primary_project"
+            search_term, "m.primary_project"
         )
         secondary_project_cause = build_single_column_search(
-            search_term, "secondary_project"
+            search_term, "m.secondary_project"
         )
         c = self.conn.cursor()
         SELECT_SQL = f"""
         SELECT DISTINCT m.*, i.standard_name, s.purpose
         FROM metrics m
         LEFT JOIN standard_index i ON m.standard_code = i.standard_code
-        LEFT JOIN standard_system s ON m.standard_code = s.standard_code
+        LEFT JOIN standard_system s ON m.standard_code = s.standard_code AND s.purpose like '%{purpose}%'
         where
         ( {indicator_item_cause} or
         {product_category_cause} or
@@ -254,8 +254,7 @@ class Metric:
         m.product_category like '%{product_category}%' and
         m.product_name like '%{product_name}%' and
         m.experimental_condition like '%{experimental_condition}%' and
-        m.indicator_item like '%{indicator_item}%' and
-        s.purpose like '%{purpose}%'
+        m.indicator_item like '%{indicator_item}%'
         """
         c.execute(SELECT_SQL)
 
