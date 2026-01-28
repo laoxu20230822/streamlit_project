@@ -50,8 +50,8 @@ INSERT INTO metrics (
     project,
     product_category,
     table_header_product_name,
-    product_name,  
-    product_model, 
+    product_name,
+    product_model,
     standard_code,
     table_code,
     table_name,
@@ -65,10 +65,10 @@ INSERT INTO metrics (
     remarks,
     table_footnote,
     indicator_item,
-    experimental_condition_type,  
-    application_process,  
-    first_classification,  
-    second_classification,  
+    experimental_condition_type,
+    application_process,
+    first_classification,
+    second_classification,
     third_classification,
     fourth_classification
 ) VALUES (
@@ -240,7 +240,7 @@ class Metric:
         )
         c = self.conn.cursor()
         SELECT_SQL = f"""
-        SELECT DISTINCT m.*, i.standard_name
+        SELECT DISTINCT m.*, i.standard_name, s.purpose
         FROM metrics m
         LEFT JOIN standard_index i ON m.standard_code = i.standard_code
         LEFT JOIN standard_system s ON m.standard_code = s.standard_code

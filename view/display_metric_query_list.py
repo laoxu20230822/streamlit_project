@@ -123,9 +123,9 @@ def display_metric_query_list(search_term: str):
         indicator_item,
         purpose,
     )
-    
-    
-    
+
+
+
     """
     标准号，表编号，表名称，一级项目名称，二级项目名称,单位，实验条件，指标要求,备注,表脚注
     standard_code,table_code,table_name,primary_project,secondary_project,unit,experimental_condition,indicator_requirement,remarks,table_footnote
@@ -133,6 +133,8 @@ def display_metric_query_list(search_term: str):
     df = pd.DataFrame(
         data if data else [],
         columns={
+            "purpose": "用途",
+            "product_model": "规格型号",
             "product_category": "产品类别",
             "product_name": "产品名称",
             "project": "检测项目",
@@ -179,6 +181,8 @@ def display_metric_query_list(search_term: str):
         "suppressNoRowsOverlay": True,
         "columnDefs": [
             {"field": "seq", "headerName": "序号", "width": 50},
+            {"field": "purpose", "headerName": "用途", "width": 100},
+            {"field": "product_model", "headerName": "规格型号", "width": 100},
             {"field": "product_category", "headerName": "产品类别", "width": 100},
             {"field": "product_name", "headerName": "产品名称", "width": 120},
             {
@@ -237,7 +241,7 @@ def display_metric_query_list(search_term: str):
         # key='asdjflasdjkfl'
     )
     selected_rows = grid_response["selected_rows"]
-  
+
     if selected_rows is not None:
         st.session_state.selected_rows = [
             {
@@ -329,6 +333,8 @@ def show_metric_grid(df: pd.DataFrame, tab_index: int):
         "columnDefs": [
             # {"field": "table_code", "headerName": "表编号"},
             # {"field": "table_name", "headerName": "表名称"},
+            {"field": "purpose", "headerName": "用途"},
+            {"field": "product_model", "headerName": "规格型号"},
             {"field": "product_category", "headerName": "产品类别"},
             {"field": "product_name", "headerName": "产品名称"},
             # {"field": "indicator_item", "headerName": "指标项"},
