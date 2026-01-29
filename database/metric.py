@@ -240,7 +240,7 @@ class Metric:
         )
         c = self.conn.cursor()
         SELECT_SQL = f"""
-        SELECT DISTINCT m.*, i.standard_name, s.purpose
+        SELECT m.*, i.standard_name, GROUP_CONCAT(DISTINCT s.purpose) as purpose
         FROM metrics m
         LEFT JOIN standard_index i ON m.standard_code = i.standard_code
         LEFT JOIN standard_system s ON m.standard_code = s.standard_code AND s.purpose like '%{purpose}%'
@@ -255,6 +255,7 @@ class Metric:
         m.product_name like '%{product_name}%' and
         m.experimental_condition like '%{experimental_condition}%' and
         m.indicator_item like '%{indicator_item}%'
+        GROUP BY m.id
         """
         c.execute(SELECT_SQL)
 

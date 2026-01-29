@@ -160,18 +160,19 @@ class Glossary:
 
         # 构建完整查询SQL，返回glossary表所有字段加上standard_system表的筛选字段
         sql = f"""
-        SELECT DISTINCT g.*,
-               s.oil_gas_resource_type,
-               s.process1,
-               s.process2,
-               s.wellbore_type1,
-               s.wellbore_type2,
-               s.quality_control,
-               s.hse_requirements,
-               s.special_condition
+        SELECT g.*,
+               GROUP_CONCAT(DISTINCT s.oil_gas_resource_type) as oil_gas_resource_type,
+               GROUP_CONCAT(DISTINCT s.process1) as process1,
+               GROUP_CONCAT(DISTINCT s.process2) as process2,
+               GROUP_CONCAT(DISTINCT s.wellbore_type1) as wellbore_type1,
+               GROUP_CONCAT(DISTINCT s.wellbore_type2) as wellbore_type2,
+               GROUP_CONCAT(DISTINCT s.quality_control) as quality_control,
+               GROUP_CONCAT(DISTINCT s.hse_requirements) as hse_requirements,
+               GROUP_CONCAT(DISTINCT s.special_condition) as special_condition
         FROM glossary g
         LEFT JOIN standard_system s ON g.standard_code = s.standard_code
         WHERE {' AND '.join(where_conditions)}
+        GROUP BY g.id
         ORDER BY g.term
         """
 
