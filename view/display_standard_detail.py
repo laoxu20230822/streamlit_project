@@ -4,6 +4,10 @@ from database.standard_index import init_standard_index_db
 def display_standard_detail(standard_code:str):
     standard_index=init_standard_index_db()
     detail=standard_index.detail(standard_code)
+    
+    if not detail:
+        st.error(f"未找到标准详情: {standard_code}")
+        return
 
     html_stype="<hr style='margin: 0.5rem 0; border-color: grey;'></hr>"
     # st.html(

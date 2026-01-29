@@ -148,6 +148,8 @@ class StandardIndex:
         c.execute(f"select * from standard_index where standard_code='{standard_code}'")
         columns = [col[0] for col in c.description]
         data = [dict(zip(columns, row)) for row in c.fetchall()]
+        if not data:
+            return None
         return data[0]
 
     def create_table(self):
